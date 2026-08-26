@@ -7,6 +7,24 @@
     <Filter Include="sources">
       <UniqueIdentifier>{08e36723-ce4f-4cff-9662-c40801cf1acf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Views">
+      <UniqueIdentifier>{a0e64b2b-0f56-41d1-a7f0-dcae6e6067c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Views\Pages">
+      <UniqueIdentifier>{8bd37514-25bc-49ff-8799-ad959aaa9ea6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Views\Pages\1-Dashboard">
+      <UniqueIdentifier>{166fe94d-cff7-4006-8be4-7469a701c8ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Views\Pages\2-Resolution">
+      <UniqueIdentifier>{2ad15eee-5ddf-4c25-9d02-a9cc51f4ff2e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Views\Pages\3-Backup">
+      <UniqueIdentifier>{a127abc1-fbfc-49d8-9963-ae83536a2e9e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Views\Pages\4-Localization">
+      <UniqueIdentifier>{6e8a7e65-f3d7-4519-9ac9-390f117f756d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\imconfig.h">
@@ -23,6 +41,18 @@
     </ClInclude>
     <ClInclude Include="..\..\backends\imgui_impl_dx11.h">
       <Filter>sources</Filter>
+    </ClInclude>
+    <ClInclude Include="DashboardPage.h">
+      <Filter>Views\Pages\1-Dashboard</Filter>
+    </ClInclude>
+    <ClInclude Include="ResolutionPage.h">
+      <Filter>Views\Pages\2-Resolution</Filter>
+    </ClInclude>
+    <ClInclude Include="BackupPage.h">
+      <Filter>Views\Pages\3-Backup</Filter>
+    </ClInclude>
+    <ClInclude Include="LocalizationPage.h">
+      <Filter>Views\Pages\4-Localization</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -49,6 +79,18 @@
     </ClCompile>
     <ClCompile Include="..\..\imgui_tables.cpp">
       <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="DashboardPage.cpp">
+      <Filter>Views\Pages\1-Dashboard</Filter>
+    </ClCompile>
+    <ClCompile Include="ResolutionPage.cpp">
+      <Filter>Views\Pages\2-Resolution</Filter>
+    </ClCompile>
+    <ClCompile Include="BackupPage.cpp">
+      <Filter>Views\Pages\3-Backup</Filter>
+    </ClCompile>
+    <ClCompile Include="LocalizationPage.cpp">
+      <Filter>Views\Pages\4-Localization</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

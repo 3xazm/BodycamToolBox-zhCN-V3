@@ -156,6 +156,10 @@
     <ClInclude Include="..\..\imgui_internal.h" />
     <ClInclude Include="..\..\backends\imgui_impl_dx11.h" />
     <ClInclude Include="..\..\backends\imgui_impl_win32.h" />
+    <ClInclude Include="BackupPage.h" />
+    <ClInclude Include="DashboardPage.h" />
+    <ClInclude Include="LocalizationPage.h" />
+    <ClInclude Include="ResolutionPage.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\imgui.cpp" />
@@ -165,7 +169,11 @@
     <ClCompile Include="..\..\imgui_widgets.cpp" />
     <ClCompile Include="..\..\backends\imgui_impl_dx11.cpp" />
     <ClCompile Include="..\..\backends\imgui_impl_win32.cpp" />
+    <ClCompile Include="BackupPage.cpp" />
+    <ClCompile Include="DashboardPage.cpp" />
+    <ClCompile Include="LocalizationPage.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="ResolutionPage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\misc\debuggers\imgui.natstepfilter" />
