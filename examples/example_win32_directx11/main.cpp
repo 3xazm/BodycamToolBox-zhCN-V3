@@ -198,39 +198,46 @@ int main(int, char**)
         // ------------------------------------------------------------------------
         // 自定义窗口标题栏 (Windows 原生尺寸与精细图标)
         // ------------------------------------------------------------------------
-        float header_height = 32.0f * main_scale; // 整体标题栏高度拉大到 32px
-        float btn_w = 46.0f * main_scale;         // 按钮宽度参照 Windows 原生的 46px
-        float btn_h = header_height;              // 按钮高度贴满整个标题栏
+        // 检测窗口是否最大化
+        WINDOWPLACEMENT wp = { sizeof(wp) };
+        ::GetWindowPlacement(hwnd, &wp);
+        bool is_maximized = (wp.showCmd == SW_SHOWMAXIMIZED);
 
-        // 右上角 3 个按钮的总宽度 (46 * 3 = 138)
+        float header_height = 32.0f * main_scale;
+        float btn_w = 46.0f * main_scale;
+        float btn_h = header_height;
         float total_btn_width = btn_w * 3.0f;
 
-        // 1. 创建标题栏拖拽区域 (留出右侧按钮区)
-        ImGui::SetCursorPos(ImVec2(0, 0));
-        ImGui::InvisibleButton("##TitleDragArea", ImVec2(ImGui::GetWindowWidth() - total_btn_width, header_height));
+        // 最大化时，Windows 边缘会有 8px 左右的溢出偏移，这里做边缘修正
+        float right_padding = is_maximized ? (8.0f * main_scale) : 0.0f;
+        float top_padding = is_maximized ? (8.0f * main_scale) : 0.0f;
+
+        // 1. 创建标题栏拖拽区域 (避开右侧按钮与系统溢出边框)
+        ImGui::SetCursorPos(ImVec2(0, top_padding));
+        ImGui::InvisibleButton("##TitleDragArea", ImVec2(ImGui::GetWindowWidth() - total_btn_width - right_padding, header_height));
 
         if (ImGui::IsItemHovered() && ImGui::IsMouseDown(ImGuiMouseButton_Left)) {
             ::ReleaseCapture();
             ::SendMessage(hwnd, WM_NCLBUTTONDOWN, HTCAPTION, 0);
         }
 
-        // 2. 绘制标题文本 (居中偏左放置)
-        ImGui::SetCursorPos(ImVec2(12.0f * main_scale, (header_height - 18.0f * main_scale) * 0.5f));
+        // 2. 绘制标题文本
+        ImGui::SetCursorPos(ImVec2(12.0f * main_scale, top_padding + (header_height - 18.0f * main_scale) * 0.5f));
         ImGui::TextDisabled("  BODYCAM 工具箱 V3");
 
-        // 3. 绘制右侧控制按钮 (无缝贴合窗口右上角)
-        ImGui::SetCursorPos(ImVec2(ImGui::GetWindowWidth() - total_btn_width, 0.0f));
+        // 3. 绘制右侧控制按钮 (最大化时自动向左/下内缩，不再移出屏幕外)
+        ImGui::SetCursorPos(ImVec2(ImGui::GetWindowWidth() - total_btn_width - right_padding, top_padding));
 
-        // 临时去除按钮圆角与内边距，使其紧密拼合
+        // 临时去除按钮圆角与内边距
         ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 0.0f);
         ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
 
-        // 基础按钮颜色配置 (常态透明)
+        // 基础按钮颜色配置
         ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
         ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1.0f, 1.0f, 1.0f, 0.12f));
         ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(1.0f, 1.0f, 1.0f, 0.20f));
 
-        // 获取公用的画笔与颜色定义 (只在这里声明一次)
+        // 获取公用画笔
         ImDrawList* draw_list = ImGui::GetWindowDrawList();
         ImU32 icon_color = ImGui::GetColorU32(ImGuiCol_Text);
 
@@ -239,7 +246,6 @@ int main(int, char**)
             ::SendMessage(hwnd, WM_SYSCOMMAND, SC_MINIMIZE, 0);
         }
 
-        // 绘制最小化横线
         ImVec2 min_p_min = ImGui::GetItemRectMin();
         ImVec2 min_p_max = ImGui::GetItemRectMax();
         float line_y = (min_p_min.y + min_p_max.y) * 0.5f;
@@ -252,30 +258,22 @@ int main(int, char**)
         ImGui::SameLine();
 
         // --- 最大化 / 还原按钮 ---
-        WINDOWPLACEMENT wp = { sizeof(wp) };
-        ::GetWindowPlacement(hwnd, &wp);
-        bool is_maximized = (wp.showCmd == SW_SHOWMAXIMIZED);
-
         if (ImGui::Button("##MaxBtn", ImVec2(btn_w, btn_h))) {
             ::SendMessage(hwnd, WM_SYSCOMMAND, is_maximized ? SC_RESTORE : SC_MAXIMIZE, 0);
         }
 
-        // 获取按钮的实际绘制矩形区域
         ImVec2 p_min = ImGui::GetItemRectMin();
         ImVec2 p_max = ImGui::GetItemRectMax();
         float w = p_max.x - p_min.x;
         float h = p_max.y - p_min.y;
 
-        // 使用百分比相对定位，确保全屏/最大化时绝对不变形
         if (is_maximized) {
             // 还原状态：双叠框 ❐
-            // 后方框
             draw_list->AddRect(
                 ImVec2(p_min.x + w * 0.40f, p_min.y + h * 0.30f),
                 ImVec2(p_min.x + w * 0.68f, p_min.y + h * 0.58f),
                 icon_color, 0.0f, 0, 1.0f * main_scale
             );
-            // 前方框
             draw_list->AddRect(
                 ImVec2(p_min.x + w * 0.32f, p_min.y + h * 0.42f),
                 ImVec2(p_min.x + w * 0.60f, p_min.y + h * 0.70f),
@@ -292,8 +290,8 @@ int main(int, char**)
         }
         ImGui::SameLine();
 
-        // --- 关闭按钮 (悬停红色) ---
-        ImGui::PopStyleColor(2); // 弹出通用 Hover/Active
+        // --- 关闭按钮 (悬停红) ---
+        ImGui::PopStyleColor(2);
         ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.90f, 0.11f, 0.14f, 1.0f));
         ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.75f, 0.10f, 0.12f, 1.0f));
 
@@ -301,12 +299,12 @@ int main(int, char**)
             ::PostQuitMessage(0);
         }
 
-        // 清除推入的临时样式
+        // 清除临时样式
         ImGui::PopStyleColor(3);
         ImGui::PopStyleVar(2);
 
         // 移动光标到标题栏下方
-        ImGui::SetCursorPosY(header_height);
+        ImGui::SetCursorPosY(header_height + top_padding);
         ImGui::Separator();
 
         // ------------------------------------------------------------------------
@@ -503,7 +501,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
     switch (msg)
     {
-    // 拦截非客户区计算：彻底移除系统标题栏，同时保留 DWM 窗口动画与阴影
+        // 拦截非客户区计算：彻底移除系统标题栏，同时保留 DWM 窗口动画与阴影
     case WM_NCCALCSIZE:
     {
         if (wParam == TRUE)
