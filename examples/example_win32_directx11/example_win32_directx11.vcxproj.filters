@@ -63,6 +63,9 @@
     <ClInclude Include="LocalizationPage.h">
       <Filter>Views\Pages\4-Localization</Filter>
     </ClInclude>
+    <ClInclude Include="RainEffect.h">
+      <Filter>Assets\HLSL</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\imgui.cpp">
@@ -100,6 +103,9 @@
     </ClCompile>
     <ClCompile Include="LocalizationPage.cpp">
       <Filter>Views\Pages\4-Localization</Filter>
+    </ClCompile>
+    <ClCompile Include="RainEffect.cpp">
+      <Filter>Assets\HLSL</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -147,7 +147,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>d3d11.lib;d3dcompiler.lib;dxgi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(DXSDK_DIR)/Lib/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
     </Link>
     <CustomBuildStep>
       <Command>
@@ -170,6 +170,7 @@
     <ClInclude Include="BackupPage.h" />
     <ClInclude Include="DashboardPage.h" />
     <ClInclude Include="LocalizationPage.h" />
+    <ClInclude Include="RainEffect.h" />
     <ClInclude Include="ResolutionPage.h" />
   </ItemGroup>
   <ItemGroup>
@@ -184,6 +185,7 @@
     <ClCompile Include="DashboardPage.cpp" />
     <ClCompile Include="LocalizationPage.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="RainEffect.cpp" />
     <ClCompile Include="ResolutionPage.cpp" />
   </ItemGroup>
   <ItemGroup>

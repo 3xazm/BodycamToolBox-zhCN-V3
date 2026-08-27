@@ -4,6 +4,7 @@
 #include "imgui_impl_dx11.h"
 #include <d3d11.h>
 #include <tchar.h>
+#pragma comment(linker, "/subsystem:windows /entry:mainCRTStartup")
 
 #include <dwmapi.h>
 #pragma comment(lib, "dwmapi.lib")
@@ -15,6 +16,8 @@
 #include "DashboardPage.h"
 #include "ResolutionPage.h"
 
+#include "RainEffect.h" 
+ 
 // ==========================================
 // 1. D3D11 与 Shader 全局变量声明
 // ==========================================
@@ -85,16 +88,18 @@ bool InitRainShader() {
     ID3DBlob* psBlob = nullptr;
     ID3DBlob* errorBlob = nullptr;
 
-    // 编译 Vertex Shader
-    HRESULT hr = D3DCompileFromFile(L"RainEffect.hlsl", nullptr, nullptr, "mainVS", "vs_5_0", 0, 0, &vsBlob, &errorBlob);
+    size_t shaderLen = strlen(g_RainEffectHLSL);
+
+    // 1. 从内存字符串编译 Vertex Shader
+    HRESULT hr = D3DCompile(g_RainEffectHLSL, shaderLen, "RainEffect.hlsl", nullptr, nullptr, "mainVS", "vs_5_0", 0, 0, &vsBlob, &errorBlob);
     if (FAILED(hr)) {
         if (errorBlob) { OutputDebugStringA((char*)errorBlob->GetBufferPointer()); errorBlob->Release(); }
         return false;
     }
     g_pd3dDevice->CreateVertexShader(vsBlob->GetBufferPointer(), vsBlob->GetBufferSize(), nullptr, &g_pRainVS);
 
-    // 编译 Pixel Shader
-    hr = D3DCompileFromFile(L"RainEffect.hlsl", nullptr, nullptr, "main", "ps_5_0", 0, 0, &psBlob, &errorBlob);
+    // 2. 从内存字符串编译 Pixel Shader
+    hr = D3DCompile(g_RainEffectHLSL, shaderLen, "RainEffect.hlsl", nullptr, nullptr, "main", "ps_5_0", 0, 0, &psBlob, &errorBlob);
     if (FAILED(hr)) {
         if (errorBlob) { OutputDebugStringA((char*)errorBlob->GetBufferPointer()); errorBlob->Release(); }
         vsBlob->Release();
@@ -102,7 +107,7 @@ bool InitRainShader() {
     }
     g_pd3dDevice->CreatePixelShader(psBlob->GetBufferPointer(), psBlob->GetBufferSize(), nullptr, &g_pRainPS);
 
-    // Input Layout
+    // 3. Input Layout
     D3D11_INPUT_ELEMENT_DESC layout[] = {
         { "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
         { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 8, D3D11_INPUT_PER_VERTEX_DATA, 0 },
@@ -111,7 +116,7 @@ bool InitRainShader() {
     vsBlob->Release();
     psBlob->Release();
 
-    // 绘制雨滴的屏顶点
+    // 4. 绘制雨滴的屏顶点
     SimpleVertex vertices[] = {
         { -1.0f,  1.0f, 0.0f, 0.0f },
         {  1.0f,  1.0f, 1.0f, 0.0f },
@@ -127,7 +132,7 @@ bool InitRainShader() {
     D3D11_SUBRESOURCE_DATA vInitData = { vertices, 0, 0 };
     g_pd3dDevice->CreateBuffer(&vbd, &vInitData, &g_pRainVB);
 
-    // Constant Buffer
+    // 5. Constant Buffer
     D3D11_BUFFER_DESC desc = {};
     desc.ByteWidth = sizeof(RainCB);
     desc.Usage = D3D11_USAGE_DYNAMIC;
@@ -335,7 +340,7 @@ int main(int, char**)
 
         ImGuiStyle& current_style = ImGui::GetStyle();
         current_style.Colors[ImGuiCol_WindowBg] = ImVec4(1.0f, 1.0f, 1.0f, 0.12f);  //设置窗口背景为半透明黑色 (0.05f, 0.05f, 0.05f, 0.20f);
-		current_style.Colors[ImGuiCol_ChildBg] = ImVec4(1.00f, 1.00f, 1.00f, 0.05f);    //设置子窗口背景为半透明白色 (1.00f, 1.00f, 1.00f, 0.05f); 
+        current_style.Colors[ImGuiCol_ChildBg] = ImVec4(1.00f, 1.00f, 1.00f, 0.05f);    //设置子窗口背景为半透明白色 (1.00f, 1.00f, 1.00f, 0.05f); 
 
         ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoBringToFrontOnFocus;
         ImGui::Begin("MainWindow", nullptr, window_flags);
