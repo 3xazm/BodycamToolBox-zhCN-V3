@@ -110,13 +110,15 @@
     <None Include="..\..\misc\debuggers\imgui.natstepfilter">
       <Filter>imgui</Filter>
     </None>
-    <None Include="RainEffect.hlsl">
-      <Filter>Assets\HLSL</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Media Include="..\..\..\..\..\..\Downloads\rainwindow.mp4">
       <Filter>Assets\Video</Filter>
     </Media>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="RainEffect.hlsl">
+      <Filter>Assets\HLSL</Filter>
+    </CustomBuild>
   </ItemGroup>
 </Project>

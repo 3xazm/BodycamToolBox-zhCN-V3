@@ -192,11 +192,11 @@
     <None Include="..\README.txt" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="RainEffect.hlsl">
+    <CustomBuild Include="RainEffect.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <FileType>Document</FileType>
-    </None>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <Media Include="..\..\..\..\..\..\Downloads\rainwindow.mp4" />
