@@ -171,6 +171,7 @@
     <ClInclude Include="DashboardPage.h" />
     <ClInclude Include="LocalizationPage.h" />
     <ClInclude Include="RainEffect.h" />
+    <ClInclude Include="RainEffectPipeline.h" />
     <ClInclude Include="ResolutionPage.h" />
   </ItemGroup>
   <ItemGroup>

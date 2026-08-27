@@ -66,6 +66,9 @@
     <ClInclude Include="RainEffect.h">
       <Filter>Assets\HLSL</Filter>
     </ClInclude>
+    <ClInclude Include="RainEffectPipeline.h">
+      <Filter>Assets\HLSL</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\imgui.cpp">
