@@ -25,6 +25,15 @@
     <Filter Include="Views\Pages\4-Localization">
       <UniqueIdentifier>{6e8a7e65-f3d7-4519-9ac9-390f117f756d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Assets">
+      <UniqueIdentifier>{ce14a469-1986-4f49-9bae-8ac7ea3dd9be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\HLSL">
+      <UniqueIdentifier>{7001836f-aa14-4da9-8cdf-c996f637469e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Video">
+      <UniqueIdentifier>{462b5364-6efd-4e6b-a91e-f1be6eda64d9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\imconfig.h">
@@ -101,5 +110,13 @@
     <None Include="..\..\misc\debuggers\imgui.natstepfilter">
       <Filter>imgui</Filter>
     </None>
+    <None Include="RainEffect.hlsl">
+      <Filter>Assets\HLSL</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="..\..\..\..\..\..\Downloads\rainwindow.mp4">
+      <Filter>Assets\Video</Filter>
+    </Media>
   </ItemGroup>
 </Project>

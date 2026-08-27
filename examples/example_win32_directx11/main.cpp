@@ -7,23 +7,181 @@
 
 #include <dwmapi.h>
 #pragma comment(lib, "dwmapi.lib")
+#include <vector>
+#include <cstdlib>
+#include <d3dcompiler.h>
+#pragma comment(lib, "d3dcompiler.lib")
 
 #include "DashboardPage.h"
 
-//## 侧边栏与 UI 渲染辅助
-struct NavigationItem {
-    const char* label;
-    int tab_index;
+// ==========================================
+// 1. D3D11 与 Shader 全局变量声明
+// ==========================================
+static ID3D11Device* g_pd3dDevice = nullptr;
+static ID3D11DeviceContext* g_pd3dDeviceContext = nullptr;
+static IDXGISwapChain* g_pSwapChain = nullptr;
+static bool                    g_SwapChainOccluded = false;
+static UINT                    g_ResizeWidth = 0, g_ResizeHeight = 0;
+static ID3D11RenderTargetView* g_mainRenderTargetView = nullptr;
+
+// 雨滴 Shader 独立渲染资源
+ID3D11VertexShader* g_pRainVS = nullptr;
+ID3D11PixelShader* g_pRainPS = nullptr;
+ID3D11InputLayout* g_pRainInputLayout = nullptr;
+ID3D11Buffer* g_pRainVB = nullptr;
+ID3D11Buffer* g_pRainBuffer = nullptr;
+
+// 雨滴离屏 Texture 与 RTV/SRV
+ID3D11Texture2D* g_pRainTexture = nullptr;
+ID3D11RenderTargetView* g_pRainRTV = nullptr;
+ID3D11ShaderResourceView* g_pRainSRV = nullptr;
+int                            g_RainTexWidth = 0, g_RainTexHeight = 0;
+
+struct RainCB {
+    float time;
+    float resolution[2];
+    float padding;
 };
 
-bool RenderSidebarItem(const char* label, bool is_selected, float main_scale) {
-    ImGui::PushStyleVar(ImGuiStyleVar_SelectableTextAlign, ImVec2(0.0f, 0.5f));
-    bool pressed = ImGui::Selectable(label, is_selected, 0, ImVec2(0, 38.0f * main_scale));
-    ImGui::PopStyleVar();
-    return pressed;
+struct SimpleVertex {
+    float x, y;
+    float u, v;
+};
+
+// ==========================================
+// 2. 雨滴 Shader 离屏资源初始化与释放
+// ==========================================
+void CleanupRainRenderTarget() {
+    if (g_pRainSRV) { g_pRainSRV->Release(); g_pRainSRV = nullptr; }
+    if (g_pRainRTV) { g_pRainRTV->Release(); g_pRainRTV = nullptr; }
+    if (g_pRainTexture) { g_pRainTexture->Release(); g_pRainTexture = nullptr; }
 }
 
-//## Windows 亚克力 (Acrylic) 效果支持
+void CreateRainRenderTarget(int width, int height) {
+    CleanupRainRenderTarget();
+    if (width <= 0 || height <= 0) return;
+
+    g_RainTexWidth = width;
+    g_RainTexHeight = height;
+
+    D3D11_TEXTURE2D_DESC texDesc = {};
+    texDesc.Width = width;
+    texDesc.Height = height;
+    texDesc.MipLevels = 1;
+    texDesc.ArraySize = 1;
+    texDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    texDesc.SampleDesc.Count = 1;
+    texDesc.Usage = D3D11_USAGE_DEFAULT;
+    texDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+
+    g_pd3dDevice->CreateTexture2D(&texDesc, nullptr, &g_pRainTexture);
+    g_pd3dDevice->CreateRenderTargetView(g_pRainTexture, nullptr, &g_pRainRTV);
+    g_pd3dDevice->CreateShaderResourceView(g_pRainTexture, nullptr, &g_pRainSRV);
+}
+
+bool InitRainShader() {
+    ID3DBlob* vsBlob = nullptr;
+    ID3DBlob* psBlob = nullptr;
+    ID3DBlob* errorBlob = nullptr;
+
+    // 编译 Vertex Shader
+    HRESULT hr = D3DCompileFromFile(L"RainEffect.hlsl", nullptr, nullptr, "mainVS", "vs_5_0", 0, 0, &vsBlob, &errorBlob);
+    if (FAILED(hr)) {
+        if (errorBlob) { OutputDebugStringA((char*)errorBlob->GetBufferPointer()); errorBlob->Release(); }
+        return false;
+    }
+    g_pd3dDevice->CreateVertexShader(vsBlob->GetBufferPointer(), vsBlob->GetBufferSize(), nullptr, &g_pRainVS);
+
+    // 编译 Pixel Shader
+    hr = D3DCompileFromFile(L"RainEffect.hlsl", nullptr, nullptr, "main", "ps_5_0", 0, 0, &psBlob, &errorBlob);
+    if (FAILED(hr)) {
+        if (errorBlob) { OutputDebugStringA((char*)errorBlob->GetBufferPointer()); errorBlob->Release(); }
+        vsBlob->Release();
+        return false;
+    }
+    g_pd3dDevice->CreatePixelShader(psBlob->GetBufferPointer(), psBlob->GetBufferSize(), nullptr, &g_pRainPS);
+
+    // Input Layout
+    D3D11_INPUT_ELEMENT_DESC layout[] = {
+        { "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 8, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+    };
+    g_pd3dDevice->CreateInputLayout(layout, 2, vsBlob->GetBufferPointer(), vsBlob->GetBufferSize(), &g_pRainInputLayout);
+    vsBlob->Release();
+    psBlob->Release();
+
+    // 绘制雨滴的屏顶点
+    SimpleVertex vertices[] = {
+        { -1.0f,  1.0f, 0.0f, 0.0f },
+        {  1.0f,  1.0f, 1.0f, 0.0f },
+        { -1.0f, -1.0f, 0.0f, 1.0f },
+        {  1.0f,  1.0f, 1.0f, 0.0f },
+        {  1.0f, -1.0f, 1.0f, 1.0f },
+        { -1.0f, -1.0f, 0.0f, 1.0f },
+    };
+    D3D11_BUFFER_DESC vbd = {};
+    vbd.Usage = D3D11_USAGE_DEFAULT;
+    vbd.ByteWidth = sizeof(vertices);
+    vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+    D3D11_SUBRESOURCE_DATA vInitData = { vertices, 0, 0 };
+    g_pd3dDevice->CreateBuffer(&vbd, &vInitData, &g_pRainVB);
+
+    // Constant Buffer
+    D3D11_BUFFER_DESC desc = {};
+    desc.ByteWidth = sizeof(RainCB);
+    desc.Usage = D3D11_USAGE_DYNAMIC;
+    desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+    desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+    g_pd3dDevice->CreateBuffer(&desc, nullptr, &g_pRainBuffer);
+
+    return true;
+}
+
+void RenderRainTexture(float width, float height) {
+    if (width <= 0 || height <= 0 || !g_pRainPS) return;
+    if ((int)width != g_RainTexWidth || (int)height != g_RainTexHeight) {
+        CreateRainRenderTarget((int)width, (int)height);
+    }
+
+    // 透明清屏
+    const float clearColor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+    g_pd3dDeviceContext->ClearRenderTargetView(g_pRainRTV, clearColor);
+    g_pd3dDeviceContext->OMSetRenderTargets(1, &g_pRainRTV, nullptr);
+
+    D3D11_VIEWPORT vp = {};
+    vp.Width = width;
+    vp.Height = height;
+    vp.MinDepth = 0.0f;
+    vp.MaxDepth = 1.0f;
+    g_pd3dDeviceContext->RSSetViewports(1, &vp);
+
+    static float g_time = 0.0f;
+    g_time += 0.016f;
+
+    D3D11_MAPPED_SUBRESOURCE mappedResource;
+    if (SUCCEEDED(g_pd3dDeviceContext->Map(g_pRainBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource))) {
+        RainCB* cb = (RainCB*)mappedResource.pData;
+        cb->time = g_time;
+        cb->resolution[0] = width;
+        cb->resolution[1] = height;
+        g_pd3dDeviceContext->Unmap(g_pRainBuffer, 0);
+    }
+
+    UINT stride = sizeof(SimpleVertex);
+    UINT offset = 0;
+    g_pd3dDeviceContext->IASetVertexBuffers(0, 1, &g_pRainVB, &stride, &offset);
+    g_pd3dDeviceContext->IASetInputLayout(g_pRainInputLayout);
+    g_pd3dDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+    g_pd3dDeviceContext->VSSetShader(g_pRainVS, nullptr, 0);
+    g_pd3dDeviceContext->PSSetShader(g_pRainPS, nullptr, 0);
+    g_pd3dDeviceContext->PSSetConstantBuffers(0, 1, &g_pRainBuffer);
+
+    g_pd3dDeviceContext->Draw(6, 0);
+}
+// ==========================================
+// 3. Windows 亚克力 (Acrylic) 效果支持
+// ==========================================
 typedef enum _WINDOWCOMPOSITIONATTRIB {
     WCA_ACCENT_POLICY = 19
 } WINDOWCOMPOSITIONATTRIB;
@@ -56,22 +214,18 @@ void EnableAcrylicBlur(HWND hwnd, COLORREF colorWithAlpha) {
     }
 }
 
-//## Direct3D 11 全局变量
-static ID3D11Device* g_pd3dDevice = nullptr;
-static ID3D11DeviceContext* g_pd3dDeviceContext = nullptr;
-static IDXGISwapChain* g_pSwapChain = nullptr;
-static bool                    g_SwapChainOccluded = false;
-static UINT                    g_ResizeWidth = 0, g_ResizeHeight = 0;
-static ID3D11RenderTargetView* g_mainRenderTargetView = nullptr;
-
-//## 前置函数声明
+// ==========================================
+// 4. 前置函数声明
+// ==========================================
 bool CreateDeviceD3D(HWND hWnd);
 void CleanupDeviceD3D();
 void CreateRenderTarget();
 void CleanupRenderTarget();
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-//## 程序主入口
+// ==========================================
+// 5. 程序主入口
+// ==========================================
 int main(int, char**)
 {
     // 1. DPI 适配与初始化
@@ -88,11 +242,11 @@ int main(int, char**)
         L"Bodycam 工具箱 V3",
         WS_THICKFRAME | WS_SYSMENU | WS_MAXIMIZEBOX | WS_MINIMIZEBOX,
         100, 100,
-        (int)(1280 * main_scale), (int)(800 * main_scale),
+        (int)(1050 * main_scale), (int)(650 * main_scale),
         nullptr, nullptr, wc.hInstance, nullptr
     );
 
-    // 4. DWM 属性设置 (毛玻璃 & 暗黑模式)
+    // 4. DWM 属性设置 (亚克力背景效果)
     DWM_BLURBEHIND bb = { 0 };
     bb.dwFlags = DWM_BB_ENABLE;
     bb.fEnable = TRUE;
@@ -101,14 +255,18 @@ int main(int, char**)
 
     BOOL USE_DARK_MODE = TRUE;
     DwmSetWindowAttribute(hwnd, 19, &USE_DARK_MODE, sizeof(USE_DARK_MODE));
+    //磨砂/模糊效果
+    EnableAcrylicBlur(hwnd, 0x00000000);
 
-    // 5. 初始化 D3D 设备与显示窗口
+    // 5. 初始化 D3D 设备与窗口
     if (!CreateDeviceD3D(hwnd))
     {
         CleanupDeviceD3D();
         ::UnregisterClassW(wc.lpszClassName, wc.hInstance);
         return 1;
     }
+
+    InitRainShader();
 
     ::ShowWindow(hwnd, SW_SHOWDEFAULT);
     ::UpdateWindow(hwnd);
@@ -163,20 +321,29 @@ int main(int, char**)
             CreateRenderTarget();
         }
 
+        // --- Step A: 渲染雨滴离屏纹理 ---
+        RenderRainTexture(io.DisplaySize.x, io.DisplaySize.y);
+
+        // --- Step B: ImGui UI 绘制 ---
         ImGui_ImplDX11_NewFrame();
         ImGui_ImplWin32_NewFrame();
         ImGui::NewFrame();
 
-        // 窗口覆盖配置与透明色调
         ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always);
         ImGui::SetNextWindowSize(io.DisplaySize, ImGuiCond_Always);
 
         ImGuiStyle& current_style = ImGui::GetStyle();
-        current_style.Colors[ImGuiCol_WindowBg] = ImVec4(0.10f, 0.11f, 0.13f, 0.75f);
-        current_style.Colors[ImGuiCol_ChildBg] = ImVec4(0.14f, 0.15f, 0.17f, 0.60f);
+        current_style.Colors[ImGuiCol_WindowBg] = ImVec4(1.0f, 1.0f, 1.0f, 0.12f);  //设置窗口背景为半透明黑色 (0.05f, 0.05f, 0.05f, 0.20f);
+		current_style.Colors[ImGuiCol_ChildBg] = ImVec4(1.00f, 1.00f, 1.00f, 0.05f);    //设置子窗口背景为半透明白色 (1.00f, 1.00f, 1.00f, 0.05f); 
 
-        ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse;
+        ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoBringToFrontOnFocus;
         ImGui::Begin("MainWindow", nullptr, window_flags);
+
+        // 把渲染好的雨滴离屏纹理贴在窗口背景底层
+        if (g_pRainSRV) {
+            ImDrawList* bg_draw = ImGui::GetWindowDrawList();
+            bg_draw->AddImage((ImTextureID)g_pRainSRV, ImVec2(0, 0), io.DisplaySize);
+        }
 
         // 自定义标题栏
         WINDOWPLACEMENT wp = { sizeof(wp) };
@@ -261,7 +428,7 @@ int main(int, char**)
         ImGui::SetCursorPosY(header_height + top_padding);
         ImGui::Separator();
 
-        // 分栏布局
+        // 主分栏布局
         if (ImGui::BeginTable("MainLayout", 2, ImGuiTableFlags_Resizable | ImGuiTableFlags_SizingFixedFit))
         {
             ImGui::TableSetupColumn("Sidebar", ImGuiTableColumnFlags_WidthFixed, 200.0f * main_scale);
@@ -288,22 +455,30 @@ int main(int, char**)
 
         ImGui::End();
 
-        // 画面呈现与清屏
+        // --- Step C: 渲染主 FrameBuffer 并提交输出 ---
         ImGui::Render();
         const float clear_color_with_alpha[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
 
         g_pd3dDeviceContext->OMSetRenderTargets(1, &g_mainRenderTargetView, nullptr);
         g_pd3dDeviceContext->ClearRenderTargetView(g_mainRenderTargetView, clear_color_with_alpha);
+
         ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
         HRESULT hr = g_pSwapChain->Present(1, 0);
         g_SwapChainOccluded = (hr == DXGI_STATUS_OCCLUDED);
     }
 
-    // 8. 资源清理退出
+    // 8. 退出与资源释放
     ImGui_ImplDX11_Shutdown();
     ImGui_ImplWin32_Shutdown();
     ImGui::DestroyContext();
+
+    CleanupRainRenderTarget();
+    if (g_pRainVS) { g_pRainVS->Release(); g_pRainVS = nullptr; }
+    if (g_pRainPS) { g_pRainPS->Release(); g_pRainPS = nullptr; }
+    if (g_pRainInputLayout) { g_pRainInputLayout->Release(); g_pRainInputLayout = nullptr; }
+    if (g_pRainVB) { g_pRainVB->Release(); g_pRainVB = nullptr; }
+    if (g_pRainBuffer) { g_pRainBuffer->Release(); g_pRainBuffer = nullptr; }
 
     CleanupDeviceD3D();
     ::DestroyWindow(hwnd);
@@ -312,7 +487,9 @@ int main(int, char**)
     return 0;
 }
 
-//## Direct3D 11 辅助函数实现
+// ==========================================
+// 6. Direct3D 11 辅助函数实现
+// ==========================================
 bool CreateDeviceD3D(HWND hWnd)
 {
     DXGI_SWAP_CHAIN_DESC sd;
@@ -354,10 +531,12 @@ void CleanupDeviceD3D()
 
 void CreateRenderTarget()
 {
-    ID3D11Texture2D* pBackBuffer;
-    g_pSwapChain->GetBuffer(0, IID_PPV_ARGS(&pBackBuffer));
-    g_pd3dDevice->CreateRenderTargetView(pBackBuffer, nullptr, &g_mainRenderTargetView);
-    pBackBuffer->Release();
+    ID3D11Texture2D* pBackBuffer = nullptr;
+    if (SUCCEEDED(g_pSwapChain->GetBuffer(0, IID_PPV_ARGS(&pBackBuffer))) && pBackBuffer)
+    {
+        g_pd3dDevice->CreateRenderTargetView(pBackBuffer, nullptr, &g_mainRenderTargetView);
+        pBackBuffer->Release();
+    }
 }
 
 void CleanupRenderTarget()
@@ -365,7 +544,9 @@ void CleanupRenderTarget()
     if (g_mainRenderTargetView) { g_mainRenderTargetView->Release(); g_mainRenderTargetView = nullptr; }
 }
 
-//## Windows 消息回调过程 (WndProc)
+// ==========================================
+// 7. Windows 消息回调过程 (WndProc)
+// ==========================================
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
