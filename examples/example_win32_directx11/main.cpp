@@ -13,6 +13,7 @@
 #pragma comment(lib, "d3dcompiler.lib")
 
 #include "DashboardPage.h"
+#include "ResolutionPage.h"
 
 // ==========================================
 // 1. D3D11 与 Shader 全局变量声明
@@ -428,6 +429,12 @@ int main(int, char**)
         ImGui::SetCursorPosY(header_height + top_padding);
         ImGui::Separator();
 
+        // 1. 静态/全局实例化页面对象
+        static ResolutionPage g_ResolutionPage;
+
+        // 2. 将默认选中的页面设为 1 (首页)
+        static int g_SelectedTab = 1;
+
         // 主分栏布局
         if (ImGui::BeginTable("MainLayout", 2, ImGuiTableFlags_Resizable | ImGuiTableFlags_SizingFixedFit))
         {
@@ -436,19 +443,54 @@ int main(int, char**)
 
             ImGui::TableNextRow();
 
+            // ==========================================
             // 左侧侧边栏
+            // ==========================================
             ImGui::TableSetColumnIndex(0);
             ImGui::TextDisabled("BODYCAM 工具箱");
             ImGui::Separator();
             ImGui::Spacing();
 
             ImGui::PushStyleVar(ImGuiStyleVar_SelectableTextAlign, ImVec2(0.0f, 0.5f));
-            ImGui::Selectable("首页", true, 0, ImVec2(0, 38.0f * main_scale));
+
+            // 菜单 1：首页 (ID 设为 1)
+            if (ImGui::Selectable("首页", g_SelectedTab == 1, 0, ImVec2(0, 38.0f * main_scale))) {
+                g_SelectedTab = 1;
+            }
+
+            // 菜单 2：分辨率与其他 (ID 设为 2)
+            if (ImGui::Selectable("分辨率与其他", g_SelectedTab == 2, 0, ImVec2(0, 38.0f * main_scale))) {
+                g_SelectedTab = 2;
+            }
+
+            /* 预留位置：
+            // 菜单 0：设置 (后续添加)
+            if (ImGui::Selectable("设置", g_SelectedTab == 0, 0, ImVec2(0, 38.0f * main_scale))) {
+                g_SelectedTab = 0;
+            }
+            */
+
             ImGui::PopStyleVar();
 
+            // ==========================================
             // 右侧主展示区
+            // ==========================================
             ImGui::TableSetColumnIndex(1);
-            RenderDashboardPage(hwnd, main_scale);
+
+            // 根据选中的 Tab 切换渲染内容
+            switch (g_SelectedTab) {
+            case 0:
+                // RenderSettingsPage(); // 留给以后的“设置”页面
+                break;
+            case 1:
+                RenderDashboardPage(hwnd, main_scale); // 首页内容
+                break;
+            case 2:
+                g_ResolutionPage.Render();            // 分辨率修复页面
+                break;
+            default:
+                break;
+            }
 
             ImGui::EndTable();
         }
