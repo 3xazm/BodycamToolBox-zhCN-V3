@@ -84,14 +84,13 @@ static inline float CustomLerp(float a, float b, float t) {
     return a + (b - a) * t;
 }
 
-// 按钮图标类型枚举
 enum MacBtnType {
-    MAC_BTN_CLOSE,    // X
-    MAC_BTN_MAXIMIZE, // 口 / 双框
-    MAC_BTN_MINIMIZE  // -
+    MAC_BTN_CLOSE,
+    MAC_BTN_MAXIMIZE,
+    MAC_BTN_MINIMIZE
 };
 
-// ==================== 2. 带液态玻璃感与鼠标跟踪高光的控制按钮 ====================
+// ==================== 2. 带液态玻璃感与控制按钮 ====================
 bool DrawMacCircleButton(const char* id_str, const ImVec2& pos, float radius, MacBtnType type, bool isMaximized = false) {
     ImGuiWindow* window = ImGui::GetCurrentWindow();
     if (window->SkipItems) return false;
@@ -109,33 +108,25 @@ bool DrawMacCircleButton(const char* id_str, const ImVec2& pos, float radius, Ma
     float anim = storage->GetFloat(id, 0.0f);
     float dt = ImGui::GetIO().DeltaTime;
 
-    // 平滑动画插值
     anim = CustomLerp(anim, hovered ? 1.0f : 0.0f, dt * 12.0f);
     storage->SetFloat(id, anim);
 
     ImDrawList* drawList = ImGui::GetWindowDrawList();
     ImVec2 mousePos = ImGui::GetMousePos();
 
-    // 基础颜色设定 (默认带有液态玻璃的低饱和透明感)
     ImU32 baseThemeColor;
-    if (type == MAC_BTN_CLOSE)      baseThemeColor = IM_COL32(255, 75, 75, 255);   // 红
-    else if (type == MAC_BTN_MAXIMIZE) baseThemeColor = IM_COL32(255, 185, 45, 255);  // 黄
-    else                            baseThemeColor = IM_COL32(50, 205, 80, 255);   // 绿
+    if (type == MAC_BTN_CLOSE)      baseThemeColor = IM_COL32(255, 75, 75, 255);
+    else if (type == MAC_BTN_MAXIMIZE) baseThemeColor = IM_COL32(255, 185, 45, 255);
+    else                            baseThemeColor = IM_COL32(50, 205, 80, 255);
 
-    // 泡泡平滑微放缩
     float currentRadius = radius + (radius * 0.26f * anim);
 
-    // 1. 液态玻璃基础底色（默认半透明，悬停时被激活发光）
     int bgAlpha = static_cast<int>(85.0f + 160.0f * anim);
     ImU32 glassBgCol = (baseThemeColor & 0x00FFFFFF) | (static_cast<unsigned int>(bgAlpha) << 24);
     drawList->AddCircleFilled(pos, currentRadius, glassBgCol);
-
-    // 2. 玻璃外边框（顶部亮白高光反光，底部微暗）
     drawList->AddCircle(pos, currentRadius, IM_COL32(255, 255, 255, static_cast<int>(80.0f + 100.0f * anim)), 0, 1.2f);
 
-    // 3. 鼠标手电筒/聚光灯自动跟踪 (Spotlight Follow Effect)
     if (anim > 0.01f) {
-        // 计算鼠标相对于按钮中心的向量
         ImVec2 delta(mousePos.x - pos.x, mousePos.y - pos.y);
         float distSq = delta.x * delta.x + delta.y * delta.y;
         float maxOffset = currentRadius * 0.45f;
@@ -148,11 +139,8 @@ bool DrawMacCircleButton(const char* id_str, const ImVec2& pos, float radius, Ma
         }
 
         ImVec2 spotCenter(pos.x + lightOffset.x, pos.y + lightOffset.y);
-
-        // 手电筒聚光灯核心光源
         drawList->AddCircleFilled(spotCenter, currentRadius * 0.55f, IM_COL32(255, 255, 255, static_cast<int>(165.0f * anim)));
 
-        // 柔和弥散发光圈
         for (int i = 1; i <= 3; i++) {
             float alpha = 32.0f * anim / static_cast<float>(i);
             ImU32 glowCol = (baseThemeColor & 0x00FFFFFF) | (static_cast<unsigned int>(alpha) << 24);
@@ -160,125 +148,63 @@ bool DrawMacCircleButton(const char* id_str, const ImVec2& pos, float radius, Ma
         }
     }
 
-    // 4. 纯矢量 Geometry 图标绘制
-    ImU32 iconColor = IM_COL32(255, 255, 255, static_cast<int>(160 + 95 * anim)); // 默认半透白，悬停高亮纯白
+    ImU32 iconColor = IM_COL32(255, 255, 255, static_cast<int>(160 + 95 * anim));
     float iconScale = currentRadius * 0.42f;
 
     if (type == MAC_BTN_MINIMIZE) {
-        // - 最小化 (横线)
-        drawList->AddLine(
-            ImVec2(pos.x - iconScale, pos.y),
-            ImVec2(pos.x + iconScale, pos.y),
-            iconColor, 1.8f
-        );
+        drawList->AddLine(ImVec2(pos.x - iconScale, pos.y), ImVec2(pos.x + iconScale, pos.y), iconColor, 1.8f);
     }
     else if (type == MAC_BTN_MAXIMIZE) {
-        // 口 / 双框 最大化
         if (isMaximized) {
-            // 后框
-            drawList->AddRect(
-                ImVec2(pos.x - iconScale * 0.3f, pos.y - iconScale * 0.9f),
-                ImVec2(pos.x + iconScale * 0.9f, pos.y + iconScale * 0.3f),
-                iconColor, 0.0f, 0, 1.2f
-            );
-            // 前框
-            drawList->AddRect(
-                ImVec2(pos.x - iconScale * 0.9f, pos.y - iconScale * 0.3f),
-                ImVec2(pos.x + iconScale * 0.3f, pos.y + iconScale * 0.9f),
-                iconColor, 0.0f, 0, 1.2f
-            );
+            drawList->AddRect(ImVec2(pos.x - iconScale * 0.3f, pos.y - iconScale * 0.9f), ImVec2(pos.x + iconScale * 0.9f, pos.y + iconScale * 0.3f), iconColor, 0.0f, 0, 1.2f);
+            drawList->AddRect(ImVec2(pos.x - iconScale * 0.9f, pos.y - iconScale * 0.3f), ImVec2(pos.x + iconScale * 0.3f, pos.y + iconScale * 0.9f), iconColor, 0.0f, 0, 1.2f);
         }
         else {
-            // 单框
-            drawList->AddRect(
-                ImVec2(pos.x - iconScale * 0.8f, pos.y - iconScale * 0.8f),
-                ImVec2(pos.x + iconScale * 0.8f, pos.y + iconScale * 0.8f),
-                iconColor, 0.0f, 0, 1.5f
-            );
+            drawList->AddRect(ImVec2(pos.x - iconScale * 0.8f, pos.y - iconScale * 0.8f), ImVec2(pos.x + iconScale * 0.8f, pos.y + iconScale * 0.8f), iconColor, 0.0f, 0, 1.5f);
         }
     }
     else if (type == MAC_BTN_CLOSE) {
-        // X 关闭
-        drawList->AddLine(
-            ImVec2(pos.x - iconScale * 0.75f, pos.y - iconScale * 0.75f),
-            ImVec2(pos.x + iconScale * 0.75f, pos.y + iconScale * 0.75f),
-            iconColor, 1.8f
-        );
-        drawList->AddLine(
-            ImVec2(pos.x + iconScale * 0.75f, pos.y - iconScale * 0.75f),
-            ImVec2(pos.x - iconScale * 0.75f, pos.y + iconScale * 0.75f),
-            iconColor, 1.8f
-        );
+        drawList->AddLine(ImVec2(pos.x - iconScale * 0.75f, pos.y - iconScale * 0.75f), ImVec2(pos.x + iconScale * 0.75f, pos.y + iconScale * 0.75f), iconColor, 1.8f);
+        drawList->AddLine(ImVec2(pos.x + iconScale * 0.75f, pos.y - iconScale * 0.75f), ImVec2(pos.x - iconScale * 0.75f, pos.y + iconScale * 0.75f), iconColor, 1.8f);
     }
 
     return pressed;
 }
 
-// ==================== 3. 带柔和发光与微膨胀效果的 Sidebar 选项 ====================
-bool DrawSidebarOption(const char* label, bool selected, const ImVec2& size) {
+// ==================== 3. 无方框轻量 Sidebar 选项 (完美稳定版) ====================
+bool DrawSidebarOption(const char* label, bool selected, const ImVec2& size, ImVec2* outCenterPos = nullptr) {
     ImGuiWindow* window = ImGui::GetCurrentWindow();
     if (window->SkipItems) return false;
 
+    // 1. 使用 InvisibleButton 作为底层标准交互控件（解决 ID 冲突与布局游标异常）
+    ImVec2 pos = ImGui::GetCursorScreenPos();
+    bool pressed = ImGui::InvisibleButton(label, size);
+    bool hovered = ImGui::IsItemHovered();
+
+    // 2. 安全获取与平滑更新动画帧状态 (anim)
+    ImGuiStorage* storage = ImGui::GetStateStorage();
     ImGuiID id = window->GetID(label);
-    ImVec2 pos = window->DC.CursorPos;
-    ImRect bb(pos, ImVec2(pos.x + size.x, pos.y + size.y));
-
-    ImGui::ItemSize(size);
-    if (!ImGui::ItemAdd(bb, id)) return false;
-
-    bool hovered, held;
-    bool pressed = ImGui::ButtonBehavior(bb, id, &hovered, &held);
-
-    ImGuiStorage* storage = window->DC.StateStorage;
     float anim = storage->GetFloat(id, 0.0f);
     float dt = ImGui::GetIO().DeltaTime;
 
-    // 平滑动画插值
-    anim = CustomLerp(anim, hovered ? 1.0f : 0.0f, dt * 11.0f);
+    anim = CustomLerp(anim, hovered ? 1.0f : 0.0f, dt * 12.0f);
     storage->SetFloat(id, anim);
 
+    // 3. 计算选项中心点供液态胶囊吸收定位
+    if (outCenterPos) {
+        *outCenterPos = ImVec2(pos.x + size.x * 0.5f, pos.y + size.y * 0.5f);
+    }
+
+    // 4. 安全绘制文字与平滑过渡
     ImDrawList* drawList = ImGui::GetWindowDrawList();
-    float rounding = size.y * 0.4f;
+    ImU32 textCol = selected ? IM_COL32(255, 255, 255, 255) : IM_COL32(200, 205, 215, static_cast<int>(180.0f + 75.0f * anim));
 
-    // 泡泡平滑膨胀
-    float expand = anim * 8.0f;
-    ImVec2 minPos(pos.x - expand, pos.y - expand);
-    ImVec2 maxPos(pos.x + size.x + expand, pos.y + size.y + expand);
-
-    // 外发光
-    if (anim > 0.01f && !selected) {
-        drawList->AddRectFilled(
-            ImVec2(minPos.x - 3.0f * anim, minPos.y - 3.0f * anim),
-            ImVec2(maxPos.x + 3.0f * anim, maxPos.y + 3.0f * anim),
-            IM_COL32(255, 255, 255, static_cast<int>(12.0f * anim)),
-            rounding + 3.0f
-        );
-    }
-
-    // 背景色
-    ImU32 bgCol = selected ? IM_COL32(255, 255, 255, 46) : IM_COL32(255, 255, 255, 12 + static_cast<int>(55.0f * anim));
-
-    drawList->AddRectFilled(minPos, maxPos, bgCol, rounding);
-    drawList->AddRect(
-        minPos, maxPos,
-        IM_COL32(255, 255, 255, selected ? 150 : static_cast<int>(60.0f + 60.0f * anim)),
-        rounding, 0, 1.0f
+    ImVec2 textSize = ImGui::CalcTextSize(label);
+    ImVec2 textPos(
+        pos.x + 24.0f + (selected ? 4.0f : (anim * 3.0f)),
+        pos.y + (size.y - textSize.y) * 0.5f
     );
 
-    // 选中提示条
-    if (selected) {
-        drawList->AddRectFilled(
-            ImVec2(minPos.x + 8.0f, minPos.y + 8.0f),
-            ImVec2(minPos.x + 13.0f, maxPos.y - 8.0f),
-            IM_COL32(0, 122, 255, 225), 1.0f
-        );
-    }
-
-    ImU32 textCol = selected ? IM_COL32(20, 20, 20, 255) : IM_COL32(240, 240, 240, 255);
-    ImVec2 textPos = ImVec2(
-        minPos.x + (selected ? 24.0f : 16.0f) + (anim * 2.0f),
-        minPos.y + (size.y + expand * 2.0f - ImGui::GetTextLineHeight()) * 0.5f
-    );
     drawList->AddText(textPos, textCol, label);
 
     return pressed;
@@ -331,6 +257,11 @@ int main(int, char**) {
 
     static int currentTab = 0;
     static char searchBuffer[128] = "";
+
+    // 全局液态胶囊滑动位置静态变量
+    static float liquidCurrentY = -1.0f;
+    static bool isFirstFrameLiquid = true;
+    static float fluidWeight = 0.0f; // <--- 新增：用于平滑过渡流体波浪强度
     bool done = false;
 
     while (!done) {
@@ -414,24 +345,21 @@ int main(int, char**) {
             ::SendMessage(hwnd, WM_NCLBUTTONDOWN, HTCAPTION, 0);
         }
 
-        // 右上角玻璃控制灯（从右向左：红 X -> 黄 口 -> 绿 -）
-        float circleR = 13.0f * scale;   // <-- 修改这里的 11.0f 即可改变球体半径（比如调小成 8.0f，或调大成 14.0f）
+        // 右上角控制灯
+        float circleR = 13.0f * scale;
         float btnY = 24.0f * scale;
         float rightBaseX = windowSize.x - 24.0f * scale;
-        float btnSpacing = 30.0f * scale; // 如果调大了 circleR，可以适当增大按钮间距
+        float btnSpacing = 30.0f * scale;
 
         bool isMaximized = ::IsZoomed(hwnd);
 
-        // 1. 最右侧：红色关闭 (X)
         if (DrawMacCircleButton("CloseBtn", ImVec2(rightBaseX, btnY), circleR, MAC_BTN_CLOSE)) {
             ::PostQuitMessage(0);
         }
-        // 2. 中间：黄色最大化/还原 (口)
         if (DrawMacCircleButton("MaxBtn", ImVec2(rightBaseX - btnSpacing, btnY), circleR, MAC_BTN_MAXIMIZE, isMaximized)) {
             if (isMaximized) ::SendMessage(hwnd, WM_SYSCOMMAND, SC_RESTORE, 0);
             else ::SendMessage(hwnd, WM_SYSCOMMAND, SC_MAXIMIZE, 0);
         }
-        // 3. 最左侧：绿色最小化 (-)
         if (DrawMacCircleButton("MinBtn", ImVec2(rightBaseX - btnSpacing * 2.0f, btnY), circleR, MAC_BTN_MINIMIZE)) {
             ::SendMessage(hwnd, WM_SYSCOMMAND, SC_MINIMIZE, 0);
         }
@@ -446,48 +374,126 @@ int main(int, char**) {
         drawList->AddRectFilled(sidebarPos, ImVec2(sidebarPos.x + sidebarW, sidebarPos.y + contentH), IM_COL32(255, 255, 255, 15), 16.0f * scale);
         drawList->AddRect(sidebarPos, ImVec2(sidebarPos.x + sidebarW, sidebarPos.y + contentH), IM_COL32(255, 255, 255, 50), 16.0f * scale);
 
-        // Sidebar 顶部选项列表
         float optItemW = sidebarW - 20.0f * scale;
         float optItemH = 38.0f * scale;
 
+        ImVec2 optPositions[3];
+
         ImGui::SetCursorPos(ImVec2(sidebarPos.x + 10.0f * scale, sidebarPos.y + 12.0f * scale));
-        if (DrawSidebarOption("首页", currentTab == 0, ImVec2(optItemW, optItemH))) {
+        if (DrawSidebarOption("首页", currentTab == 0, ImVec2(optItemW, optItemH), &optPositions[0])) {
             currentTab = 0;
         }
 
         ImGui::SetCursorPos(ImVec2(sidebarPos.x + 10.0f * scale, sidebarPos.y + 12.0f * scale + optItemH + 8.0f * scale));
-        if (DrawSidebarOption("分辨率修复", currentTab == 1, ImVec2(optItemW, optItemH))) {
+        if (DrawSidebarOption("分辨率修复", currentTab == 1, ImVec2(optItemW, optItemH), &optPositions[1])) {
             currentTab = 1;
         }
 
-        // Sidebar 底部固定：设置 (Settings)
         ImGui::SetCursorPos(ImVec2(sidebarPos.x + 10.0f * scale, sidebarPos.y + contentH - optItemH - 12.0f * scale));
-        if (DrawSidebarOption("设置", currentTab == 2, ImVec2(optItemW, optItemH))) {
+        if (DrawSidebarOption("设置", currentTab == 2, ImVec2(optItemW, optItemH), &optPositions[2])) {
             currentTab = 2;
         }
+
+        // 1. 全局液态胶囊滑动位置计算
+        float targetY = optPositions[currentTab].y - optItemH * 0.5f;
+
+        if (isFirstFrameLiquid) {
+            liquidCurrentY = targetY;
+            isFirstFrameLiquid = false;
+        }
+        else {
+            liquidCurrentY = CustomLerp(liquidCurrentY, targetY, io.DeltaTime * 11.0f);
+        }
+
+        ImVec2 liquidMin(sidebarPos.x + 10.0f * scale, liquidCurrentY);
+        ImVec2 liquidMax(liquidMin.x + optItemW, liquidMin.y + optItemH);
+
+        // 2. 悬停判断：通过选项区域检测鼠标，避免被 InvisibleButton 遮挡
+        ImVec2 mousePos = ImGui::GetMousePos();
+        bool isHoveringLiquid = false;
+        for (int i = 0; i < 3; ++i) {
+            ImVec2 optMin(sidebarPos.x + 10.0f * scale, optPositions[i].y - optItemH * 0.5f);
+            ImVec2 optMax(optMin.x + optItemW, optMin.y + optItemH);
+            if (mousePos.x >= optMin.x && mousePos.x <= optMax.x && mousePos.y >= optMin.y && mousePos.y <= optMax.y) {
+                isHoveringLiquid = true;
+                break;
+            }
+        }
+
+        // 3. 计算流体动效平滑权重 (fluidWeight 在 0.0f 到 1.0f 之间平滑渐变，无 if-else 硬切)
+        float targetWeight = isHoveringLiquid ? 1.0f : 0.0f;
+        fluidWeight = CustomLerp(fluidWeight, targetWeight, io.DeltaTime * 6.0f);
+
+        // 统一绘制逻辑：无论是否悬停，都由 fluidWeight 决定图形状态
+        const int numSegments = 64;
+        ImVec2 wavePoints[64];
+        float time = static_cast<float>(ImGui::GetTime()) * 2.8f;
+
+        ImVec2 center(liquidMin.x + optItemW * 0.5f, liquidMin.y + optItemH * 0.5f);
+        float rx = optItemW * 0.49f;
+        float ry = optItemH * 0.49f;
+
+        for (int i = 0; i < numSegments; ++i) {
+            float a = (static_cast<float>(i) / static_cast<float>(numSegments)) * 2.0f * 3.14159265f;
+
+            // 当 fluidWeight 逐渐变小到 0 时，organicOffset 会自然缩小到 0，波浪平息
+            float wave1 = std::sin(a * 2.0f + time) * 2.2f;
+            float wave2 = std::cos(a * 3.0f - time * 0.8f) * 1.5f;
+            float organicOffset = (wave1 + wave2) * fluidWeight;
+
+            float cosA = std::cos(a);
+            float sinA = std::sin(a);
+
+            // 次方数在 1.0 (流体水滴) 到 1.25 (规整圆角矩形) 之间平滑过渡
+            float power = CustomLerp(1.25f, 1.0f, fluidWeight);
+            float pX = std::pow(std::abs(cosA), power) * (cosA >= 0 ? 1.0f : -1.0f);
+            float pY = std::pow(std::abs(sinA), power) * (sinA >= 0 ? 1.0f : -1.0f);
+
+            wavePoints[i] = ImVec2(
+                center.x + pX * (rx + organicOffset),
+                center.y + pY * (ry + organicOffset)
+            );
+        }
+
+        // 颜色透明度也随 fluidWeight 平滑过渡
+        int bgAlpha = static_cast<int>(CustomLerp(35.0f, 55.0f, fluidWeight));
+        int borderAlpha = static_cast<int>(CustomLerp(90.0f, 200.0f, fluidWeight));
+
+        drawList->AddConvexPolyFilled(wavePoints, numSegments, IM_COL32(255, 255, 255, bgAlpha));
+        drawList->AddPolyline(wavePoints, numSegments, IM_COL32(255, 255, 255, borderAlpha), ImDrawFlags_Closed, 1.5f);
+
+        // 4. 蓝色指示条
+        drawList->AddRectFilled(
+            ImVec2(liquidMin.x + 6.0f, liquidMin.y + 8.0f),
+            ImVec2(liquidMin.x + 11.0f, liquidMax.y - 8.0f),
+            IM_COL32(0, 122, 255, 230), 2.0f
+        );
 
         // --- 右侧主内容面板 ---
         float mainX = sidebarPos.x + sidebarW + 16.0f * scale;
         float mainW = windowSize.x - mainX - 16.0f * scale;
 
         ImGui::SetCursorPos(ImVec2(mainX, contentStartY));
-        ImGui::BeginChild("MainContentPanel", ImVec2(mainW, contentH), true);
 
-        if (currentTab == 0) {
-            ImGui::Text("右侧内容面板");
-            ImGui::Separator();
-            ImGui::Text("欢迎使用全新的液态玻璃界面系统。");
-        }
-        else if (currentTab == 1) {
-            ImGui::Text("分辨率修复设置模块");
-            ImGui::Separator();
-        }
-        else if (currentTab == 2) {
-            ImGui::Text("配置设置");
-            ImGui::Separator();
+        // 必须保证 BeginChild 与 EndChild 严格一对一调用
+        if (ImGui::BeginChild("MainContentPanel", ImVec2(mainW, contentH), true)) {
+            if (currentTab == 0) {
+                ImGui::Text("右侧内容面板");
+                ImGui::Separator();
+                ImGui::Text("欢迎使用全新的液态玻璃界面系统。");
+            }
+            else if (currentTab == 1) {
+                ImGui::Text("分辨率修复设置模块");
+                ImGui::Separator();
+                // 如果此 Tab 内后续有加控件，确保没有未闭合的 Group/Combo/Tree
+            }
+            else if (currentTab == 2) {
+                ImGui::Text("配置设置");
+                ImGui::Separator();
+            }
         }
 
-        ImGui::EndChild();
+        ImGui::EndChild(); // 无论是否 Skip 都会安全闭合
 
         ImGui::End();
         ImGui::PopStyleVar();
