@@ -226,6 +226,9 @@ public:
     }
 
     void Render(ID3D11DeviceContext* ctx, float width, float height, float mouseX, float mouseY, float dt) {
+
+        (void)mouseX;
+        (void)mouseY;
         if (!ctx || !pCB || !pRTV || !pPS) return;
         gTime += dt;
 

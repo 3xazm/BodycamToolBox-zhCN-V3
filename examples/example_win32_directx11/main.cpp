@@ -13,6 +13,19 @@
 #pragma comment(lib, "dwmapi.lib")
 #pragma comment(linker, "/subsystem:windows /entry:mainCRTStartup")
 
+/*
+// 引入 DWM 圆角枚举定义
+#ifndef DWMWA_WINDOW_CORNER_PREFERENCE
+#define DWMWA_WINDOW_CORNER_PREFERENCE 33
+typedef enum {
+    DWMWCP_DEFAULT = 0,
+    DWMWCP_DONOTROUND = 1,
+    DWMWCP_ROUND = 2,
+    DWMWCP_ROUNDSMALL = 3
+} DWM_WINDOW_CORNER_PREFERENCE;
+#endif
+*/
+
 // 全局 Direct3D 资源
 static ID3D11Device* g_pd3dDevice = nullptr;
 static ID3D11DeviceContext* g_pd3dDeviceContext = nullptr;
@@ -55,14 +68,14 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 void SetupAppleGlassTheme(float scale) {
     ImGuiStyle& style = ImGui::GetStyle();
 
-    // 圆角与边框配置
-    style.WindowRounding = 16.0f * scale;
-    style.ChildRounding = 12.0f * scale;
-    style.FrameRounding = 8.0f * scale;
-    style.PopupRounding = 10.0f * scale;
-    style.ScrollbarRounding = 12.0f * scale;
+    // 统一窗口与子元素圆角
+    style.WindowRounding = 12.0f * scale;
+    style.ChildRounding = 8.0f * scale;
+    style.FrameRounding = 6.0f * scale;
+    style.PopupRounding = 8.0f * scale;
+    style.ScrollbarRounding = 10.0f * scale;
     style.GrabRounding = 6.0f * scale;
-    style.WindowBorderSize = 1.0f;
+    style.WindowBorderSize = 0.0f; // 消除多余外框，使用底层硬件圆角
     style.ChildBorderSize = 1.0f;
 
     // 经典 Apple Liquid Transparent 配色方案
@@ -92,11 +105,17 @@ int main(int, char**) {
     ::RegisterClassExW(&wc);
 
     HWND hwnd = ::CreateWindowW(
-        wc.lpszClassName, L"Apple Liquid Glass ImGui",
+        wc.lpszClassName, L"BODYCAM TOOLKIT V3",
         WS_THICKFRAME | WS_SYSMENU | WS_MAXIMIZEBOX | WS_MINIMIZEBOX,
         150, 150, (int)(1100 * scale), (int)(700 * scale),
         nullptr, nullptr, wc.hInstance, nullptr
     );
+
+    // 【解决尖角 Bug】强制 Win32 窗口裁切为 Win11 标准圆角
+    //WM_WINDOW_CORNER_PREFERENCE preference = DWMWCP_ROUND;
+    //DwmSetWindowAttribute(hwnd, DWMWA_WINDOW_CORNER_PREFERENCE, &preference, sizeof(preference));
+    DWORD cornerPreference = 2; // 2 = DWMWCP_ROUND
+    DwmSetWindowAttribute(hwnd, (DWMWINDOWATTRIBUTE)33, &cornerPreference, sizeof(cornerPreference));
 
     // 启用系统暗色调与原生无边框 Acrylic 混合
     BOOL dark = TRUE;
@@ -152,10 +171,6 @@ int main(int, char**) {
             CreateRenderTarget();
         }
 
-        // 传入真实的帧间隔时间以及鼠标 X/Y 坐标（驱动你的 m 参数）
-        float mouseXNormalized = io.MousePos.x / io.DisplaySize.x;
-        float mouseYNormalized = io.MousePos.y / io.DisplaySize.y;
-
         // 1. 动态生成/更新雨滴离屏纹理
         g_RainPipeline.Resize(g_pd3dDevice, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
         g_RainPipeline.Render(g_pd3dDeviceContext, io.DisplaySize.x, io.DisplaySize.y, 0.0f, 0.0f, io.DeltaTime);
@@ -173,7 +188,10 @@ int main(int, char**) {
             ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
             ImGuiWindowFlags_NoBringToFrontOnFocus;
 
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0)); // 清除窗口 Padding 防止越界
         ImGui::Begin("MainWindow", nullptr, flags);
+        ImGui::PopStyleVar();
+
         ImDrawList* drawList = ImGui::GetWindowDrawList();
 
         // [A] 将雨滴纹理覆盖贴在最底层
@@ -181,43 +199,61 @@ int main(int, char**) {
             drawList->AddImage((ImTextureID)g_RainPipeline.pSRV, ImVec2(0, 0), io.DisplaySize);
         }
 
-        // [B] 绘制苹果“液态玻璃切边亮光” (Edge Highlight Ring)
         ImVec2 pos = ImGui::GetWindowPos();
         ImVec2 size = ImGui::GetWindowSize();
+
+        // [B] 绘制苹果“液态玻璃切边亮光” (Edge Highlight Ring)
         drawList->AddRect(
             pos, ImVec2(pos.x + size.x, pos.y + size.y),
-            IM_COL32(255, 255, 255, 75), 16.0f * scale, 0, 1.5f * scale
+            IM_COL32(255, 255, 255, 75), 12.0f * scale, 0, 1.5f * scale
         );
 
-        // [C] 顶部半透明柔光折射带 (Inner Soft Ambient)
-        drawList->AddRectFilled(
-            ImVec2(pos.x + 1, pos.y + 1),
-            ImVec2(pos.x + size.x - 1, pos.y + 45.0f * scale),
-            IM_COL32(255, 255, 255, 12), 15.0f * scale
-        );
+        // 自定义 Windows 标题栏参数
+        float headerH = 38.0f * scale;
+        float btnW = 42.0f * scale;
+        float btnH = 28.0f * scale;
 
-        // 自定义 Windows 标题栏
-        float headerH = 36.0f * scale;
-        float btnW = 46.0f * scale;
-
+        // 标题栏文字
         ImGui::SetCursorPos(ImVec2(16 * scale, (headerH - 20 * scale) * 0.5f));
         ImGui::TextColored(ImVec4(1.0f, 1.0f, 1.0f, 0.9f), "BODYCAM TOOLKIT V3 — LIQUID GLASS");
 
-        // 标题栏拖拽区域
+        // 标题栏拖拽区域（避开控制按钮区域）
         ImGui::SetCursorPos(ImVec2(0, 0));
-        ImGui::InvisibleButton("##TitleDrag", ImVec2(size.x - btnW * 3, headerH));
+        ImGui::InvisibleButton("##TitleDrag", ImVec2(size.x - btnW * 3 - 20 * scale, headerH));
         if (ImGui::IsItemHovered() && ImGui::IsMouseDown(ImGuiMouseButton_Left)) {
             ::ReleaseCapture();
             ::SendMessage(hwnd, WM_NCLBUTTONDOWN, HTCAPTION, 0);
         }
 
-        // 最小化 / 关闭 按钮
-        ImGui::SetCursorPos(ImVec2(size.x - btnW * 3, 0));
-        if (ImGui::Button("-##Min", ImVec2(btnW, headerH))) ::SendMessage(hwnd, WM_SYSCOMMAND, SC_MINIMIZE, 0);
+        // 【解决右上角按钮越界与恢复 Bug】
+        // 放置 最小化 / 最大化(还原) / 关闭 按钮
+        float rightMargin = 12.0f * scale; // 留出右侧安全边界
+        ImGui::SetCursorPos(ImVec2(size.x - (btnW * 3) - rightMargin, (headerH - btnH) * 0.5f));
+
+        ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4 * scale, 0));
+
+        if (ImGui::Button("-##Min", ImVec2(btnW, btnH))) {
+            ::SendMessage(hwnd, WM_SYSCOMMAND, SC_MINIMIZE, 0);
+        }
         ImGui::SameLine();
-        if (ImGui::Button("[]##Max", ImVec2(btnW, headerH))) ::SendMessage(hwnd, WM_SYSCOMMAND, SC_MAXIMIZE, 0);
+
+        // 最大化/还原按键逻辑修复
+        const char* maxLabel = ::IsZoomed(hwnd) ? "[]##Restore" : "[]##Max";
+        if (ImGui::Button(maxLabel, ImVec2(btnW, btnH))) {
+            if (::IsZoomed(hwnd)) {
+                ::SendMessage(hwnd, WM_SYSCOMMAND, SC_RESTORE, 0); // 已最大化时还原
+            }
+            else {
+                ::SendMessage(hwnd, WM_SYSCOMMAND, SC_MAXIMIZE, 0); // 未最大化时放大
+            }
+        }
         ImGui::SameLine();
-        if (ImGui::Button("X##Close", ImVec2(btnW, headerH))) ::PostQuitMessage(0);
+
+        if (ImGui::Button("X##Close", ImVec2(btnW, btnH))) {
+            ::PostQuitMessage(0);
+        }
+
+        ImGui::PopStyleVar();
 
         ImGui::SetCursorPosY(headerH);
         ImGui::Separator();
@@ -307,7 +343,6 @@ bool CreateDeviceD3D(HWND hWnd) {
     if (FAILED(D3D11CreateDeviceAndSwapChain(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, 0, featureLevelArray, 2, D3D11_SDK_VERSION, &sd, &g_pSwapChain, &g_pd3dDevice, &featureLevel, &g_pd3dDeviceContext)))
         return false;
 
-    // 关键：创建全局 Alpha 混合状态，解决黑色暗影/透明冲掉问题
     D3D11_BLEND_DESC blendDesc = {};
     blendDesc.RenderTarget[0].BlendEnable = TRUE;
     blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
