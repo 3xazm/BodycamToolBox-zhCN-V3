@@ -187,7 +187,7 @@ bool DrawSidebarOption(const char* label, bool selected, const ImVec2& size, ImV
     float anim = storage->GetFloat(id, 0.0f);
     float dt = ImGui::GetIO().DeltaTime;
 
-    anim = CustomLerp(anim, hovered ? 1.0f : 0.0f, dt * 12.0f);
+    anim = CustomLerp(anim, hovered ? 6.0f : 0.0f, dt * 12.0f); //selct text
     storage->SetFloat(id, anim);
 
     // 3. 计算选项中心点供液态胶囊吸收定位
@@ -261,7 +261,7 @@ int main(int, char**) {
     // 全局液态胶囊滑动位置静态变量
     static float liquidCurrentY = -1.0f;
     static bool isFirstFrameLiquid = true;
-    static float fluidWeight = 0.0f; // <--- 新增：用于平滑过渡流体波浪强度
+    static float fluidWeight = 6.0f; // <--- 新增：用于平滑过渡流体波浪强度
     bool done = false;
 
     while (!done) {
@@ -408,21 +408,17 @@ int main(int, char**) {
         ImVec2 liquidMin(sidebarPos.x + 10.0f * scale, liquidCurrentY);
         ImVec2 liquidMax(liquidMin.x + optItemW, liquidMin.y + optItemH);
 
-        // 2. 悬停判断：通过选项区域检测鼠标，避免被 InvisibleButton 遮挡
+        // 2. 悬停判断：只检测鼠标是否悬停在【当前选中的选项】区域内
         ImVec2 mousePos = ImGui::GetMousePos();
-        bool isHoveringLiquid = false;
-        for (int i = 0; i < 3; ++i) {
-            ImVec2 optMin(sidebarPos.x + 10.0f * scale, optPositions[i].y - optItemH * 0.5f);
-            ImVec2 optMax(optMin.x + optItemW, optMin.y + optItemH);
-            if (mousePos.x >= optMin.x && mousePos.x <= optMax.x && mousePos.y >= optMin.y && mousePos.y <= optMax.y) {
-                isHoveringLiquid = true;
-                break;
-            }
-        }
+        ImVec2 selectedOptMin(sidebarPos.x + 10.0f * scale, optPositions[currentTab].y - optItemH * 0.5f);
+        ImVec2 selectedOptMax(selectedOptMin.x + optItemW, selectedOptMin.y + optItemH);
+
+        bool isHoveringLiquid = (mousePos.x >= selectedOptMin.x && mousePos.x <= selectedOptMax.x &&
+            mousePos.y >= selectedOptMin.y && mousePos.y <= selectedOptMax.y);
 
         // 3. 计算流体动效平滑权重 (fluidWeight 在 0.0f 到 1.0f 之间平滑渐变，无 if-else 硬切)
-        float targetWeight = isHoveringLiquid ? 1.0f : 0.0f;
-        fluidWeight = CustomLerp(fluidWeight, targetWeight, io.DeltaTime * 6.0f);
+        float targetWeight = isHoveringLiquid ? 2.0f : 0.0f;
+        fluidWeight = CustomLerp(fluidWeight, targetWeight, io.DeltaTime * 4.0f);
 
         // 统一绘制逻辑：无论是否悬停，都由 fluidWeight 决定图形状态
         const int numSegments = 64;
@@ -436,22 +432,21 @@ int main(int, char**) {
         for (int i = 0; i < numSegments; ++i) {
             float a = (static_cast<float>(i) / static_cast<float>(numSegments)) * 2.0f * 3.14159265f;
 
-            // 当 fluidWeight 逐渐变小到 0 时，organicOffset 会自然缩小到 0，波浪平息
-            float wave1 = std::sin(a * 2.0f + time) * 2.2f;
-            float wave2 = std::cos(a * 3.0f - time * 0.8f) * 1.5f;
+            float wave1 = std::sin(a * 2.0f + time) * 2.0f;
+            float wave2 = std::cos(a * 3.0f - time * 0.8f) * 1.2f;
             float organicOffset = (wave1 + wave2) * fluidWeight;
 
             float cosA = std::cos(a);
             float sinA = std::sin(a);
 
-            // 次方数在 1.0 (流体水滴) 到 1.25 (规整圆角矩形) 之间平滑过渡
-            float power = CustomLerp(1.25f, 1.0f, fluidWeight);
-            float pX = std::pow(std::abs(cosA), power) * (cosA >= 0 ? 1.0f : -1.0f);
-            float pY = std::pow(std::abs(sinA), power) * (sinA >= 0 ? 1.0f : -1.0f);
+            // 提高 power 值 (例如 3.5)，可以让形状变直，不再呈现椭圆拉伸感
+            float power = CustomLerp(8.5f, 6.2f, fluidWeight); 
+            float pX = std::pow(std::abs(cosA), 2.0f / power) * (cosA >= 0 ? 1.0f : -1.0f);
+            float pY = std::pow(std::abs(sinA), 2.0f / power) * (sinA >= 0 ? 1.0f : -1.0f);
 
             wavePoints[i] = ImVec2(
-                center.x + pX * (rx + organicOffset),
-                center.y + pY * (ry + organicOffset)
+                center.x + pX * (rx * 0.98f + organicOffset),
+                center.y + pY * (ry * 0.85f + organicOffset)
             );
         }
 
