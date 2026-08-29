@@ -5,6 +5,7 @@
 #include <tchar.h>
 #include <cmath>
 #include <algorithm>
+#include <vector>
 
 #include "imgui.h"
 #include "imgui_internal.h"
@@ -394,30 +395,76 @@ int main(int, char**) {
             currentTab = 2;
         }
 
-        // ==================== 1. 物理水滴吸附与动态弹簧计算 ====================
+        // ==================== 1. 水滴玻璃附着与水痕蒸发系统 ====================
+        struct TrailSegment {
+            float y;          // 水痕中心位置 Y
+            float alpha;      // 当前透明度 (1.0 -> 0.0 蒸发)
+            float width;      // 水痕宽度
+            float height;     // 水痕高度
+        };
+        static std::vector<TrailSegment> waterTrails; // 保存残留水痕的数组
+
         static float liquidVelY = 0.0f;          // 移动速度
-        static float liquidStretch = 0.0f;       // 液滴上下拉伸幅度
+        static float liquidStretch = 0.0f;       // 液滴上下拉伸感
+        static float lastY = -1.0f;              // 上一帧位置
 
         float targetY = optPositions[currentTab].y - optItemH * 0.5f;
 
         if (isFirstFrameLiquid) {
             liquidCurrentY = targetY;
+            lastY = targetY;
             isFirstFrameLiquid = false;
         }
         else {
-            // 弹簧物理公式：提供类似水滴粘滞在玻璃上的“拉扯与回弹”感
-            float stiffness = 180.0f; // 弹簧刚度
-            float damping = 14.0f;    // 阻尼系数（控制弹性回跳）
+            // 水滴滑动物理模型：非对称高粘滞力（模拟水在玻璃上的附着力）
+            float dist = targetY - liquidCurrentY;
 
-            float force = (targetY - liquidCurrentY) * stiffness;
+            float stiffness = (dist > 0.0f) ? 200.0f : 230.0f;
+            float damping = (std::abs(dist) < 12.0f) ? 6.0f : 12.0f; // 靠近目标时骤增阻尼（强行粘在玻璃上）
+
+            float force = dist * stiffness;
             liquidVelY += force * io.DeltaTime;
             liquidVelY -= liquidVelY * damping * io.DeltaTime;
             liquidCurrentY += liquidVelY * io.DeltaTime;
 
-            // 根据移动速度计算水滴的垂直拉伸感 (移动越快，两端拉得越长)
-            float targetStretch = (std::abs(liquidVelY) / 600.0f);
-            targetStretch = (std::min)(targetStretch, 0.45f); // 限制最大拉伸
-            liquidStretch = CustomLerp(liquidStretch, targetStretch, io.DeltaTime * 15.0f);
+            // 根据速度计算形变
+            float targetStretch = (std::abs(liquidVelY) / 500.0f);
+            targetStretch = (std::min)(targetStretch, 0.5f);
+            liquidStretch = CustomLerp(liquidStretch, targetStretch, io.DeltaTime * 18.0f);
+
+            // 当水滴在玻璃上快速滑动时，沿途留下半透明水痕
+            if (std::abs(liquidCurrentY - lastY) > 4.0f * scale) {
+                TrailSegment seg;
+                seg.y = (liquidCurrentY + lastY) * 0.5f + optItemH * 0.5f;
+                seg.alpha = 0.45f; // 初始水痕透明度
+                seg.width = (optItemW - 30.0f * scale) * (1.0f - liquidStretch * 0.2f);
+                seg.height = std::abs(liquidCurrentY - lastY) + 6.0f * scale;
+                waterTrails.push_back(seg);
+                lastY = liquidCurrentY;
+            }
+        }
+
+        // 更新并绘制所有残留水痕（模拟水痕在玻璃上慢慢蒸发干涸）
+        for (auto it = waterTrails.begin(); it != waterTrails.end(); ) {
+            // 水痕逐渐透明蒸发
+            it->alpha -= io.DeltaTime * 1.2f;
+
+            if (it->alpha <= 0.0f) {
+                it = waterTrails.erase(it); // 彻底干涸蒸发
+            }
+            else {
+                float trailCenterX = sidebarPos.x + 10.0f * scale + optItemW * 0.5f;
+                ImVec2 tMin(trailCenterX - it->width * 0.5f, it->y - it->height * 0.5f);
+                ImVec2 tMax(trailCenterX + it->width * 0.5f, it->y + it->height * 0.5f);
+
+                int fillAlpha = static_cast<int>(it->alpha * 90.0f);
+                int borderAlpha = static_cast<int>(it->alpha * 140.0f);
+
+                drawList->AddRectFilled(tMin, tMax, IM_COL32(255, 255, 255, fillAlpha), 8.0f * scale);
+                drawList->AddRect(tMin, tMax, IM_COL32(255, 255, 255, borderAlpha), 0, 1.0f);
+
+                ++it;
+            }
         }
 
         ImVec2 liquidMin(sidebarPos.x + 10.0f * scale, liquidCurrentY);
@@ -431,11 +478,11 @@ int main(int, char**) {
         bool isHoveringLiquid = (mousePos.x >= selectedOptMin.x && mousePos.x <= selectedOptMax.x &&
             mousePos.y >= selectedOptMin.y && mousePos.y <= selectedOptMax.y);
 
-        // 3. 计算流体动效平滑权重
+        // 3. 计算流体波浪平滑权重
         float targetWeight = isHoveringLiquid ? 2.0f : 0.0f;
         fluidWeight = CustomLerp(fluidWeight, targetWeight, io.DeltaTime * 4.0f);
 
-        // 4. 水滴吸附流体渲染 (结合速度拉伸 + 悬停有机波浪)
+        // ==================== 4. 渲染主水滴 (Water Droplet Shape) ====================
         const int numSegments = 64;
         ImVec2 wavePoints[64];
         float time = static_cast<float>(ImGui::GetTime()) * 2.8f;
@@ -444,25 +491,27 @@ int main(int, char**) {
         float rx = optItemW * 0.49f;
         float ry = optItemH * 0.49f;
 
-        // 动态计算水滴在移动时的挤压形变（Y轴伸长，X轴微缩）
-        float stretchY = 1.0f + liquidStretch * 0.35f;
-        float stretchX = 1.0f - liquidStretch * 0.15f;
+        // 动态计算水滴移动时的非对称拉伸（Y轴拉长，X轴变窄）
+        float stretchY = 1.0f + liquidStretch * 0.45f;
+        float stretchX = 1.0f - liquidStretch * 0.20f;
 
         for (int i = 0; i < numSegments; ++i) {
             float a = (static_cast<float>(i) / static_cast<float>(numSegments)) * 2.0f * 3.14159265f;
 
-            // 原生水滴波浪 + 移动拉伸变形
             float wave1 = std::sin(a * 2.0f + time) * 2.0f;
             float wave2 = std::cos(a * 3.0f - time * 0.8f) * 1.2f;
 
-            // 在向下/向上滑动时，前端和后端会产生非对称的水滴尾迹拉扯
-            float moveDirectionSign = (liquidVelY > 0.0f) ? 1.0f : -1.0f;
-            float tailDrag = std::sin(a) * moveDirectionSign * liquidStretch * 4.0f;
-
-            float organicOffset = ((wave1 + wave2) * fluidWeight) + tailDrag;
-
-            float cosA = std::cos(a);
             float sinA = std::sin(a);
+            float cosA = std::cos(a);
+
+            // 运动方向判定：1.0 为下滑，-1.0 为上吸
+            float moveDir = (liquidVelY >= 0.0f) ? 1.0f : -1.0f;
+
+            // 下滑时上方水尾收尖，下方水头饱满
+            float dropletAsymmetry = (sinA * moveDir < 0.0f) ? (1.0f - std::abs(sinA) * 0.38f * liquidStretch)
+                : (1.0f + std::abs(sinA) * 0.18f * liquidStretch);
+
+            float organicOffset = (wave1 + wave2) * fluidWeight;
 
             float power = CustomLerp(8.5f, 6.2f, fluidWeight);
             float pX = std::pow(std::abs(cosA), 2.0f / power) * (cosA >= 0 ? 1.0f : -1.0f);
@@ -470,14 +519,14 @@ int main(int, char**) {
 
             wavePoints[i] = ImVec2(
                 center.x + (pX * rx * stretchX * 0.98f) + cosA * organicOffset,
-                center.y + (pY * ry * stretchY * 0.85f) + sinA * organicOffset
+                center.y + (pY * ry * stretchY * dropletAsymmetry * 0.85f) + sinA * organicOffset
             );
         }
 
-        // 颜色透明度：滑动或悬停时增加亮度
-        float motionAlphaExtra = (std::min)(liquidStretch * 80.0f, 40.0f);
+        // 滑动时水滴亮度提亮
+        float motionAlphaExtra = (std::min)(liquidStretch * 90.0f, 50.0f);
         int bgAlpha = static_cast<int>(CustomLerp(35.0f, 55.0f, fluidWeight) + motionAlphaExtra);
-        int borderAlpha = static_cast<int>(CustomLerp(90.0f, 200.0f, fluidWeight) + motionAlphaExtra);
+        int borderAlpha = static_cast<int>(CustomLerp(90.0f, 220.0f, fluidWeight) + motionAlphaExtra);
 
         drawList->AddConvexPolyFilled(wavePoints, numSegments, IM_COL32(255, 255, 255, bgAlpha));
         drawList->AddPolyline(wavePoints, numSegments, IM_COL32(255, 255, 255, borderAlpha), ImDrawFlags_Closed, 1.5f);
