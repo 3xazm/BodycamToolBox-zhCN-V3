@@ -394,7 +394,10 @@ int main(int, char**) {
             currentTab = 2;
         }
 
-        // 1. 全局液态胶囊滑动位置计算
+        // ==================== 1. 物理水滴吸附与动态弹簧计算 ====================
+        static float liquidVelY = 0.0f;          // 移动速度
+        static float liquidStretch = 0.0f;       // 液滴上下拉伸幅度
+
         float targetY = optPositions[currentTab].y - optItemH * 0.5f;
 
         if (isFirstFrameLiquid) {
@@ -402,13 +405,25 @@ int main(int, char**) {
             isFirstFrameLiquid = false;
         }
         else {
-            liquidCurrentY = CustomLerp(liquidCurrentY, targetY, io.DeltaTime * 11.0f);
+            // 弹簧物理公式：提供类似水滴粘滞在玻璃上的“拉扯与回弹”感
+            float stiffness = 180.0f; // 弹簧刚度
+            float damping = 14.0f;    // 阻尼系数（控制弹性回跳）
+
+            float force = (targetY - liquidCurrentY) * stiffness;
+            liquidVelY += force * io.DeltaTime;
+            liquidVelY -= liquidVelY * damping * io.DeltaTime;
+            liquidCurrentY += liquidVelY * io.DeltaTime;
+
+            // 根据移动速度计算水滴的垂直拉伸感 (移动越快，两端拉得越长)
+            float targetStretch = (std::abs(liquidVelY) / 600.0f);
+            targetStretch = (std::min)(targetStretch, 0.45f); // 限制最大拉伸
+            liquidStretch = CustomLerp(liquidStretch, targetStretch, io.DeltaTime * 15.0f);
         }
 
         ImVec2 liquidMin(sidebarPos.x + 10.0f * scale, liquidCurrentY);
         ImVec2 liquidMax(liquidMin.x + optItemW, liquidMin.y + optItemH);
 
-        // 2. 悬停判断：只检测鼠标是否悬停在【当前选中的选项】区域内
+        // 2. 悬停判断：只检测鼠标是否悬停在【当前选中的选项】
         ImVec2 mousePos = ImGui::GetMousePos();
         ImVec2 selectedOptMin(sidebarPos.x + 10.0f * scale, optPositions[currentTab].y - optItemH * 0.5f);
         ImVec2 selectedOptMax(selectedOptMin.x + optItemW, selectedOptMin.y + optItemH);
@@ -416,11 +431,11 @@ int main(int, char**) {
         bool isHoveringLiquid = (mousePos.x >= selectedOptMin.x && mousePos.x <= selectedOptMax.x &&
             mousePos.y >= selectedOptMin.y && mousePos.y <= selectedOptMax.y);
 
-        // 3. 计算流体动效平滑权重 (fluidWeight 在 0.0f 到 1.0f 之间平滑渐变，无 if-else 硬切)
+        // 3. 计算流体动效平滑权重
         float targetWeight = isHoveringLiquid ? 2.0f : 0.0f;
         fluidWeight = CustomLerp(fluidWeight, targetWeight, io.DeltaTime * 4.0f);
 
-        // 统一绘制逻辑：无论是否悬停，都由 fluidWeight 决定图形状态
+        // 4. 水滴吸附流体渲染 (结合速度拉伸 + 悬停有机波浪)
         const int numSegments = 64;
         ImVec2 wavePoints[64];
         float time = static_cast<float>(ImGui::GetTime()) * 2.8f;
@@ -429,30 +444,40 @@ int main(int, char**) {
         float rx = optItemW * 0.49f;
         float ry = optItemH * 0.49f;
 
+        // 动态计算水滴在移动时的挤压形变（Y轴伸长，X轴微缩）
+        float stretchY = 1.0f + liquidStretch * 0.35f;
+        float stretchX = 1.0f - liquidStretch * 0.15f;
+
         for (int i = 0; i < numSegments; ++i) {
             float a = (static_cast<float>(i) / static_cast<float>(numSegments)) * 2.0f * 3.14159265f;
 
+            // 原生水滴波浪 + 移动拉伸变形
             float wave1 = std::sin(a * 2.0f + time) * 2.0f;
             float wave2 = std::cos(a * 3.0f - time * 0.8f) * 1.2f;
-            float organicOffset = (wave1 + wave2) * fluidWeight;
+
+            // 在向下/向上滑动时，前端和后端会产生非对称的水滴尾迹拉扯
+            float moveDirectionSign = (liquidVelY > 0.0f) ? 1.0f : -1.0f;
+            float tailDrag = std::sin(a) * moveDirectionSign * liquidStretch * 4.0f;
+
+            float organicOffset = ((wave1 + wave2) * fluidWeight) + tailDrag;
 
             float cosA = std::cos(a);
             float sinA = std::sin(a);
 
-            // 提高 power 值 (例如 3.5)，可以让形状变直，不再呈现椭圆拉伸感
-            float power = CustomLerp(8.5f, 6.2f, fluidWeight); 
+            float power = CustomLerp(8.5f, 6.2f, fluidWeight);
             float pX = std::pow(std::abs(cosA), 2.0f / power) * (cosA >= 0 ? 1.0f : -1.0f);
             float pY = std::pow(std::abs(sinA), 2.0f / power) * (sinA >= 0 ? 1.0f : -1.0f);
 
             wavePoints[i] = ImVec2(
-                center.x + pX * (rx * 0.98f + organicOffset),
-                center.y + pY * (ry * 0.85f + organicOffset)
+                center.x + (pX * rx * stretchX * 0.98f) + cosA * organicOffset,
+                center.y + (pY * ry * stretchY * 0.85f) + sinA * organicOffset
             );
         }
 
-        // 颜色透明度也随 fluidWeight 平滑过渡
-        int bgAlpha = static_cast<int>(CustomLerp(35.0f, 55.0f, fluidWeight));
-        int borderAlpha = static_cast<int>(CustomLerp(90.0f, 200.0f, fluidWeight));
+        // 颜色透明度：滑动或悬停时增加亮度
+        float motionAlphaExtra = (std::min)(liquidStretch * 80.0f, 40.0f);
+        int bgAlpha = static_cast<int>(CustomLerp(35.0f, 55.0f, fluidWeight) + motionAlphaExtra);
+        int borderAlpha = static_cast<int>(CustomLerp(90.0f, 200.0f, fluidWeight) + motionAlphaExtra);
 
         drawList->AddConvexPolyFilled(wavePoints, numSegments, IM_COL32(255, 255, 255, bgAlpha));
         drawList->AddPolyline(wavePoints, numSegments, IM_COL32(255, 255, 255, borderAlpha), ImDrawFlags_Closed, 1.5f);
