@@ -15,7 +15,8 @@
 #include "Win32_API.h"
 #include "Direct3D_Resource.h"
 #include "UI_Controls.h"
-#include "UI_Theme.h" // 引入 UI 主题与流体动画模块
+#include "UI_Theme.h"
+#include "MainViews.h" // 引入视图模块
 
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "dwmapi.lib")
@@ -73,7 +74,7 @@ int main(int, char**) {
 
     static int currentTab = 0;
     static char searchBuffer[128] = "";
-    static LiquidAnimationState liquidState; // 统一管理流体动画状态
+    static LiquidAnimationState liquidState;
 
     bool done = false;
 
@@ -210,19 +211,7 @@ int main(int, char**) {
         ImGui::SetCursorPos(ImVec2(mainX, contentStartY));
 
         if (ImGui::BeginChild("MainContentPanel", ImVec2(mainW, contentH), true)) {
-            if (currentTab == 0) {
-                ImGui::Text("右侧内容面板");
-                ImGui::Separator();
-                ImGui::Text("欢迎使用全新的液态玻璃界面系统。");
-            }
-            else if (currentTab == 1) {
-                ImGui::Text("分辨率修复设置模块");
-                ImGui::Separator();
-            }
-            else if (currentTab == 2) {
-                ImGui::Text("配置设置");
-                ImGui::Separator();
-            }
+            RenderMainViews(currentTab, scale);
         }
 
         ImGui::EndChild();

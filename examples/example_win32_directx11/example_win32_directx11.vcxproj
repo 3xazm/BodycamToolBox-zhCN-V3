@@ -171,6 +171,7 @@
     <ClInclude Include="DashboardPage.h" />
     <ClInclude Include="Direct3D_Resource.h" />
     <ClInclude Include="LocalizationPage.h" />
+    <ClInclude Include="MainViews.h" />
     <ClInclude Include="RainEffect.h" />
     <ClInclude Include="RainEffectPipeline.h" />
     <ClInclude Include="ResolutionPage.h" />
@@ -191,6 +192,7 @@
     <ClCompile Include="Direct3D_Resource.cpp" />
     <ClCompile Include="LocalizationPage.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MainViews.cpp" />
     <ClCompile Include="RainEffect.cpp" />
     <ClCompile Include="ResolutionPage.cpp" />
     <ClCompile Include="UI_Controls.cpp" />
