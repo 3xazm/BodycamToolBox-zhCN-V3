@@ -176,6 +176,7 @@
     <ClInclude Include="RainEffectPipeline.h" />
     <ClInclude Include="ResolutionPage.h" />
     <ClInclude Include="UI_Controls.h" />
+    <ClInclude Include="UI_Header.h" />
     <ClInclude Include="UI_Sidebar.h" />
     <ClInclude Include="UI_Theme.h" />
     <ClInclude Include="Win32_API.h" />
@@ -197,6 +198,7 @@
     <ClCompile Include="RainEffect.cpp" />
     <ClCompile Include="ResolutionPage.cpp" />
     <ClCompile Include="UI_Controls.cpp" />
+    <ClCompile Include="UI_Header.cpp" />
     <ClCompile Include="UI_Sidebar.cpp" />
     <ClCompile Include="UI_Theme.cpp" />
     <ClCompile Include="Win32_API.cpp" />

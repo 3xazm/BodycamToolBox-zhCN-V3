@@ -16,8 +16,9 @@
 #include "Direct3D_Resource.h"
 #include "UI_Controls.h"
 #include "UI_Theme.h"
-#include "UI_Sidebar.h" // 1. 引入新抽离的侧边栏模块[cite: 19]
-#include "MainViews.h"
+#include "UI_Header.h"   // 引入 Header 模块
+#include "UI_Sidebar.h"  // 引入 Sidebar 模块[cite: 20]
+#include "MainViews.h"   // 引入 View 视图模块[cite: 20]
 
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "dwmapi.lib")
@@ -131,66 +132,27 @@ int main(int, char**) {
             IM_COL32(255, 255, 255, 80), 16.0f * scale, 0, 1.5f * scale
         );
 
-        // Header 区域
+        // 1. Header 区域渲染
         float headerH = 42.0f * scale;
+        RenderHeader(hwnd, drawList, windowSize, scale, headerH, searchBuffer, IM_ARRAYSIZE(searchBuffer));
 
-        ImVec2 titleCapsuleSize(200.0f * scale, 34.0f * scale);
-        ImVec2 titlePos(16.0f * scale, 12.0f * scale);
-        drawList->AddRectFilled(titlePos, ImVec2(titlePos.x + titleCapsuleSize.x, titlePos.y + titleCapsuleSize.y), IM_COL32(255, 255, 255, 25), 17.0f * scale);
-        drawList->AddRect(titlePos, ImVec2(titlePos.x + titleCapsuleSize.x, titlePos.y + titleCapsuleSize.y), IM_COL32(255, 255, 255, 80), 17.0f * scale);
-
-        ImVec2 titleTextSize = ImGui::CalcTextSize("Bodycam工具箱V3");
-        drawList->AddText(ImVec2(titlePos.x + (titleCapsuleSize.x - titleTextSize.x) * 0.5f, titlePos.y + (titleCapsuleSize.y - titleTextSize.y) * 0.5f), IM_COL32(255, 255, 255, 230), "Bodycam工具箱V3");
-
-        float searchW = 300.0f * scale;
-        float searchX = (windowSize.x - searchW) * 0.5f;
-        ImGui::SetCursorPos(ImVec2(searchX, 12.0f * scale));
-        ImGui::PushItemWidth(searchW);
-        ImGui::InputTextWithHint("##Search", "搜索...", searchBuffer, IM_ARRAYSIZE(searchBuffer));
-        ImGui::PopItemWidth();
-
-        ImGui::SetCursorPos(ImVec2(0, 0));
-        ImGui::InvisibleButton("##TitleDrag", ImVec2(windowSize.x - 120.0f * scale, headerH));
-        if (ImGui::IsItemHovered() && ImGui::IsMouseDown(ImGuiMouseButton_Left)) {
-            ::ReleaseCapture();
-            ::SendMessage(hwnd, WM_NCLBUTTONDOWN, HTCAPTION, 0);
-        }
-
-        float circleR = 13.0f * scale;
-        float btnY = 24.0f * scale;
-        float rightBaseX = windowSize.x - 24.0f * scale;
-        float btnSpacing = 30.0f * scale;
-
-        bool isMaximized = ::IsZoomed(hwnd);
-
-        if (DrawMacCircleButton("CloseBtn", ImVec2(rightBaseX, btnY), circleR, MAC_BTN_CLOSE)) {
-            ::PostQuitMessage(0);
-        }
-        if (DrawMacCircleButton("MaxBtn", ImVec2(rightBaseX - btnSpacing, btnY), circleR, MAC_BTN_MAXIMIZE, isMaximized)) {
-            if (isMaximized) ::SendMessage(hwnd, WM_SYSCOMMAND, SC_RESTORE, 0);
-            else ::SendMessage(hwnd, WM_SYSCOMMAND, SC_MAXIMIZE, 0);
-        }
-        if (DrawMacCircleButton("MinBtn", ImVec2(rightBaseX - btnSpacing * 2.0f, btnY), circleR, MAC_BTN_MINIMIZE)) {
-            ::SendMessage(hwnd, WM_SYSCOMMAND, SC_MINIMIZE, 0);
-        }
-
-        // 主体布局坐标计算
+        // 2. 主体布局坐标计算
         float contentStartY = headerH + 16.0f * scale;
         float contentH = windowSize.y - contentStartY - 16.0f * scale;
         float sidebarW = 200.0f * scale;
         ImVec2 sidebarPos(16.0f * scale, contentStartY);
 
-        // 2. 侧边栏渲染（这里直接调用 UI_Sidebar 模块函数）[cite: 19]
+        // 3. 侧边栏渲染[cite: 20]
         RenderSidebar(drawList, currentTab, liquidState, sidebarPos, sidebarW, contentH, scale, io.DeltaTime);
 
-        // 右侧内容面板
+        // 4. 右侧内容面板[cite: 20]
         float mainX = sidebarPos.x + sidebarW + 16.0f * scale;
         float mainW = windowSize.x - mainX - 16.0f * scale;
 
         ImGui::SetCursorPos(ImVec2(mainX, contentStartY));
 
         if (ImGui::BeginChild("MainContentPanel", ImVec2(mainW, contentH), true)) {
-            RenderMainViews(currentTab, scale);
+            RenderMainViews(currentTab, scale); //[cite: 20]
         }
 
         ImGui::EndChild();
