@@ -16,7 +16,8 @@
 #include "Direct3D_Resource.h"
 #include "UI_Controls.h"
 #include "UI_Theme.h"
-#include "MainViews.h" // 引入视图模块
+#include "UI_Sidebar.h" // 1. 引入新抽离的侧边栏模块[cite: 19]
+#include "MainViews.h"
 
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "dwmapi.lib")
@@ -173,36 +174,14 @@ int main(int, char**) {
             ::SendMessage(hwnd, WM_SYSCOMMAND, SC_MINIMIZE, 0);
         }
 
-        // 主体布局
+        // 主体布局坐标计算
         float contentStartY = headerH + 16.0f * scale;
         float contentH = windowSize.y - contentStartY - 16.0f * scale;
         float sidebarW = 200.0f * scale;
-
         ImVec2 sidebarPos(16.0f * scale, contentStartY);
-        drawList->AddRectFilled(sidebarPos, ImVec2(sidebarPos.x + sidebarW, sidebarPos.y + contentH), IM_COL32(255, 255, 255, 15), 16.0f * scale);
-        drawList->AddRect(sidebarPos, ImVec2(sidebarPos.x + sidebarW, sidebarPos.y + contentH), IM_COL32(255, 255, 255, 50), 16.0f * scale);
 
-        float optItemW = sidebarW - 20.0f * scale;
-        float optItemH = 38.0f * scale;
-        ImVec2 optPositions[3];
-
-        ImGui::SetCursorPos(ImVec2(sidebarPos.x + 10.0f * scale, sidebarPos.y + 12.0f * scale));
-        if (DrawSidebarOption("首页", currentTab == 0, ImVec2(optItemW, optItemH), &optPositions[0])) {
-            currentTab = 0;
-        }
-
-        ImGui::SetCursorPos(ImVec2(sidebarPos.x + 10.0f * scale, sidebarPos.y + 12.0f * scale + optItemH + 8.0f * scale));
-        if (DrawSidebarOption("分辨率修复", currentTab == 1, ImVec2(optItemW, optItemH), &optPositions[1])) {
-            currentTab = 1;
-        }
-
-        ImGui::SetCursorPos(ImVec2(sidebarPos.x + 10.0f * scale, sidebarPos.y + contentH - optItemH - 12.0f * scale));
-        if (DrawSidebarOption("设置", currentTab == 2, ImVec2(optItemW, optItemH), &optPositions[2])) {
-            currentTab = 2;
-        }
-
-        // 渲染封装后的液态胶囊及水痕效果
-        RenderLiquidCapsule(drawList, liquidState, currentTab, sidebarPos, optItemW, optItemH, optPositions, scale, io.DeltaTime);
+        // 2. 侧边栏渲染（这里直接调用 UI_Sidebar 模块函数）[cite: 19]
+        RenderSidebar(drawList, currentTab, liquidState, sidebarPos, sidebarW, contentH, scale, io.DeltaTime);
 
         // 右侧内容面板
         float mainX = sidebarPos.x + sidebarW + 16.0f * scale;
