@@ -169,10 +169,12 @@
     <ClInclude Include="..\..\backends\imgui_impl_win32.h" />
     <ClInclude Include="BackupPage.h" />
     <ClInclude Include="DashboardPage.h" />
+    <ClInclude Include="Direct3D_Resource.h" />
     <ClInclude Include="LocalizationPage.h" />
     <ClInclude Include="RainEffect.h" />
     <ClInclude Include="RainEffectPipeline.h" />
     <ClInclude Include="ResolutionPage.h" />
+    <ClInclude Include="Win32_API.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\imgui.cpp" />
@@ -184,10 +186,12 @@
     <ClCompile Include="..\..\backends\imgui_impl_win32.cpp" />
     <ClCompile Include="BackupPage.cpp" />
     <ClCompile Include="DashboardPage.cpp" />
+    <ClCompile Include="Direct3D_Resource.cpp" />
     <ClCompile Include="LocalizationPage.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="RainEffect.cpp" />
     <ClCompile Include="ResolutionPage.cpp" />
+    <ClCompile Include="Win32_API.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\misc\debuggers\imgui.natstepfilter" />

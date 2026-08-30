@@ -1,7 +1,6 @@
 #define NOMINMAX
 #include <windows.h>
 #include <dwmapi.h>
-#include <d3d11.h>
 #include <tchar.h>
 #include <cmath>
 #include <algorithm>
@@ -13,47 +12,16 @@
 #include "imgui_impl_dx11.h"
 
 #include "RainEffectPipeline.h"
+#include "Win32_API.h"
+#include "Direct3D_Resource.h"
 
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "dwmapi.lib")
 #pragma comment(linker, "/subsystem:windows /entry:mainCRTStartup")
 
-// 全局 Direct3D 资源
-static ID3D11Device* g_pd3dDevice = nullptr;
-static ID3D11DeviceContext* g_pd3dDeviceContext = nullptr;
-static IDXGISwapChain* g_pSwapChain = nullptr;
-static ID3D11RenderTargetView* g_mainRenderTargetView = nullptr;
-static ID3D11BlendState* g_pBlendState = nullptr;
-
-static UINT                     g_ResizeWidth = 0, g_ResizeHeight = 0;
-static bool                     g_SwapChainOccluded = false;
-
-static RainEffectPipeline       g_RainPipeline;
-
-// Win32 API 模糊透明支撑
-typedef enum _WINDOWCOMPOSITIONATTRIB { WCA_ACCENT_POLICY = 19 } WINDOWCOMPOSITIONATTRIB;
-typedef struct _ACCENT_POLICY { int AccentState; int AccentFlags; int GradientColor; int AnimationId; } ACCENT_POLICY;
-typedef struct _WINDOWCOMPOSITIONATTRIB_DATA { WINDOWCOMPOSITIONATTRIB Attribute; PVOID pvData; SIZE_T cbData; } WINDOWCOMPOSITIONATTRIB_DATA;
-typedef BOOL(WINAPI* pfnSetWindowCompositionAttribute)(HWND, WINDOWCOMPOSITIONATTRIB_DATA*);
-
-void EnableAcrylic(HWND hwnd, COLORREF colorWithAlpha) {
-    HMODULE hUser = GetModuleHandleA("user32.dll");
-    if (hUser) {
-        pfnSetWindowCompositionAttribute SetWindowCompositionAttribute =
-            (pfnSetWindowCompositionAttribute)GetProcAddress(hUser, "SetWindowCompositionAttribute");
-        if (SetWindowCompositionAttribute) {
-            ACCENT_POLICY policy = { 4, 0, (int)colorWithAlpha, 0 };
-            WINDOWCOMPOSITIONATTRIB_DATA data = { WCA_ACCENT_POLICY, &policy, sizeof(policy) };
-            SetWindowCompositionAttribute(hwnd, &data);
-        }
-    }
-}
+static RainEffectPipeline g_RainPipeline;
 
 // Forward declarations
-bool CreateDeviceD3D(HWND hWnd);
-void CleanupDeviceD3D();
-void CreateRenderTarget();
-void CleanupRenderTarget();
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 void SetupAppleGlassTheme(float scale) {
@@ -78,7 +46,6 @@ void SetupAppleGlassTheme(float scale) {
     colors[ImGuiCol_Text] = ImVec4(0.95f, 0.96f, 0.98f, 1.00f);
 }
 
-// ==================== 1. 动效辅助插值函数 ====================
 static inline float CustomLerp(float a, float b, float t) {
     if (t < 0.0f) t = 0.0f;
     if (t > 1.0f) t = 1.0f;
@@ -91,7 +58,6 @@ enum MacBtnType {
     MAC_BTN_MINIMIZE
 };
 
-// ==================== 2. 带液态玻璃感与控制按钮 ====================
 bool DrawMacCircleButton(const char* id_str, const ImVec2& pos, float radius, MacBtnType type, bool isMaximized = false) {
     ImGuiWindow* window = ImGui::GetCurrentWindow();
     if (window->SkipItems) return false;
@@ -172,31 +138,26 @@ bool DrawMacCircleButton(const char* id_str, const ImVec2& pos, float radius, Ma
     return pressed;
 }
 
-// ==================== 3. 无方框轻量 Sidebar 选项 (完美稳定版) ====================
 bool DrawSidebarOption(const char* label, bool selected, const ImVec2& size, ImVec2* outCenterPos = nullptr) {
     ImGuiWindow* window = ImGui::GetCurrentWindow();
     if (window->SkipItems) return false;
 
-    // 1. 使用 InvisibleButton 作为底层标准交互控件（解决 ID 冲突与布局游标异常）
     ImVec2 pos = ImGui::GetCursorScreenPos();
     bool pressed = ImGui::InvisibleButton(label, size);
     bool hovered = ImGui::IsItemHovered();
 
-    // 2. 安全获取与平滑更新动画帧状态 (anim)
     ImGuiStorage* storage = ImGui::GetStateStorage();
     ImGuiID id = window->GetID(label);
     float anim = storage->GetFloat(id, 0.0f);
     float dt = ImGui::GetIO().DeltaTime;
 
-    anim = CustomLerp(anim, hovered ? 6.0f : 0.0f, dt * 12.0f); //selct text
+    anim = CustomLerp(anim, hovered ? 6.0f : 0.0f, dt * 12.0f);
     storage->SetFloat(id, anim);
 
-    // 3. 计算选项中心点供液态胶囊吸收定位
     if (outCenterPos) {
         *outCenterPos = ImVec2(pos.x + size.x * 0.5f, pos.y + size.y * 0.5f);
     }
 
-    // 4. 安全绘制文字与平滑过渡
     ImDrawList* drawList = ImGui::GetWindowDrawList();
     ImU32 textCol = selected ? IM_COL32(255, 255, 255, 255) : IM_COL32(200, 205, 215, static_cast<int>(180.0f + 75.0f * anim));
 
@@ -225,7 +186,7 @@ int main(int, char**) {
         nullptr, nullptr, wc.hInstance, nullptr
     );
 
-    DWORD cornerPreference = 2; // DWMWCP_ROUND
+    DWORD cornerPreference = 2;
     DwmSetWindowAttribute(hwnd, (DWMWINDOWATTRIBUTE)33, &cornerPreference, sizeof(cornerPreference));
 
     BOOL dark = TRUE;
@@ -259,10 +220,9 @@ int main(int, char**) {
     static int currentTab = 0;
     static char searchBuffer[128] = "";
 
-    // 全局液态胶囊滑动位置静态变量
     static float liquidCurrentY = -1.0f;
     static bool isFirstFrameLiquid = true;
-    static float fluidWeight = 6.0f; // <--- 新增：用于平滑过渡流体波浪强度
+    static float fluidWeight = 6.0f;
     bool done = false;
 
     while (!done) {
@@ -312,16 +272,14 @@ int main(int, char**) {
 
         ImVec2 windowSize = ImGui::GetWindowSize();
 
-        // 窗口轮廓线
         drawList->AddRect(
             ImVec2(0, 0), windowSize,
             IM_COL32(255, 255, 255, 80), 16.0f * scale, 0, 1.5f * scale
         );
 
-        // ==================== 1. 顶部 Header 区域 ====================
+        // Header 区域
         float headerH = 42.0f * scale;
 
-        // 左侧标题胶囊块
         ImVec2 titleCapsuleSize(200.0f * scale, 34.0f * scale);
         ImVec2 titlePos(16.0f * scale, 12.0f * scale);
         drawList->AddRectFilled(titlePos, ImVec2(titlePos.x + titleCapsuleSize.x, titlePos.y + titleCapsuleSize.y), IM_COL32(255, 255, 255, 25), 17.0f * scale);
@@ -330,7 +288,6 @@ int main(int, char**) {
         ImVec2 titleTextSize = ImGui::CalcTextSize("Bodycam工具箱V3");
         drawList->AddText(ImVec2(titlePos.x + (titleCapsuleSize.x - titleTextSize.x) * 0.5f, titlePos.y + (titleCapsuleSize.y - titleTextSize.y) * 0.5f), IM_COL32(255, 255, 255, 230), "Bodycam工具箱V3");
 
-        // 中间搜索栏
         float searchW = 300.0f * scale;
         float searchX = (windowSize.x - searchW) * 0.5f;
         ImGui::SetCursorPos(ImVec2(searchX, 12.0f * scale));
@@ -338,7 +295,6 @@ int main(int, char**) {
         ImGui::InputTextWithHint("##Search", "搜索...", searchBuffer, IM_ARRAYSIZE(searchBuffer));
         ImGui::PopItemWidth();
 
-        // 拖拽窗口暗区域
         ImGui::SetCursorPos(ImVec2(0, 0));
         ImGui::InvisibleButton("##TitleDrag", ImVec2(windowSize.x - 120.0f * scale, headerH));
         if (ImGui::IsItemHovered() && ImGui::IsMouseDown(ImGuiMouseButton_Left)) {
@@ -346,7 +302,6 @@ int main(int, char**) {
             ::SendMessage(hwnd, WM_NCLBUTTONDOWN, HTCAPTION, 0);
         }
 
-        // 右上角控制灯
         float circleR = 13.0f * scale;
         float btnY = 24.0f * scale;
         float rightBaseX = windowSize.x - 24.0f * scale;
@@ -365,12 +320,11 @@ int main(int, char**) {
             ::SendMessage(hwnd, WM_SYSCOMMAND, SC_MINIMIZE, 0);
         }
 
-        // ==================== 2. 主体分栏布局 ====================
+        // 主体布局
         float contentStartY = headerH + 16.0f * scale;
         float contentH = windowSize.y - contentStartY - 16.0f * scale;
         float sidebarW = 200.0f * scale;
 
-        // --- 左侧 Sidebar 容器板 ---
         ImVec2 sidebarPos(16.0f * scale, contentStartY);
         drawList->AddRectFilled(sidebarPos, ImVec2(sidebarPos.x + sidebarW, sidebarPos.y + contentH), IM_COL32(255, 255, 255, 15), 16.0f * scale);
         drawList->AddRect(sidebarPos, ImVec2(sidebarPos.x + sidebarW, sidebarPos.y + contentH), IM_COL32(255, 255, 255, 50), 16.0f * scale);
@@ -395,18 +349,18 @@ int main(int, char**) {
             currentTab = 2;
         }
 
-        // ==================== 1. 水滴玻璃附着与水痕蒸发系统 ====================
+        // 蒸发水痕与流动胶囊系统
         struct TrailSegment {
-            float y;          // 水痕中心位置 Y
-            float alpha;      // 当前透明度 (1.0 -> 0.0 蒸发)
-            float width;      // 水痕宽度
-            float height;     // 水痕高度
+            float y;
+            float alpha;
+            float width;
+            float height;
         };
-        static std::vector<TrailSegment> waterTrails; // 保存残留水痕的数组
+        static std::vector<TrailSegment> waterTrails;
 
-        static float liquidVelY = 0.0f;          // 移动速度
-        static float liquidStretch = 0.0f;       // 液滴上下拉伸感
-        static float lastY = -1.0f;              // 上一帧位置
+        static float liquidVelY = 0.0f;
+        static float liquidStretch = 0.0f;
+        static float lastY = -1.0f;
 
         float targetY = optPositions[currentTab].y - optItemH * 0.5f;
 
@@ -416,27 +370,24 @@ int main(int, char**) {
             isFirstFrameLiquid = false;
         }
         else {
-            // 水滴滑动物理模型：非对称高粘滞力（模拟水在玻璃上的附着力）
             float dist = targetY - liquidCurrentY;
 
             float stiffness = (dist > 0.0f) ? 200.0f : 230.0f;
-            float damping = (std::abs(dist) < 12.0f) ? 6.0f : 12.0f; // 靠近目标时骤增阻尼（强行粘在玻璃上）
+            float damping = (std::abs(dist) < 12.0f) ? 6.0f : 12.0f;
 
             float force = dist * stiffness;
             liquidVelY += force * io.DeltaTime;
             liquidVelY -= liquidVelY * damping * io.DeltaTime;
             liquidCurrentY += liquidVelY * io.DeltaTime;
 
-            // 根据速度计算形变
             float targetStretch = (std::abs(liquidVelY) / 500.0f);
             targetStretch = (std::min)(targetStretch, 0.5f);
             liquidStretch = CustomLerp(liquidStretch, targetStretch, io.DeltaTime * 18.0f);
 
-            // 当水滴在玻璃上快速滑动时，沿途留下半透明水痕
             if (std::abs(liquidCurrentY - lastY) > 4.0f * scale) {
                 TrailSegment seg;
                 seg.y = (liquidCurrentY + lastY) * 0.5f + optItemH * 0.5f;
-                seg.alpha = 0.45f; // 初始水痕透明度
+                seg.alpha = 0.45f;
                 seg.width = (optItemW - 30.0f * scale) * (1.0f - liquidStretch * 0.2f);
                 seg.height = std::abs(liquidCurrentY - lastY) + 6.0f * scale;
                 waterTrails.push_back(seg);
@@ -444,13 +395,11 @@ int main(int, char**) {
             }
         }
 
-        // 更新并绘制所有残留水痕（模拟水痕在玻璃上慢慢蒸发干涸）
         for (auto it = waterTrails.begin(); it != waterTrails.end(); ) {
-            // 水痕逐渐透明蒸发
             it->alpha -= io.DeltaTime * 1.2f;
 
             if (it->alpha <= 0.0f) {
-                it = waterTrails.erase(it); // 彻底干涸蒸发
+                it = waterTrails.erase(it);
             }
             else {
                 float trailCenterX = sidebarPos.x + 10.0f * scale + optItemW * 0.5f;
@@ -470,7 +419,6 @@ int main(int, char**) {
         ImVec2 liquidMin(sidebarPos.x + 10.0f * scale, liquidCurrentY);
         ImVec2 liquidMax(liquidMin.x + optItemW, liquidMin.y + optItemH);
 
-        // 2. 悬停判断：只检测鼠标是否悬停在【当前选中的选项】
         ImVec2 mousePos = ImGui::GetMousePos();
         ImVec2 selectedOptMin(sidebarPos.x + 10.0f * scale, optPositions[currentTab].y - optItemH * 0.5f);
         ImVec2 selectedOptMax(selectedOptMin.x + optItemW, selectedOptMin.y + optItemH);
@@ -478,11 +426,9 @@ int main(int, char**) {
         bool isHoveringLiquid = (mousePos.x >= selectedOptMin.x && mousePos.x <= selectedOptMax.x &&
             mousePos.y >= selectedOptMin.y && mousePos.y <= selectedOptMax.y);
 
-        // 3. 计算流体波浪平滑权重
         float targetWeight = isHoveringLiquid ? 2.0f : 0.0f;
         fluidWeight = CustomLerp(fluidWeight, targetWeight, io.DeltaTime * 4.0f);
 
-        // ==================== 4. 渲染主水滴 (Water Droplet Shape) ====================
         const int numSegments = 64;
         ImVec2 wavePoints[64];
         float time = static_cast<float>(ImGui::GetTime()) * 2.8f;
@@ -491,7 +437,6 @@ int main(int, char**) {
         float rx = optItemW * 0.49f;
         float ry = optItemH * 0.49f;
 
-        // 动态计算水滴移动时的非对称拉伸（Y轴拉长，X轴变窄）
         float stretchY = 1.0f + liquidStretch * 0.45f;
         float stretchX = 1.0f - liquidStretch * 0.20f;
 
@@ -504,10 +449,8 @@ int main(int, char**) {
             float sinA = std::sin(a);
             float cosA = std::cos(a);
 
-            // 运动方向判定：1.0 为下滑，-1.0 为上吸
             float moveDir = (liquidVelY >= 0.0f) ? 1.0f : -1.0f;
 
-            // 下滑时上方水尾收尖，下方水头饱满
             float dropletAsymmetry = (sinA * moveDir < 0.0f) ? (1.0f - std::abs(sinA) * 0.38f * liquidStretch)
                 : (1.0f + std::abs(sinA) * 0.18f * liquidStretch);
 
@@ -523,7 +466,6 @@ int main(int, char**) {
             );
         }
 
-        // 滑动时水滴亮度提亮
         float motionAlphaExtra = (std::min)(liquidStretch * 90.0f, 50.0f);
         int bgAlpha = static_cast<int>(CustomLerp(35.0f, 55.0f, fluidWeight) + motionAlphaExtra);
         int borderAlpha = static_cast<int>(CustomLerp(90.0f, 220.0f, fluidWeight) + motionAlphaExtra);
@@ -531,20 +473,18 @@ int main(int, char**) {
         drawList->AddConvexPolyFilled(wavePoints, numSegments, IM_COL32(255, 255, 255, bgAlpha));
         drawList->AddPolyline(wavePoints, numSegments, IM_COL32(255, 255, 255, borderAlpha), ImDrawFlags_Closed, 1.5f);
 
-        // 4. 蓝色指示条
         drawList->AddRectFilled(
             ImVec2(liquidMin.x + 6.0f, liquidMin.y + 8.0f),
             ImVec2(liquidMin.x + 11.0f, liquidMax.y - 8.0f),
             IM_COL32(0, 122, 255, 230), 2.0f
         );
 
-        // --- 右侧主内容面板 ---
+        // 面板区域
         float mainX = sidebarPos.x + sidebarW + 16.0f * scale;
         float mainW = windowSize.x - mainX - 16.0f * scale;
 
         ImGui::SetCursorPos(ImVec2(mainX, contentStartY));
 
-        // 必须保证 BeginChild 与 EndChild 严格一对一调用
         if (ImGui::BeginChild("MainContentPanel", ImVec2(mainW, contentH), true)) {
             if (currentTab == 0) {
                 ImGui::Text("右侧内容面板");
@@ -554,7 +494,6 @@ int main(int, char**) {
             else if (currentTab == 1) {
                 ImGui::Text("分辨率修复设置模块");
                 ImGui::Separator();
-                // 如果此 Tab 内后续有加控件，确保没有未闭合的 Group/Combo/Tree
             }
             else if (currentTab == 2) {
                 ImGui::Text("配置设置");
@@ -562,7 +501,7 @@ int main(int, char**) {
             }
         }
 
-        ImGui::EndChild(); // 无论是否 Skip 都会安全闭合
+        ImGui::EndChild();
 
         ImGui::End();
         ImGui::PopStyleVar();
@@ -589,61 +528,6 @@ int main(int, char**) {
     ::DestroyWindow(hwnd);
     ::UnregisterClassW(wc.lpszClassName, wc.hInstance);
     return 0;
-}
-
-bool CreateDeviceD3D(HWND hWnd) {
-    DXGI_SWAP_CHAIN_DESC sd = {};
-    sd.BufferCount = 2;
-    sd.BufferDesc.Width = 0;
-    sd.BufferDesc.Height = 0;
-    sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-    sd.BufferDesc.RefreshRate.Numerator = 60;
-    sd.BufferDesc.RefreshRate.Denominator = 1;
-    sd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
-    sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-    sd.OutputWindow = hWnd;
-    sd.SampleDesc.Count = 1;
-    sd.Windowed = TRUE;
-    sd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
-
-    D3D_FEATURE_LEVEL featureLevel;
-    const D3D_FEATURE_LEVEL featureLevelArray[2] = { D3D_FEATURE_LEVEL_11_0, D3D_FEATURE_LEVEL_10_0 };
-    if (FAILED(D3D11CreateDeviceAndSwapChain(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, 0, featureLevelArray, 2, D3D11_SDK_VERSION, &sd, &g_pSwapChain, &g_pd3dDevice, &featureLevel, &g_pd3dDeviceContext)))
-        return false;
-
-    D3D11_BLEND_DESC blendDesc = {};
-    blendDesc.RenderTarget[0].BlendEnable = TRUE;
-    blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
-    blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
-    blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
-    blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
-    blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_INV_SRC_ALPHA;
-    blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
-    blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
-
-    g_pd3dDevice->CreateBlendState(&blendDesc, &g_pBlendState);
-
-    CreateRenderTarget();
-    return true;
-}
-
-void CleanupDeviceD3D() {
-    CleanupRenderTarget();
-    if (g_pSwapChain) { g_pSwapChain->Release(); g_pSwapChain = nullptr; }
-    if (g_pd3dDeviceContext) { g_pd3dDeviceContext->Release(); g_pd3dDeviceContext = nullptr; }
-    if (g_pd3dDevice) { g_pd3dDevice->Release(); g_pd3dDevice = nullptr; }
-}
-
-void CreateRenderTarget() {
-    ID3D11Texture2D* pBackBuffer = nullptr;
-    if (SUCCEEDED(g_pSwapChain->GetBuffer(0, IID_PPV_ARGS(&pBackBuffer))) && pBackBuffer) {
-        g_pd3dDevice->CreateRenderTargetView(pBackBuffer, nullptr, &g_mainRenderTargetView);
-        pBackBuffer->Release();
-    }
-}
-
-void CleanupRenderTarget() {
-    if (g_mainRenderTargetView) { g_mainRenderTargetView->Release(); g_mainRenderTargetView = nullptr; }
 }
 
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {

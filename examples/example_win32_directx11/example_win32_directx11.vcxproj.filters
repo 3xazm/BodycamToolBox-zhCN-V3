@@ -34,6 +34,30 @@
     <Filter Include="Assets\Video">
       <UniqueIdentifier>{462b5364-6efd-4e6b-a91e-f1be6eda64d9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{55efcb6a-3f17-41b4-a5f7-25e152cabfb7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Resource">
+      <UniqueIdentifier>{b04769c1-deda-4cf3-936f-fd7aae9ef127}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Resource\Direct3D_Resource">
+      <UniqueIdentifier>{132a7a87-5cb9-45cb-ac82-986a736c149e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Resource\Win32_API">
+      <UniqueIdentifier>{a1024ebf-84a4-4273-8ed4-72d889a55878}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{e4f9ff11-a789-4cea-9b2b-6b5d125d192e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Resource">
+      <UniqueIdentifier>{d5f8bf1b-06dc-440e-aad7-cc9c48419004}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Resource\Win32_API">
+      <UniqueIdentifier>{bb03e7fb-5566-4e17-a917-a1f42a34a408}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Resource\Direct3D_Resource">
+      <UniqueIdentifier>{609684ff-0237-4a18-84e5-e3e6f22d15ca}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\imconfig.h">
@@ -68,6 +92,12 @@
     </ClInclude>
     <ClInclude Include="RainEffectPipeline.h">
       <Filter>Assets\HLSL</Filter>
+    </ClInclude>
+    <ClInclude Include="Win32_API.h">
+      <Filter>Header Files\Resource\Win32_API</Filter>
+    </ClInclude>
+    <ClInclude Include="Direct3D_Resource.h">
+      <Filter>Header Files\Resource\Direct3D_Resource</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -109,6 +139,12 @@
     </ClCompile>
     <ClCompile Include="RainEffect.cpp">
       <Filter>Assets\HLSL</Filter>
+    </ClCompile>
+    <ClCompile Include="Win32_API.cpp">
+      <Filter>Source Files\Resource\Win32_API</Filter>
+    </ClCompile>
+    <ClCompile Include="Direct3D_Resource.cpp">
+      <Filter>Source Files\Resource\Direct3D_Resource</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
