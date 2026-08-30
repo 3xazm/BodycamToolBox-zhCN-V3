@@ -14,7 +14,8 @@
 #include "RainEffectPipeline.h"
 #include "Win32_API.h"
 #include "Direct3D_Resource.h"
-#include "UI_Controls.h" // 引入抽离出的 UI 控件
+#include "UI_Controls.h"
+#include "UI_Theme.h" // 引入 UI 主题与流体动画模块
 
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "dwmapi.lib")
@@ -24,28 +25,6 @@ static RainEffectPipeline g_RainPipeline;
 
 // Forward declarations
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-
-void SetupAppleGlassTheme(float scale) {
-    ImGuiStyle& style = ImGui::GetStyle();
-
-    style.WindowRounding = 16.0f * scale;
-    style.ChildRounding = 12.0f * scale;
-    style.FrameRounding = 8.0f * scale;
-    style.PopupRounding = 10.0f * scale;
-    style.ScrollbarRounding = 10.0f * scale;
-    style.GrabRounding = 8.0f * scale;
-    style.WindowBorderSize = 0.0f;
-    style.ChildBorderSize = 1.0f;
-
-    ImVec4* colors = style.Colors;
-    colors[ImGuiCol_WindowBg] = ImVec4(0.08f, 0.10f, 0.12f, 0.30f);
-    colors[ImGuiCol_ChildBg] = ImVec4(1.00f, 1.00f, 1.00f, 0.08f);
-    colors[ImGuiCol_Border] = ImVec4(1.00f, 1.00f, 1.00f, 0.20f);
-    colors[ImGuiCol_FrameBg] = ImVec4(1.00f, 1.00f, 1.00f, 0.12f);
-    colors[ImGuiCol_FrameBgHovered] = ImVec4(1.00f, 1.00f, 1.00f, 0.20f);
-    colors[ImGuiCol_FrameBgActive] = ImVec4(1.00f, 1.00f, 1.00f, 0.30f);
-    colors[ImGuiCol_Text] = ImVec4(0.95f, 0.96f, 0.98f, 1.00f);
-}
 
 int main(int, char**) {
     ImGui_ImplWin32_EnableDpiAwareness();
@@ -94,10 +73,8 @@ int main(int, char**) {
 
     static int currentTab = 0;
     static char searchBuffer[128] = "";
+    static LiquidAnimationState liquidState; // 统一管理流体动画状态
 
-    static float liquidCurrentY = -1.0f;
-    static bool isFirstFrameLiquid = true;
-    static float fluidWeight = 6.0f;
     bool done = false;
 
     while (!done) {
@@ -206,7 +183,6 @@ int main(int, char**) {
 
         float optItemW = sidebarW - 20.0f * scale;
         float optItemH = 38.0f * scale;
-
         ImVec2 optPositions[3];
 
         ImGui::SetCursorPos(ImVec2(sidebarPos.x + 10.0f * scale, sidebarPos.y + 12.0f * scale));
@@ -224,137 +200,10 @@ int main(int, char**) {
             currentTab = 2;
         }
 
-        // 蒸发水痕与流动胶囊系统
-        struct TrailSegment {
-            float y;
-            float alpha;
-            float width;
-            float height;
-        };
-        static std::vector<TrailSegment> waterTrails;
+        // 渲染封装后的液态胶囊及水痕效果
+        RenderLiquidCapsule(drawList, liquidState, currentTab, sidebarPos, optItemW, optItemH, optPositions, scale, io.DeltaTime);
 
-        static float liquidVelY = 0.0f;
-        static float liquidStretch = 0.0f;
-        static float lastY = -1.0f;
-
-        float targetY = optPositions[currentTab].y - optItemH * 0.5f;
-
-        if (isFirstFrameLiquid) {
-            liquidCurrentY = targetY;
-            lastY = targetY;
-            isFirstFrameLiquid = false;
-        }
-        else {
-            float dist = targetY - liquidCurrentY;
-
-            float stiffness = (dist > 0.0f) ? 200.0f : 230.0f;
-            float damping = (std::abs(dist) < 12.0f) ? 6.0f : 12.0f;
-
-            float force = dist * stiffness;
-            liquidVelY += force * io.DeltaTime;
-            liquidVelY -= liquidVelY * damping * io.DeltaTime;
-            liquidCurrentY += liquidVelY * io.DeltaTime;
-
-            float targetStretch = (std::abs(liquidVelY) / 500.0f);
-            targetStretch = (std::min)(targetStretch, 0.5f);
-            liquidStretch = CustomLerp(liquidStretch, targetStretch, io.DeltaTime * 18.0f);
-
-            if (std::abs(liquidCurrentY - lastY) > 4.0f * scale) {
-                TrailSegment seg;
-                seg.y = (liquidCurrentY + lastY) * 0.5f + optItemH * 0.5f;
-                seg.alpha = 0.45f;
-                seg.width = (optItemW - 30.0f * scale) * (1.0f - liquidStretch * 0.2f);
-                seg.height = std::abs(liquidCurrentY - lastY) + 6.0f * scale;
-                waterTrails.push_back(seg);
-                lastY = liquidCurrentY;
-            }
-        }
-
-        for (auto it = waterTrails.begin(); it != waterTrails.end(); ) {
-            it->alpha -= io.DeltaTime * 1.2f;
-
-            if (it->alpha <= 0.0f) {
-                it = waterTrails.erase(it);
-            }
-            else {
-                float trailCenterX = sidebarPos.x + 10.0f * scale + optItemW * 0.5f;
-                ImVec2 tMin(trailCenterX - it->width * 0.5f, it->y - it->height * 0.5f);
-                ImVec2 tMax(trailCenterX + it->width * 0.5f, it->y + it->height * 0.5f);
-
-                int fillAlpha = static_cast<int>(it->alpha * 90.0f);
-                int borderAlpha = static_cast<int>(it->alpha * 140.0f);
-
-                drawList->AddRectFilled(tMin, tMax, IM_COL32(255, 255, 255, fillAlpha), 8.0f * scale);
-                drawList->AddRect(tMin, tMax, IM_COL32(255, 255, 255, borderAlpha), 0, 1.0f);
-
-                ++it;
-            }
-        }
-
-        ImVec2 liquidMin(sidebarPos.x + 10.0f * scale, liquidCurrentY);
-        ImVec2 liquidMax(liquidMin.x + optItemW, liquidMin.y + optItemH);
-
-        ImVec2 mousePos = ImGui::GetMousePos();
-        ImVec2 selectedOptMin(sidebarPos.x + 10.0f * scale, optPositions[currentTab].y - optItemH * 0.5f);
-        ImVec2 selectedOptMax(selectedOptMin.x + optItemW, selectedOptMin.y + optItemH);
-
-        bool isHoveringLiquid = (mousePos.x >= selectedOptMin.x && mousePos.x <= selectedOptMax.x &&
-            mousePos.y >= selectedOptMin.y && mousePos.y <= selectedOptMax.y);
-
-        float targetWeight = isHoveringLiquid ? 2.0f : 0.0f;
-        fluidWeight = CustomLerp(fluidWeight, targetWeight, io.DeltaTime * 4.0f);
-
-        const int numSegments = 64;
-        ImVec2 wavePoints[64];
-        float time = static_cast<float>(ImGui::GetTime()) * 2.8f;
-
-        ImVec2 center(liquidMin.x + optItemW * 0.5f, liquidMin.y + optItemH * 0.5f);
-        float rx = optItemW * 0.49f;
-        float ry = optItemH * 0.49f;
-
-        float stretchY = 1.0f + liquidStretch * 0.45f;
-        float stretchX = 1.0f - liquidStretch * 0.20f;
-
-        for (int i = 0; i < numSegments; ++i) {
-            float a = (static_cast<float>(i) / static_cast<float>(numSegments)) * 2.0f * 3.14159265f;
-
-            float wave1 = std::sin(a * 2.0f + time) * 2.0f;
-            float wave2 = std::cos(a * 3.0f - time * 0.8f) * 1.2f;
-
-            float sinA = std::sin(a);
-            float cosA = std::cos(a);
-
-            float moveDir = (liquidVelY >= 0.0f) ? 1.0f : -1.0f;
-
-            float dropletAsymmetry = (sinA * moveDir < 0.0f) ? (1.0f - std::abs(sinA) * 0.38f * liquidStretch)
-                : (1.0f + std::abs(sinA) * 0.18f * liquidStretch);
-
-            float organicOffset = (wave1 + wave2) * fluidWeight;
-
-            float power = CustomLerp(8.5f, 6.2f, fluidWeight);
-            float pX = std::pow(std::abs(cosA), 2.0f / power) * (cosA >= 0 ? 1.0f : -1.0f);
-            float pY = std::pow(std::abs(sinA), 2.0f / power) * (sinA >= 0 ? 1.0f : -1.0f);
-
-            wavePoints[i] = ImVec2(
-                center.x + (pX * rx * stretchX * 0.98f) + cosA * organicOffset,
-                center.y + (pY * ry * stretchY * dropletAsymmetry * 0.85f) + sinA * organicOffset
-            );
-        }
-
-        float motionAlphaExtra = (std::min)(liquidStretch * 90.0f, 50.0f);
-        int bgAlpha = static_cast<int>(CustomLerp(35.0f, 55.0f, fluidWeight) + motionAlphaExtra);
-        int borderAlpha = static_cast<int>(CustomLerp(90.0f, 220.0f, fluidWeight) + motionAlphaExtra);
-
-        drawList->AddConvexPolyFilled(wavePoints, numSegments, IM_COL32(255, 255, 255, bgAlpha));
-        drawList->AddPolyline(wavePoints, numSegments, IM_COL32(255, 255, 255, borderAlpha), ImDrawFlags_Closed, 1.5f);
-
-        drawList->AddRectFilled(
-            ImVec2(liquidMin.x + 6.0f, liquidMin.y + 8.0f),
-            ImVec2(liquidMin.x + 11.0f, liquidMax.y - 8.0f),
-            IM_COL32(0, 122, 255, 230), 2.0f
-        );
-
-        // 面板区域
+        // 右侧内容面板
         float mainX = sidebarPos.x + sidebarW + 16.0f * scale;
         float mainW = windowSize.x - mainX - 16.0f * scale;
 
