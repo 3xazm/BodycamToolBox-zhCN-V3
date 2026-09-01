@@ -119,20 +119,21 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
     switch (msg) {
     case WM_ENTERSIZEMOVE: {
-        // 进入拖拽或拉伸窗口模态循环时，开启系统定时器 (16ms ≈ 60fps) 驱动渲染
-        SetTimer(hWnd, 1, 16, nullptr);
-        return 0;
+        // 开启 1ms 级别的最高频率 Timer 驱动拖动时的刷新
+        SetTimer(hWnd, 1, 1, nullptr);
+        break; // 允许传递给 DefWindowProcW
     }
     case WM_EXITSIZEMOVE: {
-        // 结束拖拽/拉伸，销毁定时器，交还给主循环处理
         KillTimer(hWnd, 1);
-        return 0;
+        break; // 允许传递给 DefWindowProcW
     }
+    case WM_MOVING:
+    case WM_SIZING:
     case WM_TIMER: {
-        if (wParam == 1) {
-            SafeRenderFrame(); // 定时器触发重绘
+        if (msg != WM_TIMER || wParam == 1) {
+            SafeRenderFrame(); // 无论移动、拉伸还是定时器触发，都安全重绘
         }
-        return 0;
+        break;
     }
     case WM_NCHITTEST: {
         POINT pt = { LOWORD(lParam), HIWORD(lParam) };
@@ -142,7 +143,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         if (pt.y < bw && pt.x < bw) return HTTOPLEFT;
         if (pt.y < bw && pt.x > rect.right - bw) return HTTOPRIGHT;
         if (pt.y > rect.bottom - bw && pt.x < bw) return HTBOTTOMLEFT;
-        if (pt.y > rect.bottom - bw && pt.x > rect.right - bw) return HTRIGHT; // 修正逻辑
+        if (pt.y > rect.bottom - bw && pt.x > rect.right - bw) return HTBOTTOMRIGHT; // 已修复：之前错写成了 HTRIGHT
         if (pt.x < bw) return HTLEFT;
         if (pt.x > rect.right - bw) return HTRIGHT;
         if (pt.y < bw) return HTTOP;
