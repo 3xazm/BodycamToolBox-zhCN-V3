@@ -31,9 +31,6 @@
     <Filter Include="Assets\HLSL">
       <UniqueIdentifier>{7001836f-aa14-4da9-8cdf-c996f637469e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Assets\Video">
-      <UniqueIdentifier>{462b5364-6efd-4e6b-a91e-f1be6eda64d9}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files">
       <UniqueIdentifier>{55efcb6a-3f17-41b4-a5f7-25e152cabfb7}</UniqueIdentifier>
     </Filter>
@@ -72,6 +69,9 @@
     </Filter>
     <Filter Include="UI\Sidebar">
       <UniqueIdentifier>{990b0807-6795-4957-889c-0634a13b6999}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\AppIcon">
+      <UniqueIdentifier>{3980adc3-ec9b-4ca6-bf1a-d5b5a7ce62af}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -126,6 +126,11 @@
     <ClInclude Include="UI_Sidebar.h">
       <Filter>UI\Sidebar</Filter>
     </ClInclude>
+    <ClInclude Include="UI_Header.h" />
+    <ClInclude Include="AppIcon.h">
+      <Filter>Assets\AppIcon</Filter>
+    </ClInclude>
+    <ClInclude Include="AppRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\imgui.cpp">
@@ -185,6 +190,8 @@
     <ClCompile Include="UI_Sidebar.cpp">
       <Filter>UI\Sidebar</Filter>
     </ClCompile>
+    <ClCompile Include="UI_Header.cpp" />
+    <ClCompile Include="AppRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\README.txt" />
@@ -194,11 +201,6 @@
     <None Include="..\..\misc\debuggers\imgui.natstepfilter">
       <Filter>imgui</Filter>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Media Include="..\..\..\..\..\..\Downloads\rainwindow.mp4">
-      <Filter>Assets\Video</Filter>
-    </Media>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="RainEffect.hlsl">

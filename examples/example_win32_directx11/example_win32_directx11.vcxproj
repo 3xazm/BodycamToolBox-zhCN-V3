@@ -167,6 +167,8 @@
     <ClInclude Include="..\..\imgui_internal.h" />
     <ClInclude Include="..\..\backends\imgui_impl_dx11.h" />
     <ClInclude Include="..\..\backends\imgui_impl_win32.h" />
+    <ClInclude Include="AppIcon.h" />
+    <ClInclude Include="AppRenderer.h" />
     <ClInclude Include="BackupPage.h" />
     <ClInclude Include="DashboardPage.h" />
     <ClInclude Include="Direct3D_Resource.h" />
@@ -189,6 +191,7 @@
     <ClCompile Include="..\..\imgui_widgets.cpp" />
     <ClCompile Include="..\..\backends\imgui_impl_dx11.cpp" />
     <ClCompile Include="..\..\backends\imgui_impl_win32.cpp" />
+    <ClCompile Include="AppRenderer.cpp" />
     <ClCompile Include="BackupPage.cpp" />
     <ClCompile Include="DashboardPage.cpp" />
     <ClCompile Include="Direct3D_Resource.cpp" />
@@ -214,9 +217,6 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <FileType>Document</FileType>
     </CustomBuild>
-  </ItemGroup>
-  <ItemGroup>
-    <Media Include="..\..\..\..\..\..\Downloads\rainwindow.mp4" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
