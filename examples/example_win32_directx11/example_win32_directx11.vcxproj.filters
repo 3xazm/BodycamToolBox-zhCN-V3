@@ -7,35 +7,11 @@
     <Filter Include="sources">
       <UniqueIdentifier>{08e36723-ce4f-4cff-9662-c40801cf1acf}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Views">
-      <UniqueIdentifier>{a0e64b2b-0f56-41d1-a7f0-dcae6e6067c4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Views\Pages">
-      <UniqueIdentifier>{8bd37514-25bc-49ff-8799-ad959aaa9ea6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Views\Pages\1-Dashboard">
-      <UniqueIdentifier>{166fe94d-cff7-4006-8be4-7469a701c8ad}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Views\Pages\2-Resolution">
-      <UniqueIdentifier>{2ad15eee-5ddf-4c25-9d02-a9cc51f4ff2e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Views\Pages\3-Backup">
-      <UniqueIdentifier>{a127abc1-fbfc-49d8-9963-ae83536a2e9e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Views\Pages\4-Localization">
-      <UniqueIdentifier>{6e8a7e65-f3d7-4519-9ac9-390f117f756d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Assets">
       <UniqueIdentifier>{ce14a469-1986-4f49-9bae-8ac7ea3dd9be}</UniqueIdentifier>
     </Filter>
     <Filter Include="Assets\HLSL">
       <UniqueIdentifier>{7001836f-aa14-4da9-8cdf-c996f637469e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{55efcb6a-3f17-41b4-a5f7-25e152cabfb7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Resource">
-      <UniqueIdentifier>{b04769c1-deda-4cf3-936f-fd7aae9ef127}</UniqueIdentifier>
     </Filter>
     <Filter Include="UI">
       <UniqueIdentifier>{d5171565-7680-426f-ae35-d96a96948e4d}</UniqueIdentifier>
@@ -45,12 +21,6 @@
     </Filter>
     <Filter Include="UI\Views">
       <UniqueIdentifier>{1b1562ae-1410-4ec6-a61e-1ea3c7564a97}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="UI\Controls">
-      <UniqueIdentifier>{f26e2763-d1c4-479c-98d4-ca65a0425307}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="UI\Sidebar">
-      <UniqueIdentifier>{990b0807-6795-4957-889c-0634a13b6999}</UniqueIdentifier>
     </Filter>
     <Filter Include="Assets\AppIcon">
       <UniqueIdentifier>{3980adc3-ec9b-4ca6-bf1a-d5b5a7ce62af}</UniqueIdentifier>
@@ -67,8 +37,32 @@
     <Filter Include="curseFiles绑定\AppRenderer">
       <UniqueIdentifier>{2d3b3722-70e5-4374-9d98-c1ffea45987a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="UI\Header">
+    <Filter Include="UI\Header 标题">
       <UniqueIdentifier>{2893aa5b-1d58-438c-a9c9-3aa3931cfaf9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\Controls 控制">
+      <UniqueIdentifier>{f26e2763-d1c4-479c-98d4-ca65a0425307}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\Sidebar 侧边栏 %28左%29">
+      <UniqueIdentifier>{990b0807-6795-4957-889c-0634a13b6999}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MainViewsPages">
+      <UniqueIdentifier>{a0e64b2b-0f56-41d1-a7f0-dcae6e6067c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MainViewsPages\Pages">
+      <UniqueIdentifier>{8bd37514-25bc-49ff-8799-ad959aaa9ea6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MainViewsPages\Pages\1-Dashboard">
+      <UniqueIdentifier>{166fe94d-cff7-4006-8be4-7469a701c8ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MainViewsPages\Pages\2-Resolution">
+      <UniqueIdentifier>{2ad15eee-5ddf-4c25-9d02-a9cc51f4ff2e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MainViewsPages\Pages\3-Backup">
+      <UniqueIdentifier>{a127abc1-fbfc-49d8-9963-ae83536a2e9e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MainViewsPages\Pages\4-Localization">
+      <UniqueIdentifier>{6e8a7e65-f3d7-4519-9ac9-390f117f756d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -88,16 +82,16 @@
       <Filter>sources</Filter>
     </ClInclude>
     <ClInclude Include="DashboardPage.h">
-      <Filter>Views\Pages\1-Dashboard</Filter>
+      <Filter>MainViewsPages\Pages\1-Dashboard</Filter>
     </ClInclude>
     <ClInclude Include="ResolutionPage.h">
-      <Filter>Views\Pages\2-Resolution</Filter>
+      <Filter>MainViewsPages\Pages\2-Resolution</Filter>
     </ClInclude>
     <ClInclude Include="BackupPage.h">
-      <Filter>Views\Pages\3-Backup</Filter>
+      <Filter>MainViewsPages\Pages\3-Backup</Filter>
     </ClInclude>
     <ClInclude Include="LocalizationPage.h">
-      <Filter>Views\Pages\4-Localization</Filter>
+      <Filter>MainViewsPages\Pages\4-Localization</Filter>
     </ClInclude>
     <ClInclude Include="RainEffect.h">
       <Filter>Assets\HLSL</Filter>
@@ -118,10 +112,10 @@
       <Filter>UI\Views</Filter>
     </ClInclude>
     <ClInclude Include="UI_Controls.h">
-      <Filter>UI\Controls</Filter>
+      <Filter>UI\Controls 控制</Filter>
     </ClInclude>
     <ClInclude Include="UI_Sidebar.h">
-      <Filter>UI\Sidebar</Filter>
+      <Filter>UI\Sidebar 侧边栏 %28左%29</Filter>
     </ClInclude>
     <ClInclude Include="AppIcon.h">
       <Filter>Assets\AppIcon</Filter>
@@ -130,7 +124,7 @@
       <Filter>curseFiles绑定\AppRenderer</Filter>
     </ClInclude>
     <ClInclude Include="UI_Header.h">
-      <Filter>UI\Header</Filter>
+      <Filter>UI\Header 标题</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -159,16 +153,16 @@
       <Filter>imgui</Filter>
     </ClCompile>
     <ClCompile Include="DashboardPage.cpp">
-      <Filter>Views\Pages\1-Dashboard</Filter>
+      <Filter>MainViewsPages\Pages\1-Dashboard</Filter>
     </ClCompile>
     <ClCompile Include="ResolutionPage.cpp">
-      <Filter>Views\Pages\2-Resolution</Filter>
+      <Filter>MainViewsPages\Pages\2-Resolution</Filter>
     </ClCompile>
     <ClCompile Include="BackupPage.cpp">
-      <Filter>Views\Pages\3-Backup</Filter>
+      <Filter>MainViewsPages\Pages\3-Backup</Filter>
     </ClCompile>
     <ClCompile Include="LocalizationPage.cpp">
-      <Filter>Views\Pages\4-Localization</Filter>
+      <Filter>MainViewsPages\Pages\4-Localization</Filter>
     </ClCompile>
     <ClCompile Include="RainEffect.cpp">
       <Filter>Assets\HLSL</Filter>
@@ -180,10 +174,10 @@
       <Filter>UI\Views</Filter>
     </ClCompile>
     <ClCompile Include="UI_Controls.cpp">
-      <Filter>UI\Controls</Filter>
+      <Filter>UI\Controls 控制</Filter>
     </ClCompile>
     <ClCompile Include="UI_Sidebar.cpp">
-      <Filter>UI\Sidebar</Filter>
+      <Filter>UI\Sidebar 侧边栏 %28左%29</Filter>
     </ClCompile>
     <ClCompile Include="Direct3D_Resource.cpp">
       <Filter>curseFiles绑定\Direct3D_Resource</Filter>
@@ -195,7 +189,7 @@
       <Filter>curseFiles绑定\AppRenderer</Filter>
     </ClCompile>
     <ClCompile Include="UI_Header.cpp">
-      <Filter>UI\Header</Filter>
+      <Filter>UI\Header 标题</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

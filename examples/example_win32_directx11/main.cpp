@@ -9,7 +9,7 @@
 
 #include "Win32_API.h"
 #include "Direct3D_Resource.h"
-#include "AppRenderer.h"
+#include "AppRenderer.h" // 包含所有的全局 UI 声明与 AppRenderer 接口
 
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "dwmapi.lib")
@@ -119,19 +119,19 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
     switch (msg) {
     case WM_ENTERSIZEMOVE: {
-        // 开启 1ms 级别的最高频率 Timer 驱动拖动时的刷新
+        // 开启 1ms 级别的最高频率 Timer 驱动拖动和拉伸时的实时刷新
         SetTimer(hWnd, 1, 1, nullptr);
-        break; // 允许传递给 DefWindowProcW
+        break;
     }
     case WM_EXITSIZEMOVE: {
         KillTimer(hWnd, 1);
-        break; // 允许传递给 DefWindowProcW
+        break;
     }
     case WM_MOVING:
     case WM_SIZING:
     case WM_TIMER: {
         if (msg != WM_TIMER || wParam == 1) {
-            SafeRenderFrame(); // 无论移动、拉伸还是定时器触发，都安全重绘
+            SafeRenderFrame(); // 实时驱动 SafeRenderFrame 重绘，解决雨滴停止和黑边断层问题！
         }
         break;
     }
@@ -139,15 +139,27 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         POINT pt = { LOWORD(lParam), HIWORD(lParam) };
         ScreenToClient(hWnd, &pt);
         RECT rect; GetClientRect(hWnd, &rect);
-        const int bw = 8;
+
+        const int bw = static_cast<int>(8.0f * g_Scale);
+
+        // 1. 八方向调整窗口大小边框
         if (pt.y < bw && pt.x < bw) return HTTOPLEFT;
         if (pt.y < bw && pt.x > rect.right - bw) return HTTOPRIGHT;
         if (pt.y > rect.bottom - bw && pt.x < bw) return HTBOTTOMLEFT;
-        if (pt.y > rect.bottom - bw && pt.x > rect.right - bw) return HTBOTTOMRIGHT; // 已修复：之前错写成了 HTRIGHT
+        if (pt.y > rect.bottom - bw && pt.x > rect.right - bw) return HTBOTTOMRIGHT;
         if (pt.x < bw) return HTLEFT;
         if (pt.x > rect.right - bw) return HTRIGHT;
         if (pt.y < bw) return HTTOP;
         if (pt.y > rect.bottom - bw) return HTBOTTOM;
+
+        // 2. 将 Header 顶部空白区域标记为原生标题栏（支持无抖动拖拽 + 原生双击最大化）
+        float headerH = 42.0f * g_Scale;
+        float rightReservedW = 120.0f * g_Scale; // 预留右上角 Mac 控制按钮区域给 ImGui
+
+        if (pt.y >= bw && pt.y < headerH && pt.x < rect.right - rightReservedW) {
+            return HTCAPTION; // 告诉 Windows 这块就是标题栏！
+        }
+
         return HTCLIENT;
     }
     case WM_NCCALCSIZE:

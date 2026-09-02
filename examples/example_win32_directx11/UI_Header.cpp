@@ -27,13 +27,8 @@ void RenderHeader(
     ImGui::InputTextWithHint("##Search", "搜索...", searchBuffer, searchBufferSize);
     ImGui::PopItemWidth();
 
-    // 3. 标题栏无边框拖拽响应区
-    ImGui::SetCursorPos(ImVec2(0, 0));
-    ImGui::InvisibleButton("##TitleDrag", ImVec2(windowSize.x - 120.0f * scale, headerH));
-    if (ImGui::IsItemHovered() && ImGui::IsMouseDown(ImGuiMouseButton_Left)) {
-        ::ReleaseCapture();
-        ::SendMessage(hwnd, WM_NCLBUTTONDOWN, HTCAPTION, 0);
-    }
+    // 3. 标题栏区域已由 WndProc 中的 WM_NCHITTEST (HTCAPTION) 原生支持
+    // 此处无需任何代码，系统会自动处理标题栏拖拽与双击最大化
 
     // 4. 右侧 Mac 控制按钮
     float circleR = 13.0f * scale;

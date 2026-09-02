@@ -1,6 +1,7 @@
 #pragma once
 #include <windows.h>
 #include "UI_Theme.h"
+#include "UI_Header.h" // <--- 必须补充包含 UI_Header.h
 
 // 暴露给 main.cpp 调用的全局 UI 状态
 extern HWND g_hWnd;
