@@ -10,5 +10,6 @@ void RenderHeader(
     float scale,
     float headerH,
     char* searchBuffer,
-    size_t searchBufferSize
+    size_t searchBufferSize,
+    ImTextureID iconTexture = 0 // 使用 0 作为默认整型/指针值
 );

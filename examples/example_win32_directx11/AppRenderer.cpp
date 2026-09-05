@@ -77,7 +77,18 @@ void RenderFrame() {
 
     // --- Header ---
     float headerH = 42.0f * g_Scale;
-    RenderHeader(g_hWnd, drawList, windowSize, g_Scale, headerH, g_SearchBuffer, IM_ARRAYSIZE(g_SearchBuffer));
+
+    // 如果暂无图标变量，直接传 0（或者不传第 8 个参数，系统默认即为 0）
+    RenderHeader(
+        g_hWnd,
+        drawList,
+        windowSize,
+        g_Scale,
+        headerH,
+        g_SearchBuffer,
+        IM_ARRAYSIZE(g_SearchBuffer),
+        0 // 暂无纹理时传 0，等完成 stb_image 加载纹理后再替换为你的 SRV 变量
+    );
 
     // --- 布局计算 ---
     float contentStartY = headerH + 16.0f * g_Scale;

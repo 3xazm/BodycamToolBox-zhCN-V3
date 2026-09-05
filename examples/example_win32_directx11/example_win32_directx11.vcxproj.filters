@@ -22,9 +22,6 @@
     <Filter Include="UI\Views">
       <UniqueIdentifier>{1b1562ae-1410-4ec6-a61e-1ea3c7564a97}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Assets\AppIcon">
-      <UniqueIdentifier>{3980adc3-ec9b-4ca6-bf1a-d5b5a7ce62af}</UniqueIdentifier>
-    </Filter>
     <Filter Include="curseFiles绑定">
       <UniqueIdentifier>{657b841d-fff3-44af-9276-f608d71600d7}</UniqueIdentifier>
     </Filter>
@@ -63,6 +60,9 @@
     </Filter>
     <Filter Include="MainViewsPages\Pages\4-Localization">
       <UniqueIdentifier>{6e8a7e65-f3d7-4519-9ac9-390f117f756d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\BodycamAppIcon">
+      <UniqueIdentifier>{3980adc3-ec9b-4ca6-bf1a-d5b5a7ce62af}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -117,14 +117,14 @@
     <ClInclude Include="UI_Sidebar.h">
       <Filter>UI\Sidebar 侧边栏 %28左%29</Filter>
     </ClInclude>
-    <ClInclude Include="AppIcon.h">
-      <Filter>Assets\AppIcon</Filter>
-    </ClInclude>
     <ClInclude Include="AppRenderer.h">
       <Filter>curseFiles绑定\AppRenderer</Filter>
     </ClInclude>
     <ClInclude Include="UI_Header.h">
       <Filter>UI\Header 标题</Filter>
+    </ClInclude>
+    <ClInclude Include="BodycamAppIcon.h">
+      <Filter>Assets\BodycamAppIcon</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -167,9 +167,9 @@
     <ClInclude Include="..\..\imgui_internal.h" />
     <ClInclude Include="..\..\backends\imgui_impl_dx11.h" />
     <ClInclude Include="..\..\backends\imgui_impl_win32.h" />
-    <ClInclude Include="AppIcon.h" />
     <ClInclude Include="AppRenderer.h" />
     <ClInclude Include="BackupPage.h" />
+    <ClInclude Include="BodycamAppIcon.h" />
     <ClInclude Include="DashboardPage.h" />
     <ClInclude Include="Direct3D_Resource.h" />
     <ClInclude Include="LocalizationPage.h" />
