@@ -9,7 +9,11 @@
 
 #include "Win32_API.h"
 #include "Direct3D_Resource.h"
-#include "AppRenderer.h" // 包含所有的全局 UI 声明与 AppRenderer 接口
+#include "AppRenderer.h"
+
+// 引入 stb_image 解码库与图片内存数据
+#include "stb_image.h"
+#include "BodycamAppIcon.h"
 
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "dwmapi.lib")
@@ -20,24 +24,94 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 // 渲染防重入标志
 static bool g_IsRendering = false;
 
-// 包装安全的渲染调用（防止在消息回调和主循环中同时渲染导致 ImGui 崩溃）
 void SafeRenderFrame() {
-    if (g_IsRendering) return; // 如果上一帧还没渲染完，直接跳过
+    if (g_IsRendering) return;
     g_IsRendering = true;
     RenderFrame();
     g_IsRendering = false;
 }
 
+// 从 BodycamAppIcon.h 内存字节流动态创建 Win32 HICON
+HICON CreateHIconFromMemory() {
+    int width = 0, height = 0, channels = 0;
+    unsigned char* pixels = stbi_load_from_memory(
+        BodycamAppIconData,
+        (int)BodycamAppIconDataSize,
+        &width, &height, &channels, 4
+    );
+    if (!pixels) return nullptr;
+
+    BITMAPV5HEADER bi = {};
+    bi.bV5Size = sizeof(BITMAPV5HEADER);
+    bi.bV5Width = width;
+    bi.bV5Height = -height; // Top-down
+    bi.bV5Planes = 1;
+    bi.bV5BitCount = 32;
+    bi.bV5Compression = BI_BITFIELDS;
+    bi.bV5RedMask = 0x00FF0000;
+    bi.bV5GreenMask = 0x0000FF00;
+    bi.bV5BlueMask = 0x000000FF;
+    bi.bV5AlphaMask = 0xFF000000;
+
+    HDC hdc = GetDC(nullptr);
+    void* pBits = nullptr;
+    HBITMAP hBitmap = CreateDIBSection(hdc, (BITMAPINFO*)&bi, DIB_RGB_COLORS, &pBits, nullptr, 0);
+    ReleaseDC(nullptr, hdc);
+
+    if (hBitmap && pBits) {
+        for (int i = 0; i < width * height; ++i) {
+            unsigned char* src = pixels + i * 4;
+            unsigned char* dst = (unsigned char*)pBits + i * 4;
+            dst[0] = src[2]; // B
+            dst[1] = src[1]; // G
+            dst[2] = src[0]; // R
+            dst[3] = src[3]; // A
+        }
+    }
+
+    HBITMAP hMonoBitmap = CreateBitmap(width, height, 1, 1, nullptr);
+
+    HICON hIcon = nullptr;
+    if (hBitmap && hMonoBitmap) {
+        ICONINFO ii = {};
+        ii.fIcon = TRUE;
+        ii.hbmMask = hMonoBitmap;
+        ii.hbmColor = hBitmap;
+        hIcon = CreateIconIndirect(&ii);
+    }
+
+    // 修复 C28183 警告：判断空指针后再释放
+    if (hBitmap) DeleteObject(hBitmap);
+    if (hMonoBitmap) DeleteObject(hMonoBitmap);
+    stbi_image_free(pixels);
+
+    return hIcon;
+}
+
 int main(int, char**) {
-    // 1. 初始化 Win32 高 DPI 与窗口
     ImGui_ImplWin32_EnableDpiAwareness();
     float scale = ImGui_ImplWin32_GetDpiScaleForMonitor(::MonitorFromPoint(POINT{ 0, 0 }, MONITOR_DEFAULTTOPRIMARY));
 
-    WNDCLASSEXW wc = { sizeof(wc), CS_CLASSDC, WndProc, 0L, 0L, GetModuleHandle(nullptr), nullptr, nullptr, nullptr, nullptr, L"LiquidGlassApp", nullptr };
+    HICON hIcon = CreateHIconFromMemory();
+
+    HINSTANCE hInstance = GetModuleHandle(nullptr);
+    WNDCLASSEXW wc = {
+        sizeof(wc),
+        CS_CLASSDC,
+        WndProc,
+        0L, 0L,
+        hInstance,
+        hIcon,                    // 大图标
+        nullptr,
+        nullptr,
+        nullptr,
+        L"LiquidGlassApp",
+        hIcon                     // 小图标
+    };
     ::RegisterClassExW(&wc);
 
     HWND hwnd = ::CreateWindowW(
-        wc.lpszClassName, L"BODYCAM TOOLKIT V3",
+        wc.lpszClassName, L"Bodycam工具箱V3",
         WS_THICKFRAME | WS_SYSMENU | WS_MAXIMIZEBOX | WS_MINIMIZEBOX,
         150, 150, (int)(1000 * scale), (int)(620 * scale),
         nullptr, nullptr, wc.hInstance, nullptr
@@ -50,20 +124,17 @@ int main(int, char**) {
     DwmSetWindowAttribute(hwnd, 19, &dark, sizeof(dark));
     EnableAcrylic(hwnd, 0x00000000);
 
-    // 2. 初始化 Direct3D 11
     if (!CreateDeviceD3D(hwnd)) {
         CleanupDeviceD3D();
         ::UnregisterClassW(wc.lpszClassName, wc.hInstance);
         return 1;
     }
 
-    // 初始化 AppRenderer 模块
     InitAppRenderer(hwnd, scale);
 
     ::ShowWindow(hwnd, SW_SHOWDEFAULT);
     ::UpdateWindow(hwnd);
 
-    // 3. 初始化 ImGui 上下文
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
@@ -77,7 +148,6 @@ int main(int, char**) {
     ImGui_ImplWin32_Init(hwnd);
     ImGui_ImplDX11_Init(g_pd3dDevice, g_pd3dDeviceContext);
 
-    // 4. 主循环
     bool done = false;
     while (!done) {
         MSG msg;
@@ -94,11 +164,11 @@ int main(int, char**) {
         }
         g_SwapChainOccluded = false;
 
-        // 使用安全的渲染函数
         SafeRenderFrame();
     }
 
-    // 5. 资源清理
+    if (hIcon) DestroyIcon(hIcon);
+
     ImGui_ImplDX11_Shutdown();
     ImGui_ImplWin32_Shutdown();
     ImGui::DestroyContext();
@@ -112,29 +182,25 @@ int main(int, char**) {
     return 0;
 }
 
-// 消息处理回调
+// 消息处理回调（补充被遗漏的实现）
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
     if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam)) return true;
 
     switch (msg) {
-    case WM_ENTERSIZEMOVE: {
-        // 开启 1ms 级别的最高频率 Timer 驱动拖动和拉伸时的实时刷新
+    case WM_ENTERSIZEMOVE:
         SetTimer(hWnd, 1, 1, nullptr);
         break;
-    }
-    case WM_EXITSIZEMOVE: {
+    case WM_EXITSIZEMOVE:
         KillTimer(hWnd, 1);
         break;
-    }
     case WM_MOVING:
     case WM_SIZING:
-    case WM_TIMER: {
+    case WM_TIMER:
         if (msg != WM_TIMER || wParam == 1) {
-            SafeRenderFrame(); // 实时驱动 SafeRenderFrame 重绘，解决雨滴停止和黑边断层问题！
+            SafeRenderFrame();
         }
         break;
-    }
     case WM_NCHITTEST: {
         POINT pt = { LOWORD(lParam), HIWORD(lParam) };
         ScreenToClient(hWnd, &pt);
@@ -142,7 +208,6 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
         const int bw = static_cast<int>(8.0f * g_Scale);
 
-        // 1. 八方向调整窗口大小边框
         if (pt.y < bw && pt.x < bw) return HTTOPLEFT;
         if (pt.y < bw && pt.x > rect.right - bw) return HTTOPRIGHT;
         if (pt.y > rect.bottom - bw && pt.x < bw) return HTBOTTOMLEFT;
@@ -152,12 +217,11 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         if (pt.y < bw) return HTTOP;
         if (pt.y > rect.bottom - bw) return HTBOTTOM;
 
-        // 2. 将 Header 顶部空白区域标记为原生标题栏（支持无抖动拖拽 + 原生双击最大化）
         float headerH = 42.0f * g_Scale;
-        float rightReservedW = 120.0f * g_Scale; // 预留右上角 Mac 控制按钮区域给 ImGui
+        float rightReservedW = 120.0f * g_Scale;
 
         if (pt.y >= bw && pt.y < headerH && pt.x < rect.right - rightReservedW) {
-            return HTCAPTION; // 告诉 Windows 这块就是标题栏！
+            return HTCAPTION;
         }
 
         return HTCLIENT;
