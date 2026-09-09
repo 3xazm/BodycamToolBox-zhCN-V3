@@ -6,6 +6,11 @@
 #include "imgui_impl_win32.h"
 #include "imgui_impl_dx11.h"
 
+// 引入 stb_image 解码库与图标十六进制数据
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+#include "BodycamAppIcon.h" // 你的二进制图标数据文件
+
 // 自定义模块
 #include "RainEffectPipeline.h"
 #include "Direct3D_Resource.h"
@@ -21,11 +26,51 @@ char g_SearchBuffer[128] = "";
 LiquidAnimationState g_LiquidState;
 
 static RainEffectPipeline g_RainPipeline;
+static ID3D11ShaderResourceView* g_pAppIconSRV = nullptr; // 存储图标纹理句柄
+
+// 从内存 Hex 数组创建 D3D11 纹理视图
+static void LoadAppIconTexture() {
+    if (!g_pd3dDevice || g_pAppIconSRV) return;
+
+    int width = 0, height = 0, channels = 0;
+    // 使用 stb_image 将内存中的 PNG Hex 转换为 RGBA 像素数据
+    unsigned char* pixels = stbi_load_from_memory(
+        BodycamAppIconData,
+        (int)BodycamAppIconDataSize,
+        &width, &height, &channels, 4
+    );
+    if (!pixels) return;
+
+    // 创建 D3D11 2D 纹理
+    D3D11_TEXTURE2D_DESC desc = {};
+    desc.Width = width;
+    desc.Height = height;
+    desc.MipLevels = 1;
+    desc.ArraySize = 1;
+    desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    desc.SampleDesc.Count = 1;
+    desc.Usage = D3D11_USAGE_DEFAULT;
+    desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+
+    D3D11_SUBRESOURCE_DATA subData = {};
+    subData.pSysMem = pixels;
+    subData.SysMemPitch = width * 4;
+
+    ID3D11Texture2D* pTexture = nullptr;
+    if (SUCCEEDED(g_pd3dDevice->CreateTexture2D(&desc, &subData, &pTexture))) {
+        g_pd3dDevice->CreateShaderResourceView(pTexture, nullptr, &g_pAppIconSRV);
+        pTexture->Release();
+    }
+
+    stbi_image_free(pixels); // 释放内存中的临时像素
+}
 
 void InitAppRenderer(HWND hwnd, float scale) {
     g_hWnd = hwnd;
     g_Scale = scale;
     g_RainPipeline.Init(g_pd3dDevice);
+
+    LoadAppIconTexture(); // 初始化 Icon 纹理
 }
 
 void RenderFrame() {
@@ -33,7 +78,6 @@ void RenderFrame() {
 
     ImGuiIO& io = ImGui::GetIO();
 
-    // 处理窗口尺寸改变时的 RenderTarget 调整
     if (g_ResizeWidth != 0 && g_ResizeHeight != 0) {
         CleanupRenderTarget();
         g_pSwapChain->ResizeBuffers(0, g_ResizeWidth, g_ResizeHeight, DXGI_FORMAT_UNKNOWN, 0);
@@ -62,14 +106,12 @@ void RenderFrame() {
 
     ImDrawList* drawList = ImGui::GetWindowDrawList();
 
-    // 绘制背景雨滴纹理
     if (g_RainPipeline.pSRV) {
         drawList->AddImage((ImTextureID)g_RainPipeline.pSRV, ImVec2(0, 0), io.DisplaySize);
     }
 
     ImVec2 windowSize = ImGui::GetWindowSize();
 
-    // 外层高光边框
     drawList->AddRect(
         ImVec2(0, 0), windowSize,
         IM_COL32(255, 255, 255, 80), 16.0f * g_Scale, 0, 1.5f * g_Scale
@@ -77,8 +119,6 @@ void RenderFrame() {
 
     // --- Header ---
     float headerH = 42.0f * g_Scale;
-
-    // 如果暂无图标变量，直接传 0（或者不传第 8 个参数，系统默认即为 0）
     RenderHeader(
         g_hWnd,
         drawList,
@@ -87,7 +127,7 @@ void RenderFrame() {
         headerH,
         g_SearchBuffer,
         IM_ARRAYSIZE(g_SearchBuffer),
-        0 // 暂无纹理时传 0，等完成 stb_image 加载纹理后再替换为你的 SRV 变量
+        (ImTextureID)g_pAppIconSRV // 传入加载好的 Icon 纹理
     );
 
     // --- 布局计算 ---
@@ -126,5 +166,9 @@ void RenderFrame() {
 }
 
 void ShutdownAppRenderer() {
+    if (g_pAppIconSRV) {
+        g_pAppIconSRV->Release();
+        g_pAppIconSRV = nullptr;
+    }
     g_RainPipeline.Shutdown();
 }

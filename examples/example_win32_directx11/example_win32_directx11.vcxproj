@@ -177,6 +177,7 @@
     <ClInclude Include="RainEffect.h" />
     <ClInclude Include="RainEffectPipeline.h" />
     <ClInclude Include="ResolutionPage.h" />
+    <ClInclude Include="stb_image.h" />
     <ClInclude Include="UI_Controls.h" />
     <ClInclude Include="UI_Header.h" />
     <ClInclude Include="UI_Sidebar.h" />
