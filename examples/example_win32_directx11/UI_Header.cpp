@@ -11,31 +11,34 @@ void RenderHeader(
     size_t searchBufferSize,
     ImTextureID iconTexture
 ) {
-    (void)headerH; // 显式标记未引用参数，彻底消除 C4100 警告
+    (void)headerH;
 
-    // 1. 左侧标题胶囊
-    ImVec2 titleCapsuleSize(220.0f * scale, 34.0f * scale); // 加长一点胶囊容纳 Icon
-    ImVec2 titlePos(16.0f * scale, 12.0f * scale);
-    drawList->AddRectFilled(titlePos, ImVec2(titlePos.x + titleCapsuleSize.x, titlePos.y + titleCapsuleSize.y), IM_COL32(255, 255, 255, 25), 17.0f * scale);
-    drawList->AddRect(titlePos, ImVec2(titlePos.x + titleCapsuleSize.x, titlePos.y + titleCapsuleSize.y), IM_COL32(255, 255, 255, 80), 17.0f * scale);
-
-    // 计算排版：Icon 大小与间距
-    float iconSize = 20.0f * scale;
-    float spacing = 8.0f * scale;
+    // 1. 左侧标题胶囊排版参数
+    float iconSize = 28.0f * scale;      // Icon 尺寸
+    float spacing = 12.0f * scale;       // Icon 与文字的间距
+    float paddingX = 16.0f * scale;     // 胶囊左右内边距
     const char* titleText = "Bodycam工具箱V3";
     ImVec2 titleTextSize = ImGui::CalcTextSize(titleText);
 
-    // 计算整体 (Icon + 间距 + 文字) 的总宽度，实现胶囊居中
-    float totalContentW = (iconTexture ? (iconSize + spacing) : 0.0f) + titleTextSize.x;
-    float startX = titlePos.x + (titleCapsuleSize.x - totalContentW) * 0.5f;
+    // 动态计算胶囊总宽度，避免固定宽度太长
+    float contentW = (iconTexture ? (iconSize + spacing) : 0.0f) + titleTextSize.x;
+    ImVec2 titleCapsuleSize(contentW + paddingX * 3.5f, 34.0f * scale);
+    ImVec2 titlePos(16.0f * scale, 12.0f * scale);
+
+    // 绘制胶囊背景与边框
+    drawList->AddRectFilled(titlePos, ImVec2(titlePos.x + titleCapsuleSize.x, titlePos.y + titleCapsuleSize.y), IM_COL32(255, 255, 255, 25), 17.0f * scale);
+    drawList->AddRect(titlePos, ImVec2(titlePos.x + titleCapsuleSize.x, titlePos.y + titleCapsuleSize.y), IM_COL32(255, 255, 255, 80), 17.0f * scale);
+
+    // 确定起点：从胶囊左边距（paddingX）开始依次绘制，保证 Icon 靠近左侧
+    float startX = titlePos.x + paddingX;
     float contentCenterY = titlePos.y + titleCapsuleSize.y * 0.5f;
 
-    // A. 绘制 Icon 图标
+    // A. 绘制 Icon 图标（紧靠左侧）
     if (iconTexture) {
         ImVec2 iconMin(startX, contentCenterY - iconSize * 0.5f);
         ImVec2 iconMax(startX + iconSize, contentCenterY + iconSize * 0.5f);
         drawList->AddImage(iconTexture, iconMin, iconMax);
-        startX += iconSize + spacing; // 绘制完 Icon 后将 X 坐标右移
+        startX += iconSize + spacing;
     }
 
     // B. 绘制标题文字
@@ -53,10 +56,7 @@ void RenderHeader(
     ImGui::InputTextWithHint("##Search", "搜索...", searchBuffer, searchBufferSize);
     ImGui::PopItemWidth();
 
-    // 3. 标题栏区域已由 WndProc 中的 WM_NCHITTEST (HTCAPTION) 原生支持
-    // 此处无需任何代码，系统会自动处理标题栏拖拽与双击最大化
-
-    // 4. 右侧 Mac 控制按钮
+    // 3. 右侧 Mac 控制按钮
     float circleR = 13.0f * scale;
     float btnY = 24.0f * scale;
     float rightBaseX = windowSize.x - 24.0f * scale;
