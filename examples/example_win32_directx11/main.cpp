@@ -2,6 +2,7 @@
 #include <windows.h>
 #include <dwmapi.h>
 #include <tchar.h>
+#include <gdiplus.h> // 使用 GDI+ 原生解码内存图片
 
 #include "imgui.h"
 #include "imgui_impl_win32.h"
@@ -11,17 +12,15 @@
 #include "Direct3D_Resource.h"
 #include "AppRenderer.h"
 
-// 引入 stb_image 解码库与图片内存数据
-#include "stb_image.h"
 #include "BodycamAppIcon.h"
 
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "dwmapi.lib")
+#pragma comment(lib, "gdiplus.lib") // 链接 GDI+ 库
 #pragma comment(linker, "/subsystem:windows /entry:mainCRTStartup")
 
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-// 渲染防重入标志
 static bool g_IsRendering = false;
 
 void SafeRenderFrame() {
@@ -31,67 +30,47 @@ void SafeRenderFrame() {
     g_IsRendering = false;
 }
 
-// 从 BodycamAppIcon.h 内存字节流动态创建 Win32 HICON
+// 使用 GDI+ 从内存中的 PNG/JPEG 字节流无损安全转换 HICON
 HICON CreateHIconFromMemory() {
-    int width = 0, height = 0, channels = 0;
-    unsigned char* pixels = stbi_load_from_memory(
-        BodycamAppIconData,
-        (int)BodycamAppIconDataSize,
-        &width, &height, &channels, 4
-    );
-    if (!pixels) return nullptr;
+    if (!BodycamAppIconData || BodycamAppIconDataSize == 0) return nullptr;
 
-    BITMAPV5HEADER bi = {};
-    bi.bV5Size = sizeof(BITMAPV5HEADER);
-    bi.bV5Width = width;
-    bi.bV5Height = -height; // Top-down
-    bi.bV5Planes = 1;
-    bi.bV5BitCount = 32;
-    bi.bV5Compression = BI_BITFIELDS;
-    bi.bV5RedMask = 0x00FF0000;
-    bi.bV5GreenMask = 0x0000FF00;
-    bi.bV5BlueMask = 0x000000FF;
-    bi.bV5AlphaMask = 0xFF000000;
+    HGLOBAL hMem = GlobalAlloc(GMEM_MOVEABLE, BodycamAppIconDataSize);
+    if (!hMem) return nullptr;
 
-    HDC hdc = GetDC(nullptr);
-    void* pBits = nullptr;
-    HBITMAP hBitmap = CreateDIBSection(hdc, (BITMAPINFO*)&bi, DIB_RGB_COLORS, &pBits, nullptr, 0);
-    ReleaseDC(nullptr, hdc);
-
-    if (hBitmap && pBits) {
-        for (int i = 0; i < width * height; ++i) {
-            unsigned char* src = pixels + i * 4;
-            unsigned char* dst = (unsigned char*)pBits + i * 4;
-            dst[0] = src[2]; // B
-            dst[1] = src[1]; // G
-            dst[2] = src[0]; // R
-            dst[3] = src[3]; // A
-        }
+    void* pMem = GlobalLock(hMem);
+    if (!pMem) {
+        GlobalFree(hMem);
+        return nullptr;
     }
+    memcpy(pMem, BodycamAppIconData, BodycamAppIconDataSize);
+    GlobalUnlock(hMem);
 
-    HBITMAP hMonoBitmap = CreateBitmap(width, height, 1, 1, nullptr);
+    IStream* pStream = nullptr;
+    if (FAILED(CreateStreamOnHGlobal(hMem, TRUE, &pStream))) {
+        return nullptr;
+    }
 
     HICON hIcon = nullptr;
-    if (hBitmap && hMonoBitmap) {
-        ICONINFO ii = {};
-        ii.fIcon = TRUE;
-        ii.hbmMask = hMonoBitmap;
-        ii.hbmColor = hBitmap;
-        hIcon = CreateIconIndirect(&ii);
+    Gdiplus::Bitmap* pBitmap = Gdiplus::Bitmap::FromStream(pStream);
+    if (pBitmap && pBitmap->GetLastStatus() == Gdiplus::Ok) {
+        pBitmap->GetHICON(&hIcon);
+        delete pBitmap;
     }
 
-    // 修复 C28183 警告：判断空指针后再释放
-    if (hBitmap) DeleteObject(hBitmap);
-    if (hMonoBitmap) DeleteObject(hMonoBitmap);
-    stbi_image_free(pixels);
-
+    pStream->Release(); // 释放内存流
     return hIcon;
 }
 
 int main(int, char**) {
+    // 1. 在程序启动时正确初始化 GDI+ 环境
+    Gdiplus::GdiplusStartupInput gdiplusStartupInput;
+    ULONG_PTR gdiplusToken = 0;
+    Gdiplus::GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, nullptr);
+
     ImGui_ImplWin32_EnableDpiAwareness();
     float scale = ImGui_ImplWin32_GetDpiScaleForMonitor(::MonitorFromPoint(POINT{ 0, 0 }, MONITOR_DEFAULTTOPRIMARY));
 
+    // 安全生成图标
     HICON hIcon = CreateHIconFromMemory();
 
     HINSTANCE hInstance = GetModuleHandle(nullptr);
@@ -127,6 +106,7 @@ int main(int, char**) {
     if (!CreateDeviceD3D(hwnd)) {
         CleanupDeviceD3D();
         ::UnregisterClassW(wc.lpszClassName, wc.hInstance);
+        Gdiplus::GdiplusShutdown(gdiplusToken);
         return 1;
     }
 
@@ -179,10 +159,13 @@ int main(int, char**) {
 
     ::DestroyWindow(hwnd);
     ::UnregisterClassW(wc.lpszClassName, wc.hInstance);
+
+    // 2. 退出前清理 GDI+
+    Gdiplus::GdiplusShutdown(gdiplusToken);
+
     return 0;
 }
 
-// 消息处理回调（补充被遗漏的实现）
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
     if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam)) return true;

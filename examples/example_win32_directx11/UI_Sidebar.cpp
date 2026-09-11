@@ -1,4 +1,8 @@
 #include "UI_Sidebar.h"
+#include "Animate_Icon.h"
+
+// 静态保存首页图标的动画状态
+static MorphIconState g_HomeIconState;
 
 void RenderSidebar(
     ImDrawList* drawList,
@@ -30,10 +34,24 @@ void RenderSidebar(
     ImVec2 optPositions[3];
 
     // 选项 0：首页
-    ImGui::SetCursorPos(ImVec2(sidebarPos.x + 10.0f * scale, sidebarPos.y + 12.0f * scale));
-    if (DrawSidebarOption("首页", currentTab == 0, ImVec2(optItemW, optItemH), &optPositions[0])) {
+    ImVec2 homeOptPos(sidebarPos.x + 10.0f * scale, sidebarPos.y + 12.0f * scale);
+    ImGui::SetCursorPos(homeOptPos);
+
+    // 给文字前面空出位置，放入矢量图标
+    if (DrawSidebarOption("   首页", currentTab == 0, ImVec2(optItemW, optItemH), &optPositions[0])) {
         currentTab = 0;
     }
+
+    // 在“首页”文字左侧绘制矢量 Morph 图标
+    ImVec2 iconCenter(homeOptPos.x + 22.0f * scale, homeOptPos.y + optItemH * 0.5f);
+    DrawMorphHomeIcon(
+        drawList,
+        iconCenter,
+        22.0f * scale, // 从 18.0f 调大到 22.0f，视觉冲击力刚刚好
+        (currentTab == 0),
+        g_HomeIconState,
+        deltaTime
+    );
 
     // 选项 1：分辨率修复
     ImGui::SetCursorPos(ImVec2(sidebarPos.x + 10.0f * scale, sidebarPos.y + 12.0f * scale + optItemH + 8.0f * scale));

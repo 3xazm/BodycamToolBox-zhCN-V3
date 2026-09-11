@@ -167,6 +167,7 @@
     <ClInclude Include="..\..\imgui_internal.h" />
     <ClInclude Include="..\..\backends\imgui_impl_dx11.h" />
     <ClInclude Include="..\..\backends\imgui_impl_win32.h" />
+    <ClInclude Include="Animate_Icon.h" />
     <ClInclude Include="AppRenderer.h" />
     <ClInclude Include="BackupPage.h" />
     <ClInclude Include="BodycamAppIcon.h" />
@@ -192,6 +193,7 @@
     <ClCompile Include="..\..\imgui_widgets.cpp" />
     <ClCompile Include="..\..\backends\imgui_impl_dx11.cpp" />
     <ClCompile Include="..\..\backends\imgui_impl_win32.cpp" />
+    <ClCompile Include="Animate_Icon.cpp" />
     <ClCompile Include="AppRenderer.cpp" />
     <ClCompile Include="BackupPage.cpp" />
     <ClCompile Include="DashboardPage.cpp" />
