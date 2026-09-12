@@ -64,9 +64,6 @@
     <Filter Include="Assets\BodycamAppIcon">
       <UniqueIdentifier>{3980adc3-ec9b-4ca6-bf1a-d5b5a7ce62af}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Assets\AnimateIcon">
-      <UniqueIdentifier>{6dad5c21-f8d6-4ab0-ba81-62dea5b5344c}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\imconfig.h">
@@ -130,9 +127,6 @@
       <Filter>Assets\BodycamAppIcon</Filter>
     </ClInclude>
     <ClInclude Include="stb_image.h" />
-    <ClInclude Include="Animate_Icon.h">
-      <Filter>Assets\AnimateIcon</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\imgui.cpp">
@@ -197,9 +191,6 @@
     </ClCompile>
     <ClCompile Include="UI_Header.cpp">
       <Filter>UI\Header 标题</Filter>
-    </ClCompile>
-    <ClCompile Include="Animate_Icon.cpp">
-      <Filter>Assets\AnimateIcon</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
