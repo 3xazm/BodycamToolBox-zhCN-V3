@@ -64,6 +64,12 @@
     <Filter Include="Assets\BodycamAppIcon">
       <UniqueIdentifier>{3980adc3-ec9b-4ca6-bf1a-d5b5a7ce62af}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Assets\SidebarIcon">
+      <UniqueIdentifier>{dc4b4b0b-46c8-450c-916c-e567c6a92ba0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\SidebarIcon\SidebarIcon_Home">
+      <UniqueIdentifier>{64fd287a-22a7-4c88-9255-a4f5e2db61a7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\imconfig.h">
@@ -127,6 +133,18 @@
       <Filter>Assets\BodycamAppIcon</Filter>
     </ClInclude>
     <ClInclude Include="stb_image.h" />
+    <ClInclude Include="SidebarIcon_HomeNoSelect.h">
+      <Filter>Assets\SidebarIcon\SidebarIcon_Home</Filter>
+    </ClInclude>
+    <ClInclude Include="SidebarIcon_HomeSelect.h">
+      <Filter>Assets\SidebarIcon\SidebarIcon_Home</Filter>
+    </ClInclude>
+    <ClInclude Include="IconTextureLoader.h">
+      <Filter>Assets\SidebarIcon</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimatedHomeIcon.h">
+      <Filter>Assets\SidebarIcon\SidebarIcon_Home</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\imgui.cpp">
