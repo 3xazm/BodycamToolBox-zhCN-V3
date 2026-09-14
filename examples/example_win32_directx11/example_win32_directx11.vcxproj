@@ -168,6 +168,7 @@
     <ClInclude Include="..\..\backends\imgui_impl_dx11.h" />
     <ClInclude Include="..\..\backends\imgui_impl_win32.h" />
     <ClInclude Include="AnimatedHomeIcon.h" />
+    <ClInclude Include="AnimatedResolutionIcon.h" />
     <ClInclude Include="AppRenderer.h" />
     <ClInclude Include="BackupPage.h" />
     <ClInclude Include="BodycamAppIcon.h" />
@@ -181,6 +182,8 @@
     <ClInclude Include="ResolutionPage.h" />
     <ClInclude Include="SidebarIcon_HomeNoSelect.h" />
     <ClInclude Include="SidebarIcon_HomeSelect.h" />
+    <ClInclude Include="SidebarIcon_ResolutionNoSelect.h" />
+    <ClInclude Include="SidebarIcon_ResolutionSelect.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="UI_Controls.h" />
     <ClInclude Include="UI_Header.h" />
@@ -196,6 +199,7 @@
     <ClCompile Include="..\..\imgui_widgets.cpp" />
     <ClCompile Include="..\..\backends\imgui_impl_dx11.cpp" />
     <ClCompile Include="..\..\backends\imgui_impl_win32.cpp" />
+    <ClCompile Include="AnimatedResolutionIcon.cpp" />
     <ClCompile Include="AppRenderer.cpp" />
     <ClCompile Include="BackupPage.cpp" />
     <ClCompile Include="DashboardPage.cpp" />

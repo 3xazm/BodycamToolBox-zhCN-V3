@@ -70,6 +70,9 @@
     <Filter Include="Assets\SidebarIcon\SidebarIcon_Home">
       <UniqueIdentifier>{64fd287a-22a7-4c88-9255-a4f5e2db61a7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Assets\SidebarIcon\SidebarIcon_Resolution">
+      <UniqueIdentifier>{45c5c8d6-1e31-4fdd-98f6-24b4754015ae}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\imconfig.h">
@@ -145,6 +148,15 @@
     <ClInclude Include="AnimatedHomeIcon.h">
       <Filter>Assets\SidebarIcon\SidebarIcon_Home</Filter>
     </ClInclude>
+    <ClInclude Include="SidebarIcon_ResolutionNoSelect.h">
+      <Filter>Assets\SidebarIcon\SidebarIcon_Resolution</Filter>
+    </ClInclude>
+    <ClInclude Include="SidebarIcon_ResolutionSelect.h">
+      <Filter>Assets\SidebarIcon\SidebarIcon_Resolution</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimatedResolutionIcon.h">
+      <Filter>Assets\SidebarIcon\SidebarIcon_Resolution</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\imgui.cpp">
@@ -209,6 +221,9 @@
     </ClCompile>
     <ClCompile Include="UI_Header.cpp">
       <Filter>UI\Header 标题</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimatedResolutionIcon.cpp">
+      <Filter>Assets\SidebarIcon\SidebarIcon_Resolution</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
