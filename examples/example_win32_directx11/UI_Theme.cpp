@@ -156,29 +156,26 @@ void RenderLiquidCapsule(
     drawList->AddPolyline(wavePoints, numSegments, IM_COL32(255, 255, 255, borderAlpha), ImDrawFlags_Closed, 1.5f);
 
     // ------------------------------------------------------------------------
-    // 5. 蓝色选中提示条 (增加悬停上下呼吸与伸缩动画)
+    // 5. 蓝色选中提示条 (靠最左侧边缘排版)
     // ------------------------------------------------------------------------
-    float blueOffsetY = 0.0f;  // Y轴呼吸平移偏移
-    float blueHeightExpand = 0.0f; // 高度扩张/收缩
-    int blueAlpha = 230;       // 基础透明度
+    float blueOffsetY = 0.0f;
+    float blueHeightExpand = 0.0f;
+    int blueAlpha = 230;
 
     if (isHoveringLiquid) {
-        // 当鼠标悬停时，利用正弦波 (sin) 计算上下上下浮动的呼吸效果
-        float breathTime = static_cast<float>(ImGui::GetTime()) * 5.0f; // 呼吸频率
-        blueOffsetY = std::sin(breathTime) * 2.5f * scale; // 上下平移 ±2.5px
-        blueHeightExpand = std::cos(breathTime * 0.8f) * 1.5f * scale; // 上下高度伸缩
-
-        // 透明度在 200 ~ 255 之间呼吸微调
+        float breathTime = static_cast<float>(ImGui::GetTime()) * 5.0f;
+        blueOffsetY = std::sin(breathTime) * 2.5f * scale;
+        blueHeightExpand = std::cos(breathTime * 0.8f) * 1.5f * scale;
         blueAlpha = static_cast<int>(225.0f + std::sin(breathTime * 0.5f) * 30.0f);
     }
 
-    // 计算蓝色提示条动态坐标
+    // 【修改核心】：将 X 轴坐标设为靠侧边栏最左侧边缘
     ImVec2 barMin(
-        liquidMin.x + 6.0f * scale,
+        sidebarPos.x + 3.0f * scale,  // 从原本的 liquidMin.x + 6.0f 改为靠最左侧 (3.0f)
         liquidMin.y + (8.0f * scale) + blueOffsetY - blueHeightExpand
     );
     ImVec2 barMax(
-        liquidMin.x + 11.0f * scale,
+        sidebarPos.x + 7.0f * scale,  // 宽度为 4px (7.0f - 3.0f)
         liquidMax.y - (8.0f * scale) + blueOffsetY + blueHeightExpand
     );
 

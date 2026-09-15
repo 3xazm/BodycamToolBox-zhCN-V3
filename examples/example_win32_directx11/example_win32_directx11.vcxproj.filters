@@ -73,6 +73,9 @@
     <Filter Include="Assets\SidebarIcon\SidebarIcon_Resolution">
       <UniqueIdentifier>{45c5c8d6-1e31-4fdd-98f6-24b4754015ae}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Assets\SidebarIcon\SidebarIcon_Settings">
+      <UniqueIdentifier>{621cfeb0-3ce5-412e-9d8d-b604c485cefe}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\imconfig.h">
@@ -157,6 +160,15 @@
     <ClInclude Include="AnimatedResolutionIcon.h">
       <Filter>Assets\SidebarIcon\SidebarIcon_Resolution</Filter>
     </ClInclude>
+    <ClInclude Include="SidebarIcon_SettingsNoSelect.h">
+      <Filter>Assets\SidebarIcon\SidebarIcon_Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="SidebarIcon_SettingsSelect.h">
+      <Filter>Assets\SidebarIcon\SidebarIcon_Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimatedSettingsIcon.h">
+      <Filter>Assets\SidebarIcon\SidebarIcon_Settings</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\imgui.cpp">
@@ -224,6 +236,9 @@
     </ClCompile>
     <ClCompile Include="AnimatedResolutionIcon.cpp">
       <Filter>Assets\SidebarIcon\SidebarIcon_Resolution</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimatedSettingsIcon.cpp">
+      <Filter>Assets\SidebarIcon\SidebarIcon_Settings</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

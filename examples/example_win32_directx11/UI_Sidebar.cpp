@@ -3,19 +3,25 @@
 #include "SidebarIcon_HomeNoSelect.h"
 #include "SidebarIcon_ResolutionSelect.h"
 #include "SidebarIcon_ResolutionNoSelect.h"
+#include "SidebarIcon_SettingsSelect.h"
+#include "SidebarIcon_SettingsNoSelect.h"
 #include "IconTextureLoader.h"
 #include "AnimatedHomeIcon.h"
 #include "AnimatedResolutionIcon.h"
+#include "AnimatedSettingsIcon.h"
 
 // 静态纹理句柄与图标动画状态
 static ImTextureID g_TexHomeSelect = (ImTextureID)0;
 static ImTextureID g_TexHomeNoSelect = (ImTextureID)0;
 static ImTextureID g_TexResSelect = (ImTextureID)0;
 static ImTextureID g_TexResNoSelect = (ImTextureID)0;
+static ImTextureID g_TexSettingsSelect = (ImTextureID)0;
+static ImTextureID g_TexSettingsNoSelect = (ImTextureID)0;
 static bool g_TextureLoadedAttempted = false; // 防止重复加载
 
 static AnimatedHomeIconState g_HomeIconState;
 static AnimatedResolutionIconState g_ResIconState;
+static AnimatedSettingsIconState g_SettingsIconState;
 
 // 引用 main.cpp 中的全局 D3D 设备
 extern ID3D11Device* g_pd3dDevice;
@@ -30,7 +36,7 @@ void RenderSidebar(
     float scale,
     float deltaTime
 ) {
-    // 0. 首次绘制时只加载一次 AOB 纹理数据
+    // 0. 首次绘制时加载所有侧边栏纹理数据
     if (!g_TextureLoadedAttempted && g_pd3dDevice) {
         g_TextureLoadedAttempted = true;
         // Home 图标纹理
@@ -39,6 +45,9 @@ void RenderSidebar(
         // Resolution 图标纹理
         g_TexResSelect = LoadTextureFromMemory(g_pd3dDevice, SidebarIcon_ResolutionSelectData, SidebarIcon_ResolutionSelectDataSize, 0);
         g_TexResNoSelect = LoadTextureFromMemory(g_pd3dDevice, SidebarIcon_ResolutionNoSelectData, SidebarIcon_ResolutionNoSelectDataSize, 3);
+        // Settings 图标纹理
+        g_TexSettingsSelect = LoadTextureFromMemory(g_pd3dDevice, SidebarIcon_SettingsSelectData, SidebarIcon_SettingsSelectDataSize, 0);
+        g_TexSettingsNoSelect = LoadTextureFromMemory(g_pd3dDevice, SidebarIcon_SettingsNoSelectData, SidebarIcon_SettingsNoSelectDataSize, 3);
     }
 
     // 1. 绘制侧边栏玻璃感背景与边框
@@ -114,9 +123,26 @@ void RenderSidebar(
     // ----------------------------------------------------
     // 选项 2：设置（固定在底部）
     // ----------------------------------------------------
-    ImGui::SetCursorPos(ImVec2(sidebarPos.x + 10.0f * scale, sidebarPos.y + contentH - optItemH - 12.0f * scale));
-    if (DrawSidebarOption("设置", currentTab == 2, ImVec2(optItemW, optItemH), &optPositions[2])) {
+    ImVec2 settingsOptPos(sidebarPos.x + 10.0f * scale, sidebarPos.y + contentH - optItemH - 12.0f * scale);
+    ImGui::SetCursorPos(settingsOptPos);
+    if (DrawSidebarOption("       设置", currentTab == 2, ImVec2(optItemW, optItemH), &optPositions[2])) {
         currentTab = 2;
+    }
+
+    if (g_TexSettingsSelect && g_TexSettingsNoSelect) {
+        float iconSize = 24.0f * scale;
+        ImVec2 settingsIconCenter(settingsOptPos.x + 22.0f * scale, settingsOptPos.y + optItemH * 0.5f);
+
+        DrawAnimatedSettingsIcon(
+            drawList,
+            settingsIconCenter,
+            iconSize,
+            currentTab == 2,
+            g_SettingsIconState,
+            g_TexSettingsNoSelect,
+            g_TexSettingsSelect,
+            deltaTime
+        );
     }
 
     // 3. 渲染液态流体胶囊与水痕效果
