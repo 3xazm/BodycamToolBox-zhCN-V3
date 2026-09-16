@@ -1,4 +1,8 @@
 #include "MainViews.h"
+#include "DashboardPage.h" // 1. 引入仪表盘头文件
+
+// 声明定义在 AppRenderer.cpp 中的全局 HWND
+extern HWND g_hWnd;
 
 void RenderMainViews(int currentTab, float scale) {
     switch (currentTab) {
@@ -17,9 +21,8 @@ void RenderMainViews(int currentTab, float scale) {
 }
 
 void RenderHomeView(float scale) {
-    ImGui::Text("右侧内容面板");
-    ImGui::Separator();
-    ImGui::Text("欢迎使用全新的液态玻璃界面系统。");
+    // 2. 将原本的简单文本替换为 DashboardPage 逻辑
+    RenderDashboardPage(g_hWnd, scale);
 }
 
 void RenderResolutionFixView(float scale) {
