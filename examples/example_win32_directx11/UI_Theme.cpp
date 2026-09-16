@@ -7,14 +7,18 @@
 void SetupAppleGlassTheme(float scale) {
     ImGuiStyle& style = ImGui::GetStyle();
 
-    style.WindowRounding = 16.0f * scale;      // 主窗口圆角
-    style.ChildRounding = 12.0f * scale;       // 子窗口圆角
-    style.FrameRounding = 8.0f * scale;        // 控件圆角
-    style.PopupRounding = 10.0f * scale;       // 弹窗圆角
-    style.ScrollbarRounding = 10.0f * scale;   // 滚动条圆角
-    style.GrabRounding = 8.0f * scale;        // 抓手圆角
-    style.WindowBorderSize = 0.0f;             // 无主边框
-    style.ChildBorderSize = 1.0f;              // 子窗口 1px 半透明边框
+    style.WindowRounding = 16.0f * scale;
+    style.ChildRounding = 12.0f * scale;
+    style.FrameRounding = 8.0f * scale;
+    style.PopupRounding = 10.0f * scale;
+    style.ScrollbarRounding = 10.0f * scale;
+    style.GrabRounding = 8.0f * scale;
+
+    // 【核心新增】：把滚动条宽度变细为 6px（按缩放适配）
+    style.ScrollbarSize = 6.0f * scale;
+
+    style.WindowBorderSize = 0.0f;
+    style.ChildBorderSize = 1.0f;
 
     ImVec4* colors = style.Colors;
     colors[ImGuiCol_WindowBg] = ImVec4(0.08f, 0.10f, 0.12f, 0.30f);
@@ -24,6 +28,12 @@ void SetupAppleGlassTheme(float scale) {
     colors[ImGuiCol_FrameBgHovered] = ImVec4(1.00f, 1.00f, 1.00f, 0.20f);
     colors[ImGuiCol_FrameBgActive] = ImVec4(1.00f, 1.00f, 1.00f, 0.30f);
     colors[ImGuiCol_Text] = ImVec4(0.95f, 0.96f, 0.98f, 1.00f);
+
+    // 【新增】：匹配苹果玻璃风的滚动条颜色（透明背景 + 半透明滑块）
+    colors[ImGuiCol_ScrollbarBg] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f); // 槽位背景全透明
+    colors[ImGuiCol_ScrollbarGrab] = ImVec4(1.00f, 1.00f, 1.00f, 0.15f); // 默认微亮白
+    colors[ImGuiCol_ScrollbarGrabHovered] = ImVec4(1.00f, 1.00f, 1.00f, 0.30f); // 鼠标悬停
+    colors[ImGuiCol_ScrollbarGrabActive] = ImVec4(1.00f, 1.00f, 1.00f, 0.50f); // 拖拽中
 }
 
 // 渲染液态流体胶囊与水痕系统 (含蓝色提示条上下呼吸动画)
