@@ -1,7 +1,7 @@
 #include "MainViews.h"
-#include "DashboardPage.h" // 1. 引入仪表盘头文件
+#include "DashboardPage.h"
+#include "ResolutionPage.h" // 1. 包含 ResolutionPage 头文件
 
-// 声明定义在 AppRenderer.cpp 中的全局 HWND
 extern HWND g_hWnd;
 
 void RenderMainViews(int currentTab, float scale) {
@@ -10,7 +10,7 @@ void RenderMainViews(int currentTab, float scale) {
         RenderHomeView(scale);
         break;
     case 1:
-        RenderResolutionFixView(scale);
+        RenderResolutionFixView(scale); // 当 currentTab 为 1 时调用
         break;
     case 2:
         RenderSettingsView(scale);
@@ -21,13 +21,15 @@ void RenderMainViews(int currentTab, float scale) {
 }
 
 void RenderHomeView(float scale) {
-    // 2. 将原本的简单文本替换为 DashboardPage 逻辑
     RenderDashboardPage(g_hWnd, scale);
 }
 
 void RenderResolutionFixView(float scale) {
-    ImGui::Text("分辨率修复设置模块");
-    ImGui::Separator();
+    // 2. 使用 static 保证对象生命周期贯穿整个程序，避免每帧重复创建与状态丢失
+    static ResolutionPage g_ResolutionPage;
+
+    // 3. 调用类的 Render() 方法完成界面与交互绘制
+    g_ResolutionPage.Render();
 }
 
 void RenderSettingsView(float scale) {
