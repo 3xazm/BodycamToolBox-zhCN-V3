@@ -101,6 +101,7 @@ void RenderFrame() {
         ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
         ImGuiWindowFlags_NoBringToFrontOnFocus;
 
+    // 【1】压入窗口 Padding 样式
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(12 * g_Scale, 12 * g_Scale));
     ImGui::Begin("MainWindow", nullptr, flags);
 
@@ -127,7 +128,7 @@ void RenderFrame() {
         headerH,
         g_SearchBuffer,
         IM_ARRAYSIZE(g_SearchBuffer),
-        (ImTextureID)g_pAppIconSRV // 传入加载好的 Icon 纹理
+        (ImTextureID)g_pAppIconSRV
     );
 
     // --- 布局计算 ---
@@ -143,18 +144,47 @@ void RenderFrame() {
     float mainX = sidebarPos.x + sidebarW + 16.0f * g_Scale;
     float mainW = windowSize.x - mainX - 16.0f * g_Scale;
 
-    ImGui::SetCursorPos(ImVec2(mainX, contentStartY));
+    // ================= Win11 平滑轻弹动画逻辑 =================
+    static int s_LastTab = g_CurrentTab;
+    static float s_AnimProgress = 1.0f;
+
+    if (s_LastTab != g_CurrentTab) {
+        s_LastTab = g_CurrentTab;
+        s_AnimProgress = 0.0f;
+    }
+
+    if (s_AnimProgress < 1.0f) {
+        s_AnimProgress += io.DeltaTime * 4.5f;
+        if (s_AnimProgress > 1.0f) s_AnimProgress = 1.0f;
+    }
+
+    float progress = (std::min)(1.0f, (std::max)(0.0f, s_AnimProgress));
+    float invProgress = 1.0f - progress;
+    float eased = 1.0f - (invProgress * invProgress * invProgress);
+
+    float alpha = (std::min)(1.0f, (std::max)(0.0f, eased));
+    float offsetY = (1.0f - eased) * (20.0f * g_Scale);
+
+    ImGui::SetCursorPos(ImVec2(mainX, contentStartY + offsetY));
+
+    // 【2】压入 Alpha 动画样式
+    ImGui::PushStyleVar(ImGuiStyleVar_Alpha, alpha);
 
     if (ImGui::BeginChild("MainContentPanel", ImVec2(mainW, contentH), true)) {
         RenderMainViews(g_CurrentTab, g_Scale);
     }
-
     ImGui::EndChild();
-    ImGui::End();
-    ImGui::PopStyleVar();
+
+    // 【3】还原 Alpha 样式
+    ImGui::PopStyleVar(1);
+
+    ImGui::End(); // 结束 MainWindow
+
+    // 【关键修复】：还原开头的 WindowPadding 样式！
+    ImGui::PopStyleVar(1);
 
     // 3. D3D11 最终呈现
-    ImGui::Render();
+    ImGui::Render(); // 现在 Style 栈完全对齐，不再爆炸！
     const float clear_color[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
 
     g_pd3dDeviceContext->OMSetBlendState(g_pBlendState, nullptr, 0xffffffff);
