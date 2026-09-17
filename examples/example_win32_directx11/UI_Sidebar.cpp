@@ -67,7 +67,7 @@ void RenderSidebar(
     // 2. 布局计算与选项渲染
     float optItemW = sidebarW - 20.0f * scale;
     float optItemH = 38.0f * scale;
-    ImVec2 optPositions[3];
+    ImVec2 optPositions[4];
 
     // ----------------------------------------------------
     // 选项 0：首页
@@ -121,12 +121,21 @@ void RenderSidebar(
     }
 
     // ----------------------------------------------------
-    // 选项 2：设置（固定在底部）
+    // 选项 2：存档备份
+    // ----------------------------------------------------
+    ImVec2 backupOptPos(sidebarPos.x + 10.0f * scale, sidebarPos.y + 12.0f * scale + (optItemH + 8.0f * scale) * 2);
+    ImGui::SetCursorPos(backupOptPos);
+    if (DrawSidebarOption("       存档备份", currentTab == 2, ImVec2(optItemW, optItemH), &optPositions[2])) {
+        currentTab = 2;
+    }
+
+    // ----------------------------------------------------
+    // 选项 3：设置（固定在底部）
     // ----------------------------------------------------
     ImVec2 settingsOptPos(sidebarPos.x + 10.0f * scale, sidebarPos.y + contentH - optItemH - 12.0f * scale);
     ImGui::SetCursorPos(settingsOptPos);
-    if (DrawSidebarOption("       设置", currentTab == 2, ImVec2(optItemW, optItemH), &optPositions[2])) {
-        currentTab = 2;
+    if (DrawSidebarOption("       设置", currentTab == 3, ImVec2(optItemW, optItemH), &optPositions[3])) {
+        currentTab = 3;
     }
 
     if (g_TexSettingsSelect && g_TexSettingsNoSelect) {
@@ -137,7 +146,7 @@ void RenderSidebar(
             drawList,
             settingsIconCenter,
             iconSize,
-            currentTab == 2,
+            currentTab == 3,
             g_SettingsIconState,
             g_TexSettingsNoSelect,
             g_TexSettingsSelect,

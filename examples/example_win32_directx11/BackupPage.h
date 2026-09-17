@@ -1,5 +1,10 @@
 #pragma once
+#include "imgui.h"
 
-// 声明画质与画幅页面的渲染函数
-// 传入 main_scale 以便在页面内处理 DPI 缩放控件
-void RenderResolutionPage(float main_scale);
+class BackupPage {
+public:
+    BackupPage() = default;
+    ~BackupPage() = default;
+
+    void Render();
+};

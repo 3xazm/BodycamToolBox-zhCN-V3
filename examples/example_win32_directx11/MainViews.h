@@ -7,4 +7,5 @@ void RenderMainViews(int currentTab, float scale);
 // 各个子页面的绘制函数
 void RenderHomeView(float scale);
 void RenderResolutionFixView(float scale);
+void RenderBackupView(float scale);
 void RenderSettingsView(float scale);
