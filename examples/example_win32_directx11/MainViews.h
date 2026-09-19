@@ -8,4 +8,5 @@ void RenderMainViews(int currentTab, float scale);
 void RenderHomeView(float scale);
 void RenderResolutionFixView(float scale);
 void RenderBackupView(float scale);
+void RenderLocalizationView(float scale);
 void RenderSettingsView(float scale);

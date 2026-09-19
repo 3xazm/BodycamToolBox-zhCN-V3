@@ -67,7 +67,7 @@ void RenderSidebar(
     // 2. 布局计算与选项渲染
     float optItemW = sidebarW - 20.0f * scale;
     float optItemH = 38.0f * scale;
-    ImVec2 optPositions[4];
+    ImVec2 optPositions[5];
 
     // ----------------------------------------------------
     // 选项 0：首页
@@ -130,12 +130,21 @@ void RenderSidebar(
     }
 
     // ----------------------------------------------------
-    // 选项 3：设置（固定在底部）
+    // 【新增】选项 3：游戏汉化
+    // ----------------------------------------------------
+    ImVec2 locOptPos(sidebarPos.x + 10.0f * scale, sidebarPos.y + 12.0f * scale + (optItemH + 8.0f * scale) * 3);
+    ImGui::SetCursorPos(locOptPos);
+    if (DrawSidebarOption("       游戏汉化", currentTab == 3, ImVec2(optItemW, optItemH), &optPositions[3])) {
+        currentTab = 3;
+    }
+
+    // ----------------------------------------------------
+    // 选项 4：设置（固定在底部）
     // ----------------------------------------------------
     ImVec2 settingsOptPos(sidebarPos.x + 10.0f * scale, sidebarPos.y + contentH - optItemH - 12.0f * scale);
     ImGui::SetCursorPos(settingsOptPos);
-    if (DrawSidebarOption("       设置", currentTab == 3, ImVec2(optItemW, optItemH), &optPositions[3])) {
-        currentTab = 3;
+    if (DrawSidebarOption("       设置", currentTab == 4, ImVec2(optItemW, optItemH), &optPositions[4])) {
+        currentTab = 4;
     }
 
     if (g_TexSettingsSelect && g_TexSettingsNoSelect) {
@@ -146,7 +155,7 @@ void RenderSidebar(
             drawList,
             settingsIconCenter,
             iconSize,
-            currentTab == 3,
+            currentTab == 4,
             g_SettingsIconState,
             g_TexSettingsNoSelect,
             g_TexSettingsSelect,
