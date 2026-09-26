@@ -167,7 +167,9 @@
     <ClInclude Include="..\..\imgui_internal.h" />
     <ClInclude Include="..\..\backends\imgui_impl_dx11.h" />
     <ClInclude Include="..\..\backends\imgui_impl_win32.h" />
+    <ClInclude Include="AnimatedBackupIcon.h" />
     <ClInclude Include="AnimatedHomeIcon.h" />
+    <ClInclude Include="AnimatedLocalizationIcon.h" />
     <ClInclude Include="AnimatedResolutionIcon.h" />
     <ClInclude Include="AnimatedSettingsIcon.h" />
     <ClInclude Include="AppRenderer.h" />
@@ -181,8 +183,11 @@
     <ClInclude Include="RainEffect.h" />
     <ClInclude Include="RainEffectPipeline.h" />
     <ClInclude Include="ResolutionPage.h" />
+    <ClInclude Include="SidebarIcon_BackupSelect.h" />
     <ClInclude Include="SidebarIcon_HomeNoSelect.h" />
     <ClInclude Include="SidebarIcon_HomeSelect.h" />
+    <ClInclude Include="SidebarIcon_LocalizationNoSelect.h" />
+    <ClInclude Include="SidebarIcon_LocalizationSelect.h" />
     <ClInclude Include="SidebarIcon_ResolutionNoSelect.h" />
     <ClInclude Include="SidebarIcon_ResolutionSelect.h" />
     <ClInclude Include="SidebarIcon_SettingsNoSelect.h" />
@@ -202,6 +207,8 @@
     <ClCompile Include="..\..\imgui_widgets.cpp" />
     <ClCompile Include="..\..\backends\imgui_impl_dx11.cpp" />
     <ClCompile Include="..\..\backends\imgui_impl_win32.cpp" />
+    <ClCompile Include="AnimatedBackupIcon.cpp" />
+    <ClCompile Include="AnimatedLocalizationIcon.cpp" />
     <ClCompile Include="AnimatedResolutionIcon.cpp" />
     <ClCompile Include="AnimatedSettingsIcon.cpp" />
     <ClCompile Include="AppRenderer.cpp" />
@@ -213,6 +220,7 @@
     <ClCompile Include="MainViews.cpp" />
     <ClCompile Include="RainEffect.cpp" />
     <ClCompile Include="ResolutionPage.cpp" />
+    <ClCompile Include="SidebarIcon_BackupNoSelect.h" />
     <ClCompile Include="UI_Controls.cpp" />
     <ClCompile Include="UI_Header.cpp" />
     <ClCompile Include="UI_Sidebar.cpp" />

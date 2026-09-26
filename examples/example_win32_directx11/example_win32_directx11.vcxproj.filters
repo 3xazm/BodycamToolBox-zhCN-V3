@@ -76,6 +76,12 @@
     <Filter Include="Assets\SidebarIcon\SidebarIcon_Settings">
       <UniqueIdentifier>{621cfeb0-3ce5-412e-9d8d-b604c485cefe}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Assets\SidebarIcon\SidebarIcon_Backup">
+      <UniqueIdentifier>{ce07390b-5c92-46ab-9565-a35bc122a8da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\SidebarIcon\SidebarIcon_Localization">
+      <UniqueIdentifier>{cfe744d7-05fd-4c3e-81e6-3250133cd73c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\imconfig.h">
@@ -169,6 +175,21 @@
     <ClInclude Include="AnimatedSettingsIcon.h">
       <Filter>Assets\SidebarIcon\SidebarIcon_Settings</Filter>
     </ClInclude>
+    <ClInclude Include="SidebarIcon_BackupSelect.h">
+      <Filter>Assets\SidebarIcon\SidebarIcon_Backup</Filter>
+    </ClInclude>
+    <ClInclude Include="SidebarIcon_LocalizationNoSelect.h">
+      <Filter>Assets\SidebarIcon\SidebarIcon_Localization</Filter>
+    </ClInclude>
+    <ClInclude Include="SidebarIcon_LocalizationSelect.h">
+      <Filter>Assets\SidebarIcon\SidebarIcon_Localization</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimatedBackupIcon.h">
+      <Filter>Assets\SidebarIcon\SidebarIcon_Backup</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimatedLocalizationIcon.h">
+      <Filter>Assets\SidebarIcon\SidebarIcon_Localization</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\imgui.cpp">
@@ -239,6 +260,15 @@
     </ClCompile>
     <ClCompile Include="AnimatedSettingsIcon.cpp">
       <Filter>Assets\SidebarIcon\SidebarIcon_Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="SidebarIcon_BackupNoSelect.h">
+      <Filter>Assets\SidebarIcon\SidebarIcon_Backup</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimatedBackupIcon.cpp">
+      <Filter>Assets\SidebarIcon\SidebarIcon_Backup</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimatedLocalizationIcon.cpp">
+      <Filter>Assets\SidebarIcon\SidebarIcon_Localization</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -3,11 +3,17 @@
 #include "SidebarIcon_HomeNoSelect.h"
 #include "SidebarIcon_ResolutionSelect.h"
 #include "SidebarIcon_ResolutionNoSelect.h"
+#include "SidebarIcon_BackupSelect.h"   
+#include "SidebarIcon_BackupNoSelect.h" 
+#include "SidebarIcon_LocalizationSelect.h"   
+#include "SidebarIcon_LocalizationNoSelect.h"
 #include "SidebarIcon_SettingsSelect.h"
 #include "SidebarIcon_SettingsNoSelect.h"
 #include "IconTextureLoader.h"
 #include "AnimatedHomeIcon.h"
 #include "AnimatedResolutionIcon.h"
+#include "AnimatedBackupIcon.h"
+#include "AnimatedLocalizationIcon.h"
 #include "AnimatedSettingsIcon.h"
 
 // 静态纹理句柄与图标动画状态
@@ -15,12 +21,18 @@ static ImTextureID g_TexHomeSelect = (ImTextureID)0;
 static ImTextureID g_TexHomeNoSelect = (ImTextureID)0;
 static ImTextureID g_TexResSelect = (ImTextureID)0;
 static ImTextureID g_TexResNoSelect = (ImTextureID)0;
+static ImTextureID g_TexBackupSelect = (ImTextureID)0;
+static ImTextureID g_TexBackupNoSelect = (ImTextureID)0;
+static ImTextureID g_TexLocSelect = (ImTextureID)0;   
+static ImTextureID g_TexLocNoSelect = (ImTextureID)0;
 static ImTextureID g_TexSettingsSelect = (ImTextureID)0;
 static ImTextureID g_TexSettingsNoSelect = (ImTextureID)0;
 static bool g_TextureLoadedAttempted = false; // 防止重复加载
 
 static AnimatedHomeIconState g_HomeIconState;
 static AnimatedResolutionIconState g_ResIconState;
+static AnimatedBackupIconState g_BackupIconState;
+static AnimatedLocalizationIconState g_LocIconState;
 static AnimatedSettingsIconState g_SettingsIconState;
 
 // 引用 main.cpp 中的全局 D3D 设备
@@ -45,6 +57,12 @@ void RenderSidebar(
         // Resolution 图标纹理
         g_TexResSelect = LoadTextureFromMemory(g_pd3dDevice, SidebarIcon_ResolutionSelectData, SidebarIcon_ResolutionSelectDataSize, 0);
         g_TexResNoSelect = LoadTextureFromMemory(g_pd3dDevice, SidebarIcon_ResolutionNoSelectData, SidebarIcon_ResolutionNoSelectDataSize, 3);
+		// Backup 图标纹理
+        g_TexBackupSelect = LoadTextureFromMemory(g_pd3dDevice, SidebarIcon_BackupSelectData, SidebarIcon_BackupSelectDataSize, 0);
+        g_TexBackupNoSelect = LoadTextureFromMemory(g_pd3dDevice, SidebarIcon_BackupNoSelectData, SidebarIcon_BackupNoSelectDataSize, 3);
+		// Localization 图标纹理
+        g_TexLocSelect = LoadTextureFromMemory(g_pd3dDevice, SidebarIcon_LocalizationSelectData, SidebarIcon_LocalizationSelectDataSize, 0);
+        g_TexLocNoSelect = LoadTextureFromMemory(g_pd3dDevice, SidebarIcon_LocalizationNoSelectData, SidebarIcon_LocalizationNoSelectDataSize, 3);
         // Settings 图标纹理
         g_TexSettingsSelect = LoadTextureFromMemory(g_pd3dDevice, SidebarIcon_SettingsSelectData, SidebarIcon_SettingsSelectDataSize, 0);
         g_TexSettingsNoSelect = LoadTextureFromMemory(g_pd3dDevice, SidebarIcon_SettingsNoSelectData, SidebarIcon_SettingsNoSelectDataSize, 3);
@@ -128,14 +146,47 @@ void RenderSidebar(
     if (DrawSidebarOption("       存档备份", currentTab == 2, ImVec2(optItemW, optItemH), &optPositions[2])) {
         currentTab = 2;
     }
+    
+    if (g_TexBackupSelect && g_TexBackupNoSelect) {
+        float iconSize = 20.0f * scale;
+        ImVec2 backupIconCenter(backupOptPos.x + 22.0f * scale, backupOptPos.y + optItemH * 0.5f);
+
+        // <-- 3. 调用动画绘制函数
+        DrawAnimatedBackupIcon(
+            drawList,
+            backupIconCenter,
+            iconSize,
+            currentTab == 2,
+            g_BackupIconState,
+            g_TexBackupNoSelect,
+            g_TexBackupSelect,
+            deltaTime
+        );
+    }
 
     // ----------------------------------------------------
-    // 【新增】选项 3：游戏汉化
+    // 选项 3：游戏汉化
     // ----------------------------------------------------
     ImVec2 locOptPos(sidebarPos.x + 10.0f * scale, sidebarPos.y + 12.0f * scale + (optItemH + 8.0f * scale) * 3);
     ImGui::SetCursorPos(locOptPos);
     if (DrawSidebarOption("       游戏汉化", currentTab == 3, ImVec2(optItemW, optItemH), &optPositions[3])) {
         currentTab = 3;
+    }
+
+    if (g_TexLocSelect && g_TexLocNoSelect) {
+        float iconSize = 20.0f * scale;
+        ImVec2 locIconCenter(locOptPos.x + 22.0f * scale, locOptPos.y + optItemH * 0.5f);
+
+        DrawAnimatedLocalizationIcon(
+            drawList,
+            locIconCenter,
+            iconSize,
+            currentTab == 3,
+            g_LocIconState,
+            g_TexLocNoSelect,
+            g_TexLocSelect,
+            deltaTime
+        );
     }
 
     // ----------------------------------------------------
