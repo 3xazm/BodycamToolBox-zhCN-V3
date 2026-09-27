@@ -182,7 +182,9 @@
     <ClInclude Include="MainViews.h" />
     <ClInclude Include="RainEffect.h" />
     <ClInclude Include="RainEffectPipeline.h" />
+    <ClInclude Include="ResolutionModel.h" />
     <ClInclude Include="ResolutionPage.h" />
+    <ClInclude Include="ResolutionStyle.h" />
     <ClInclude Include="SidebarIcon_BackupSelect.h" />
     <ClInclude Include="SidebarIcon_HomeNoSelect.h" />
     <ClInclude Include="SidebarIcon_HomeSelect.h" />
@@ -219,7 +221,9 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainViews.cpp" />
     <ClCompile Include="RainEffect.cpp" />
+    <ClCompile Include="ResolutionModel.cpp" />
     <ClCompile Include="ResolutionPage.cpp" />
+    <ClCompile Include="ResolutionStyle.cpp" />
     <ClCompile Include="SidebarIcon_BackupNoSelect.h" />
     <ClCompile Include="UI_Controls.cpp" />
     <ClCompile Include="UI_Header.cpp" />

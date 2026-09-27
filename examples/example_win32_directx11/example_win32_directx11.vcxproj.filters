@@ -190,6 +190,12 @@
     <ClInclude Include="AnimatedLocalizationIcon.h">
       <Filter>Assets\SidebarIcon\SidebarIcon_Localization</Filter>
     </ClInclude>
+    <ClInclude Include="ResolutionStyle.h">
+      <Filter>MainViewsPages\Pages\2-Resolution</Filter>
+    </ClInclude>
+    <ClInclude Include="ResolutionModel.h">
+      <Filter>MainViewsPages\Pages\2-Resolution</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\imgui.cpp">
@@ -269,6 +275,12 @@
     </ClCompile>
     <ClCompile Include="AnimatedLocalizationIcon.cpp">
       <Filter>Assets\SidebarIcon\SidebarIcon_Localization</Filter>
+    </ClCompile>
+    <ClCompile Include="ResolutionStyle.cpp">
+      <Filter>MainViewsPages\Pages\2-Resolution</Filter>
+    </ClCompile>
+    <ClCompile Include="ResolutionModel.cpp">
+      <Filter>MainViewsPages\Pages\2-Resolution</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
