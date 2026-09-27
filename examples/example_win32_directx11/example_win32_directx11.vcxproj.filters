@@ -19,9 +19,6 @@
     <Filter Include="UI\Theme">
       <UniqueIdentifier>{d6ddbf3a-5905-46c5-bcc1-579a9dd20453}</UniqueIdentifier>
     </Filter>
-    <Filter Include="UI\Views">
-      <UniqueIdentifier>{1b1562ae-1410-4ec6-a61e-1ea3c7564a97}</UniqueIdentifier>
-    </Filter>
     <Filter Include="curseFiles绑定">
       <UniqueIdentifier>{657b841d-fff3-44af-9276-f608d71600d7}</UniqueIdentifier>
     </Filter>
@@ -42,24 +39,6 @@
     </Filter>
     <Filter Include="UI\Sidebar 侧边栏 %28左%29">
       <UniqueIdentifier>{990b0807-6795-4957-889c-0634a13b6999}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="MainViewsPages">
-      <UniqueIdentifier>{a0e64b2b-0f56-41d1-a7f0-dcae6e6067c4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="MainViewsPages\Pages">
-      <UniqueIdentifier>{8bd37514-25bc-49ff-8799-ad959aaa9ea6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="MainViewsPages\Pages\1-Dashboard">
-      <UniqueIdentifier>{166fe94d-cff7-4006-8be4-7469a701c8ad}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="MainViewsPages\Pages\2-Resolution">
-      <UniqueIdentifier>{2ad15eee-5ddf-4c25-9d02-a9cc51f4ff2e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="MainViewsPages\Pages\3-Backup">
-      <UniqueIdentifier>{a127abc1-fbfc-49d8-9963-ae83536a2e9e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="MainViewsPages\Pages\4-Localization">
-      <UniqueIdentifier>{6e8a7e65-f3d7-4519-9ac9-390f117f756d}</UniqueIdentifier>
     </Filter>
     <Filter Include="Assets\BodycamAppIcon">
       <UniqueIdentifier>{3980adc3-ec9b-4ca6-bf1a-d5b5a7ce62af}</UniqueIdentifier>
@@ -82,6 +61,30 @@
     <Filter Include="Assets\SidebarIcon\SidebarIcon_Localization">
       <UniqueIdentifier>{cfe744d7-05fd-4c3e-81e6-3250133cd73c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="UI\MainViewsPages">
+      <UniqueIdentifier>{a0e64b2b-0f56-41d1-a7f0-dcae6e6067c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\MainViewsPages\Pages">
+      <UniqueIdentifier>{8bd37514-25bc-49ff-8799-ad959aaa9ea6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\MainViewsPages\Pages\1-Dashboard">
+      <UniqueIdentifier>{166fe94d-cff7-4006-8be4-7469a701c8ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\MainViewsPages\Pages\2-Resolution">
+      <UniqueIdentifier>{2ad15eee-5ddf-4c25-9d02-a9cc51f4ff2e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\MainViewsPages\Pages\3-Backup">
+      <UniqueIdentifier>{a127abc1-fbfc-49d8-9963-ae83536a2e9e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\MainViewsPages\Pages\4-Localization">
+      <UniqueIdentifier>{6e8a7e65-f3d7-4519-9ac9-390f117f756d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\MainViewsPages\Settings">
+      <UniqueIdentifier>{dd2f88fb-93e1-4b5c-8fc1-febf42894d0e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\MainViews">
+      <UniqueIdentifier>{1b1562ae-1410-4ec6-a61e-1ea3c7564a97}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\imconfig.h">
@@ -100,16 +103,16 @@
       <Filter>sources</Filter>
     </ClInclude>
     <ClInclude Include="DashboardPage.h">
-      <Filter>MainViewsPages\Pages\1-Dashboard</Filter>
+      <Filter>UI\MainViewsPages\Pages\1-Dashboard</Filter>
     </ClInclude>
     <ClInclude Include="ResolutionPage.h">
-      <Filter>MainViewsPages\Pages\2-Resolution</Filter>
+      <Filter>UI\MainViewsPages\Pages\2-Resolution</Filter>
     </ClInclude>
     <ClInclude Include="BackupPage.h">
-      <Filter>MainViewsPages\Pages\3-Backup</Filter>
+      <Filter>UI\MainViewsPages\Pages\3-Backup</Filter>
     </ClInclude>
     <ClInclude Include="LocalizationPage.h">
-      <Filter>MainViewsPages\Pages\4-Localization</Filter>
+      <Filter>UI\MainViewsPages\Pages\4-Localization</Filter>
     </ClInclude>
     <ClInclude Include="RainEffect.h">
       <Filter>Assets\HLSL</Filter>
@@ -127,7 +130,7 @@
       <Filter>UI\Theme</Filter>
     </ClInclude>
     <ClInclude Include="MainViews.h">
-      <Filter>UI\Views</Filter>
+      <Filter>UI\MainViews</Filter>
     </ClInclude>
     <ClInclude Include="UI_Controls.h">
       <Filter>UI\Controls 控制</Filter>
@@ -191,10 +194,19 @@
       <Filter>Assets\SidebarIcon\SidebarIcon_Localization</Filter>
     </ClInclude>
     <ClInclude Include="ResolutionStyle.h">
-      <Filter>MainViewsPages\Pages\2-Resolution</Filter>
+      <Filter>UI\MainViewsPages\Pages\2-Resolution</Filter>
     </ClInclude>
     <ClInclude Include="ResolutionModel.h">
-      <Filter>MainViewsPages\Pages\2-Resolution</Filter>
+      <Filter>UI\MainViewsPages\Pages\2-Resolution</Filter>
+    </ClInclude>
+    <ClInclude Include="SettingPage.h">
+      <Filter>UI\MainViewsPages\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="SettingStyle.h">
+      <Filter>UI\MainViewsPages\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="SettingModel.h">
+      <Filter>UI\MainViewsPages\Settings</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -223,16 +235,16 @@
       <Filter>imgui</Filter>
     </ClCompile>
     <ClCompile Include="DashboardPage.cpp">
-      <Filter>MainViewsPages\Pages\1-Dashboard</Filter>
+      <Filter>UI\MainViewsPages\Pages\1-Dashboard</Filter>
     </ClCompile>
     <ClCompile Include="ResolutionPage.cpp">
-      <Filter>MainViewsPages\Pages\2-Resolution</Filter>
+      <Filter>UI\MainViewsPages\Pages\2-Resolution</Filter>
     </ClCompile>
     <ClCompile Include="BackupPage.cpp">
-      <Filter>MainViewsPages\Pages\3-Backup</Filter>
+      <Filter>UI\MainViewsPages\Pages\3-Backup</Filter>
     </ClCompile>
     <ClCompile Include="LocalizationPage.cpp">
-      <Filter>MainViewsPages\Pages\4-Localization</Filter>
+      <Filter>UI\MainViewsPages\Pages\4-Localization</Filter>
     </ClCompile>
     <ClCompile Include="RainEffect.cpp">
       <Filter>Assets\HLSL</Filter>
@@ -241,7 +253,7 @@
       <Filter>UI\Theme</Filter>
     </ClCompile>
     <ClCompile Include="MainViews.cpp">
-      <Filter>UI\Views</Filter>
+      <Filter>UI\MainViews</Filter>
     </ClCompile>
     <ClCompile Include="UI_Controls.cpp">
       <Filter>UI\Controls 控制</Filter>
@@ -277,10 +289,19 @@
       <Filter>Assets\SidebarIcon\SidebarIcon_Localization</Filter>
     </ClCompile>
     <ClCompile Include="ResolutionStyle.cpp">
-      <Filter>MainViewsPages\Pages\2-Resolution</Filter>
+      <Filter>UI\MainViewsPages\Pages\2-Resolution</Filter>
     </ClCompile>
     <ClCompile Include="ResolutionModel.cpp">
-      <Filter>MainViewsPages\Pages\2-Resolution</Filter>
+      <Filter>UI\MainViewsPages\Pages\2-Resolution</Filter>
+    </ClCompile>
+    <ClCompile Include="SettingPage.cpp">
+      <Filter>UI\MainViewsPages\Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="SettingStyle.cpp">
+      <Filter>UI\MainViewsPages\Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="SettingModel.cpp">
+      <Filter>UI\MainViewsPages\Settings</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

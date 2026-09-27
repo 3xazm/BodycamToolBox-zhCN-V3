@@ -2,7 +2,8 @@
 #include "DashboardPage.h"
 #include "ResolutionPage.h" 
 #include "BackupPage.h"
-#include "LocalizationPage.h" // 1. 包含汉化页面头文件
+#include "LocalizationPage.h" 
+#include "SettingPage.h"
 
 extern HWND g_hWnd;
 
@@ -18,10 +19,10 @@ void RenderMainViews(int currentTab, float scale) {
         RenderBackupView(scale);
         break;
     case 3:
-        RenderLocalizationView(scale); // 2. Tab 3 映射到汉化页面
+        RenderLocalizationView(scale); 
         break;
     case 4:
-        RenderSettingsView(scale); // 3. Tab 4 映射到设置页面
+        RenderSettingsView(scale); 
         break;
     default:
         break;
@@ -53,6 +54,6 @@ void RenderLocalizationView(float scale) {
 
 // 渲染--设置
 void RenderSettingsView(float scale) {
-    ImGui::Text("配置设置");
-    ImGui::Separator();
+    static SettingPage g_SettingPage;
+    g_SettingPage.Render();
 }

@@ -185,6 +185,9 @@
     <ClInclude Include="ResolutionModel.h" />
     <ClInclude Include="ResolutionPage.h" />
     <ClInclude Include="ResolutionStyle.h" />
+    <ClInclude Include="SettingModel.h" />
+    <ClInclude Include="SettingPage.h" />
+    <ClInclude Include="SettingStyle.h" />
     <ClInclude Include="SidebarIcon_BackupSelect.h" />
     <ClInclude Include="SidebarIcon_HomeNoSelect.h" />
     <ClInclude Include="SidebarIcon_HomeSelect.h" />
@@ -224,6 +227,9 @@
     <ClCompile Include="ResolutionModel.cpp" />
     <ClCompile Include="ResolutionPage.cpp" />
     <ClCompile Include="ResolutionStyle.cpp" />
+    <ClCompile Include="SettingModel.cpp" />
+    <ClCompile Include="SettingPage.cpp" />
+    <ClCompile Include="SettingStyle.cpp" />
     <ClCompile Include="SidebarIcon_BackupNoSelect.h" />
     <ClCompile Include="UI_Controls.cpp" />
     <ClCompile Include="UI_Header.cpp" />
