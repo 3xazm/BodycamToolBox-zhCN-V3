@@ -12,7 +12,7 @@
 #include "Direct3D_Resource.h"
 #include "AppRenderer.h"
 
-#include "BodycamAppIcon.h"
+#include "Assets\BodycamAppIcon\BodycamAppIcon.h"
 
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "dwmapi.lib")
