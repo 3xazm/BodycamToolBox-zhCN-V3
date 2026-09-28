@@ -88,6 +88,9 @@
     <Filter Include="src\curseFiles绑定\AppRenderer">
       <UniqueIdentifier>{2d3b3722-70e5-4374-9d98-c1ffea45987a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Assets\STB_IMAGE_IMPLEMENTATION">
+      <UniqueIdentifier>{4a98628e-9ed3-421a-89f0-6ec5e23d0902}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\imconfig.h">

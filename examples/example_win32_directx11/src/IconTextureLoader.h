@@ -3,7 +3,7 @@
 #include <vector>
 #include <algorithm>
 #include "imgui.h"
-#include "stb_image.h" 
+#include "Assets\STB_IMAGE_IMPLEMENTATION\stb_image.h" 
 
 // 像素点 3x3 膨胀算法（加粗 Alpha 通道线条）
 inline void DilateRGBAPixels(unsigned char* pixels, int width, int height, int strokeThickness = 1) {
