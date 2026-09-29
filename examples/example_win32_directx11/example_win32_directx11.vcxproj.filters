@@ -141,7 +141,6 @@
     <ClInclude Include="src\UI_Header.h" />
     <ClInclude Include="src\UI_Sidebar.h" />
     <ClInclude Include="src\UI_Theme.h" />
-    <ClInclude Include="src\Win32_API.h" />
     <ClInclude Include="src\BodycamAppIcon.h">
       <Filter>src\Assets\BodycamAppIcon</Filter>
     </ClInclude>
@@ -160,6 +159,9 @@
     </ClInclude>
     <ClInclude Include="src\BackupStyle.h">
       <Filter>src\UI\MainViews\MainViewsPages\Pages\3_Backup</Filter>
+    </ClInclude>
+    <ClInclude Include="src\curseFiles\Win32_API\Win32_API.h">
+      <Filter>src\curseFiles 绑定\Win32_API</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -203,7 +205,6 @@
     <ClCompile Include="src\UI_Header.cpp" />
     <ClCompile Include="src\UI_Sidebar.cpp" />
     <ClCompile Include="src\UI_Theme.cpp" />
-    <ClCompile Include="src\Win32_API.cpp" />
     <ClCompile Include="src\BackupPage.cpp">
       <Filter>src\UI\MainViews\MainViewsPages\Pages\3_Backup</Filter>
     </ClCompile>
@@ -222,6 +223,9 @@
     </ClCompile>
     <ClCompile Include="src\main.cpp">
       <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\curseFiles\Win32_API\Win32_API.cpp">
+      <Filter>src\curseFiles 绑定\Win32_API</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
