@@ -13,7 +13,7 @@
 
 // 自定义模块
 #include "RainEffectPipeline.h"
-#include "Direct3D_Resource.h"
+#include "curseFiles\Direct3D_Resource\Direct3D_Resource.h"
 #include "UI_Header.h"
 #include "UI_Sidebar.h"
 #include "MainViews.h"

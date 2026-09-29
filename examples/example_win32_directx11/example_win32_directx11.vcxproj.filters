@@ -115,7 +115,6 @@
     <ClInclude Include="src\AnimatedSettingsIcon.h" />
     <ClInclude Include="src\AppRenderer.h" />
     <ClInclude Include="src\DashboardPage.h" />
-    <ClInclude Include="src\Direct3D_Resource.h" />
     <ClInclude Include="src\IconTextureLoader.h" />
     <ClInclude Include="src\LocalizationPage.h" />
     <ClInclude Include="src\RainEffect.h" />
@@ -163,6 +162,9 @@
     <ClInclude Include="src\curseFiles\Win32_API\Win32_API.h">
       <Filter>src\curseFiles 绑定\Win32_API</Filter>
     </ClInclude>
+    <ClInclude Include="src\curseFiles\Direct3D_Resource\Direct3D_Resource.h">
+      <Filter>src\curseFiles 绑定\Direct3D_Resource</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\imgui.cpp">
@@ -192,7 +194,6 @@
     <ClCompile Include="src\AnimatedSettingsIcon.cpp" />
     <ClCompile Include="src\AppRenderer.cpp" />
     <ClCompile Include="src\DashboardPage.cpp" />
-    <ClCompile Include="src\Direct3D_Resource.cpp" />
     <ClCompile Include="src\LocalizationPage.cpp" />
     <ClCompile Include="src\RainEffect.cpp" />
     <ClCompile Include="src\ResolutionModel.cpp" />
@@ -226,6 +227,9 @@
     </ClCompile>
     <ClCompile Include="src\curseFiles\Win32_API\Win32_API.cpp">
       <Filter>src\curseFiles 绑定\Win32_API</Filter>
+    </ClCompile>
+    <ClCompile Include="src\curseFiles\Direct3D_Resource\Direct3D_Resource.cpp">
+      <Filter>src\curseFiles 绑定\Direct3D_Resource</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

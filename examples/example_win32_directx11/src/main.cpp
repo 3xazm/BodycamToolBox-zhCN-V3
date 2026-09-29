@@ -9,7 +9,7 @@
 #include "imgui_impl_dx11.h"
 
 #include "curseFiles\Win32_API\Win32_API.h"
-#include "Direct3D_Resource.h"
+#include "curseFiles\Direct3D_Resource\Direct3D_Resource.h"
 #include "AppRenderer.h"
 
 #include "Assets\BodycamAppIcon\BodycamAppIcon.h"

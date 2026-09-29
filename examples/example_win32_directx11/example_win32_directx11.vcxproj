@@ -180,7 +180,7 @@
     <ClInclude Include="src\DashboardModel.h" />
     <ClInclude Include="src\DashboardPage.h" />
     <ClInclude Include="src\DashboardStyle.h" />
-    <ClInclude Include="src\Direct3D_Resource.h" />
+    <ClInclude Include="src\curseFiles\Direct3D_Resource\Direct3D_Resource.h" />
     <ClInclude Include="src\IconTextureLoader.h" />
     <ClInclude Include="src\LocalizationModel.h" />
     <ClInclude Include="src\LocalizationPage.h" />
@@ -230,7 +230,7 @@
     <ClCompile Include="src\DashboardModel.cpp" />
     <ClCompile Include="src\DashboardPage.cpp" />
     <ClCompile Include="src\DashboardStyle.cpp" />
-    <ClCompile Include="src\Direct3D_Resource.cpp" />
+    <ClCompile Include="src\curseFiles\Direct3D_Resource\Direct3D_Resource.cpp" />
     <ClCompile Include="src\LocalizationModel.cpp" />
     <ClCompile Include="src\LocalizationPage.cpp" />
     <ClCompile Include="src\LocalizationStyle.cpp" />
