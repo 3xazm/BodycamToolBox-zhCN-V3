@@ -134,8 +134,6 @@
     <ClInclude Include="src\SidebarIcon_ResolutionSelect.h" />
     <ClInclude Include="src\SidebarIcon_SettingsNoSelect.h" />
     <ClInclude Include="src\SidebarIcon_SettingsSelect.h" />
-    <ClInclude Include="src\stb_image.h" />
-    <ClInclude Include="src\UI_Controls.h" />
     <ClInclude Include="src\UI_Header.h" />
     <ClInclude Include="src\UI_Sidebar.h" />
     <ClInclude Include="src\UI_Theme.h" />
@@ -166,6 +164,12 @@
     </ClInclude>
     <ClInclude Include="src\curseFiles\AppRenderer\AppRenderer.h">
       <Filter>src\curseFiles 绑定\AppRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Assets\STB_IMAGE_IMPLEMENTATION\stb_image.h">
+      <Filter>src\Assets\STB_IMAGE_IMPLEMENTATION</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UI\Controls\UI_Controls.h">
+      <Filter>src\UI\Controls 控制</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -203,7 +207,6 @@
     <ClCompile Include="src\SettingModel.cpp" />
     <ClCompile Include="src\SettingPage.cpp" />
     <ClCompile Include="src\SettingStyle.cpp" />
-    <ClCompile Include="src\UI_Controls.cpp" />
     <ClCompile Include="src\UI_Header.cpp" />
     <ClCompile Include="src\UI_Sidebar.cpp" />
     <ClCompile Include="src\UI_Theme.cpp" />
@@ -234,6 +237,9 @@
     </ClCompile>
     <ClCompile Include="src\curseFiles\AppRenderer\AppRenderer.cpp">
       <Filter>src\curseFiles 绑定\AppRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UI\Controls\UI_Controls.cpp">
+      <Filter>src\UI\Controls 控制</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

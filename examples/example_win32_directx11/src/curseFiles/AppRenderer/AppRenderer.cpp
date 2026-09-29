@@ -8,8 +8,8 @@
 
 // 引入 stb_image 解码库与图标十六进制数据
 #define STB_IMAGE_IMPLEMENTATION
-#include "..\..\Assets\STB_IMAGE_IMPLEMENTATION\stb_image.h"
-#include "..\..\Assets\BodycamAppIcon\BodycamAppIcon.h" // 你的二进制图标数据文件
+#include "..\..\src\Assets\STB_IMAGE_IMPLEMENTATION\stb_image.h"
+#include "..\..\src\Assets\BodycamAppIcon\BodycamAppIcon.h" // 你的二进制图标数据文件
 
 // 自定义模块
 #include "..\..\src\RainEffectPipeline.h"
