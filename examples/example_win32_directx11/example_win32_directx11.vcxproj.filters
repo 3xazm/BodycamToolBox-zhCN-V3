@@ -55,18 +55,6 @@
     <Filter Include="src\Assets\SidebarIcon\SidebarIcon_Localization">
       <UniqueIdentifier>{cfe744d7-05fd-4c3e-81e6-3250133cd73c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\curseFiles绑定">
-      <UniqueIdentifier>{657b841d-fff3-44af-9276-f608d71600d7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\curseFiles绑定\Direct3D_Resource">
-      <UniqueIdentifier>{132a7a87-5cb9-45cb-ac82-986a736c149e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\curseFiles绑定\Win32_API">
-      <UniqueIdentifier>{a1024ebf-84a4-4273-8ed4-72d889a55878}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\curseFiles绑定\AppRenderer">
-      <UniqueIdentifier>{2d3b3722-70e5-4374-9d98-c1ffea45987a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\Assets\STB_IMAGE_IMPLEMENTATION">
       <UniqueIdentifier>{4a98628e-9ed3-421a-89f0-6ec5e23d0902}</UniqueIdentifier>
     </Filter>
@@ -90,6 +78,18 @@
     </Filter>
     <Filter Include="src\UI\MainViews\MainViewsPages\Pages\4_Localization">
       <UniqueIdentifier>{6e8a7e65-f3d7-4519-9ac9-390f117f756d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\curseFiles 绑定">
+      <UniqueIdentifier>{657b841d-fff3-44af-9276-f608d71600d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\curseFiles 绑定\Direct3D_Resource">
+      <UniqueIdentifier>{132a7a87-5cb9-45cb-ac82-986a736c149e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\curseFiles 绑定\Win32_API">
+      <UniqueIdentifier>{a1024ebf-84a4-4273-8ed4-72d889a55878}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\curseFiles 绑定\AppRenderer">
+      <UniqueIdentifier>{2d3b3722-70e5-4374-9d98-c1ffea45987a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
