@@ -209,7 +209,7 @@
     <ClInclude Include="src\UI_Header.h" />
     <ClInclude Include="src\UI_Sidebar.h" />
     <ClInclude Include="src\UI_Theme.h" />
-    <ClInclude Include="src\Win32_API.h" />
+    <ClInclude Include="src\curseFiles\Win32_API\Win32_API.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\imgui.cpp" />
@@ -247,7 +247,7 @@
     <ClCompile Include="src\UI_Header.cpp" />
     <ClCompile Include="src\UI_Sidebar.cpp" />
     <ClCompile Include="src\UI_Theme.cpp" />
-    <ClCompile Include="src\Win32_API.cpp" />
+    <ClCompile Include="src\curseFiles\Win32_API\Win32_API.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\misc\debuggers\imgui.natstepfilter" />
