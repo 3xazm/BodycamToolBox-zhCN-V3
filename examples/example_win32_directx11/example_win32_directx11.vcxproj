@@ -206,7 +206,7 @@
     <ClInclude Include="src\SidebarIcon_SettingsNoSelect.h" />
     <ClInclude Include="src\SidebarIcon_SettingsSelect.h" />
     <ClInclude Include="src\UI\Controls\UI_Controls.h" />
-    <ClInclude Include="src\UI_Header.h" />
+    <ClInclude Include="src\UI\Header\UI_Header.h" />
     <ClInclude Include="src\UI_Sidebar.h" />
     <ClInclude Include="src\UI\Theme\UI_Theme.h" />
     <ClInclude Include="src\curseFiles\Win32_API\Win32_API.h" />
@@ -244,7 +244,7 @@
     <ClCompile Include="src\SettingPage.cpp" />
     <ClCompile Include="src\SettingStyle.cpp" />
     <ClCompile Include="src\UI\Controls\UI_Controls.cpp" />
-    <ClCompile Include="src\UI_Header.cpp" />
+    <ClCompile Include="src\UI\Header\UI_Header.cpp" />
     <ClCompile Include="src\UI_Sidebar.cpp" />
     <ClCompile Include="src\UI\Theme\UI_Theme.cpp" />
     <ClCompile Include="src\curseFiles\Win32_API\Win32_API.cpp" />
