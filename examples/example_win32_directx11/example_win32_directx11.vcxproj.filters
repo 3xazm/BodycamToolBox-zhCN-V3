@@ -13,9 +13,6 @@
     <Filter Include="src\UI">
       <UniqueIdentifier>{d5171565-7680-426f-ae35-d96a96948e4d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\UI\Theme">
-      <UniqueIdentifier>{d6ddbf3a-5905-46c5-bcc1-579a9dd20453}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\UI\Header 标题">
       <UniqueIdentifier>{2893aa5b-1d58-438c-a9c9-3aa3931cfaf9}</UniqueIdentifier>
     </Filter>
@@ -91,6 +88,9 @@
     <Filter Include="src\curseFiles 绑定\AppRenderer">
       <UniqueIdentifier>{2d3b3722-70e5-4374-9d98-c1ffea45987a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\UI\Theme 主题">
+      <UniqueIdentifier>{d6ddbf3a-5905-46c5-bcc1-579a9dd20453}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\imconfig.h">
@@ -136,7 +136,6 @@
     <ClInclude Include="src\SidebarIcon_SettingsSelect.h" />
     <ClInclude Include="src\UI_Header.h" />
     <ClInclude Include="src\UI_Sidebar.h" />
-    <ClInclude Include="src\UI_Theme.h" />
     <ClInclude Include="src\BodycamAppIcon.h">
       <Filter>src\Assets\BodycamAppIcon</Filter>
     </ClInclude>
@@ -170,6 +169,9 @@
     </ClInclude>
     <ClInclude Include="src\UI\Controls\UI_Controls.h">
       <Filter>src\UI\Controls 控制</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UI\Theme\UI_Theme.h">
+      <Filter>src\UI\Theme 主题</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -209,7 +211,6 @@
     <ClCompile Include="src\SettingStyle.cpp" />
     <ClCompile Include="src\UI_Header.cpp" />
     <ClCompile Include="src\UI_Sidebar.cpp" />
-    <ClCompile Include="src\UI_Theme.cpp" />
     <ClCompile Include="src\BackupPage.cpp">
       <Filter>src\UI\MainViews\MainViewsPages\Pages\3_Backup</Filter>
     </ClCompile>
@@ -240,6 +241,9 @@
     </ClCompile>
     <ClCompile Include="src\UI\Controls\UI_Controls.cpp">
       <Filter>src\UI\Controls 控制</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UI\Theme\UI_Theme.cpp">
+      <Filter>src\UI\Theme 主题</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
