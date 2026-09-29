@@ -151,12 +151,12 @@
     <ClInclude Include="src\MainViews.h">
       <Filter>src\UI\MainViews</Filter>
     </ClInclude>
-    <ClInclude Include="BackupStyle.h">
-      <Filter>src\UI\MainViews\MainViewsPages\Pages\3-Backup</Filter>
-    </ClInclude>
-    <ClInclude Include="BackupModel.h">
-      <Filter>src\UI\MainViews\MainViewsPages\Pages\3-Backup</Filter>
-    </ClInclude>
+    <ClInclude Include="src\BackupModel.h" />
+    <ClInclude Include="src\BackupStyle.h" />
+    <ClInclude Include="src\LocalizationModel.h" />
+    <ClInclude Include="src\LocalizationStyle.h" />
+    <ClInclude Include="src\DashboardStyle.h" />
+    <ClInclude Include="src\DashboardModel.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\imgui.cpp">
@@ -207,12 +207,12 @@
     <ClCompile Include="src\MainViews.cpp">
       <Filter>src\UI\MainViews</Filter>
     </ClCompile>
-    <ClCompile Include="BackupStyle.cpp">
-      <Filter>src\UI\MainViews\MainViewsPages\Pages\3-Backup</Filter>
-    </ClCompile>
-    <ClCompile Include="BackupModel.cpp">
-      <Filter>src\UI\MainViews\MainViewsPages\Pages\3-Backup</Filter>
-    </ClCompile>
+    <ClCompile Include="src\BackupModel.cpp" />
+    <ClCompile Include="src\BackupStyle.cpp" />
+    <ClCompile Include="src\LocalizationModel.cpp" />
+    <ClCompile Include="src\LocalizationStyle.cpp" />
+    <ClCompile Include="src\DashboardStyle.cpp" />
+    <ClCompile Include="src\DashboardModel.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\README.txt" />

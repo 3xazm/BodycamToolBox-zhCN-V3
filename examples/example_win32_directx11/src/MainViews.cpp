@@ -31,7 +31,8 @@ void RenderMainViews(int currentTab, float scale) {
 
 // 渲染--首页
 void RenderHomeView(float scale) {
-    RenderDashboardPage(g_hWnd, scale);
+	static DashboardPage g_DashboardPage;
+	g_DashboardPage.Render(g_hWnd, scale);
 }
 
 // 渲染--分辨率修复
