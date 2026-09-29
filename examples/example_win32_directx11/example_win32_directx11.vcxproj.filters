@@ -76,20 +76,20 @@
     <Filter Include="src\UI\MainViews\MainViewsPages\Pages">
       <UniqueIdentifier>{8bd37514-25bc-49ff-8799-ad959aaa9ea6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\UI\MainViews\MainViewsPages\Pages\1-Dashboard">
-      <UniqueIdentifier>{166fe94d-cff7-4006-8be4-7469a701c8ad}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\UI\MainViews\MainViewsPages\Pages\2-Resolution">
-      <UniqueIdentifier>{2ad15eee-5ddf-4c25-9d02-a9cc51f4ff2e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\UI\MainViews\MainViewsPages\Pages\3-Backup">
-      <UniqueIdentifier>{a127abc1-fbfc-49d8-9963-ae83536a2e9e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\UI\MainViews\MainViewsPages\Pages\4-Localization">
-      <UniqueIdentifier>{6e8a7e65-f3d7-4519-9ac9-390f117f756d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\UI\MainViews\MainViewsPages\Settings">
       <UniqueIdentifier>{dd2f88fb-93e1-4b5c-8fc1-febf42894d0e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\UI\MainViews\MainViewsPages\Pages\1_Dashboard">
+      <UniqueIdentifier>{166fe94d-cff7-4006-8be4-7469a701c8ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\UI\MainViews\MainViewsPages\Pages\2_Resolution">
+      <UniqueIdentifier>{2ad15eee-5ddf-4c25-9d02-a9cc51f4ff2e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\UI\MainViews\MainViewsPages\Pages\3_Backup">
+      <UniqueIdentifier>{a127abc1-fbfc-49d8-9963-ae83536a2e9e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\UI\MainViews\MainViewsPages\Pages\4_Localization">
+      <UniqueIdentifier>{6e8a7e65-f3d7-4519-9ac9-390f117f756d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -146,17 +146,21 @@
       <Filter>src\Assets\BodycamAppIcon</Filter>
     </ClInclude>
     <ClInclude Include="src\BackupPage.h">
-      <Filter>src\UI\MainViews\MainViewsPages\Pages\3-Backup</Filter>
+      <Filter>src\UI\MainViews\MainViewsPages\Pages\3_Backup</Filter>
     </ClInclude>
     <ClInclude Include="src\MainViews.h">
       <Filter>src\UI\MainViews</Filter>
     </ClInclude>
-    <ClInclude Include="src\BackupModel.h" />
-    <ClInclude Include="src\BackupStyle.h" />
     <ClInclude Include="src\LocalizationModel.h" />
     <ClInclude Include="src\LocalizationStyle.h" />
     <ClInclude Include="src\DashboardStyle.h" />
     <ClInclude Include="src\DashboardModel.h" />
+    <ClInclude Include="src\BackupModel.h">
+      <Filter>src\UI\MainViews\MainViewsPages\Pages\3_Backup</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BackupStyle.h">
+      <Filter>src\UI\MainViews\MainViewsPages\Pages\3_Backup</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\imgui.cpp">
@@ -188,7 +192,6 @@
     <ClCompile Include="src\DashboardPage.cpp" />
     <ClCompile Include="src\Direct3D_Resource.cpp" />
     <ClCompile Include="src\LocalizationPage.cpp" />
-    <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\RainEffect.cpp" />
     <ClCompile Include="src\ResolutionModel.cpp" />
     <ClCompile Include="src\ResolutionPage.cpp" />
@@ -202,17 +205,24 @@
     <ClCompile Include="src\UI_Theme.cpp" />
     <ClCompile Include="src\Win32_API.cpp" />
     <ClCompile Include="src\BackupPage.cpp">
-      <Filter>src\UI\MainViews\MainViewsPages\Pages\3-Backup</Filter>
+      <Filter>src\UI\MainViews\MainViewsPages\Pages\3_Backup</Filter>
     </ClCompile>
     <ClCompile Include="src\MainViews.cpp">
       <Filter>src\UI\MainViews</Filter>
     </ClCompile>
-    <ClCompile Include="src\BackupModel.cpp" />
-    <ClCompile Include="src\BackupStyle.cpp" />
     <ClCompile Include="src\LocalizationModel.cpp" />
     <ClCompile Include="src\LocalizationStyle.cpp" />
     <ClCompile Include="src\DashboardStyle.cpp" />
     <ClCompile Include="src\DashboardModel.cpp" />
+    <ClCompile Include="src\BackupModel.cpp">
+      <Filter>src\UI\MainViews\MainViewsPages\Pages\3_Backup</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BackupStyle.cpp">
+      <Filter>src\UI\MainViews\MainViewsPages\Pages\3_Backup</Filter>
+    </ClCompile>
+    <ClCompile Include="src\main.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\README.txt" />
