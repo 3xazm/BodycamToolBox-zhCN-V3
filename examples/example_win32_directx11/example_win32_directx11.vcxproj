@@ -167,6 +167,8 @@
     <ClInclude Include="..\..\imgui_internal.h" />
     <ClInclude Include="..\..\backends\imgui_impl_dx11.h" />
     <ClInclude Include="..\..\backends\imgui_impl_win32.h" />
+    <ClInclude Include="src\BackupModel.h" />
+    <ClInclude Include="src\BackupStyle.h" />
     <ClInclude Include="src\AnimatedBackupIcon.h" />
     <ClInclude Include="src\AnimatedHomeIcon.h" />
     <ClInclude Include="src\AnimatedLocalizationIcon.h" />
@@ -178,7 +180,9 @@
     <ClInclude Include="src\DashboardPage.h" />
     <ClInclude Include="src\Direct3D_Resource.h" />
     <ClInclude Include="src\IconTextureLoader.h" />
+    <ClInclude Include="src\LocalizationModel.h" />
     <ClInclude Include="src\LocalizationPage.h" />
+    <ClInclude Include="src\LocalizationStyle.h" />
     <ClInclude Include="src\MainViews.h" />
     <ClInclude Include="src\RainEffect.h" />
     <ClInclude Include="src\RainEffectPipeline.h" />
@@ -213,6 +217,8 @@
     <ClCompile Include="..\..\imgui_widgets.cpp" />
     <ClCompile Include="..\..\backends\imgui_impl_dx11.cpp" />
     <ClCompile Include="..\..\backends\imgui_impl_win32.cpp" />
+    <ClCompile Include="src\BackupModel.cpp" />
+    <ClCompile Include="src\BackupStyle.cpp" />
     <ClCompile Include="src\AnimatedBackupIcon.cpp" />
     <ClCompile Include="src\AnimatedLocalizationIcon.cpp" />
     <ClCompile Include="src\AnimatedResolutionIcon.cpp" />
@@ -221,7 +227,9 @@
     <ClCompile Include="src\BackupPage.cpp" />
     <ClCompile Include="src\DashboardPage.cpp" />
     <ClCompile Include="src\Direct3D_Resource.cpp" />
+    <ClCompile Include="src\LocalizationModel.cpp" />
     <ClCompile Include="src\LocalizationPage.cpp" />
+    <ClCompile Include="src\LocalizationStyle.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\MainViews.cpp" />
     <ClCompile Include="src\RainEffect.cpp" />

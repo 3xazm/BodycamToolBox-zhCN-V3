@@ -1,10 +1,7 @@
 #include "LocalizationPage.h"
+#include "LocalizationStyle.h"
 
-void LocalizationPage::Render() {
-    ImGui::Text("游戏汉化 / 语言补丁");
-    ImGui::Separator();
-
-    if (ImGui::Button("安装汉化补丁")) {
-        // 在这里编写汉化逻辑
-    }
+void LocalizationPage::Render( ) {
+	// 绑定并渲染 Style UI
+	LocalizationStyle::RenderPageUI(m_Model);
 }

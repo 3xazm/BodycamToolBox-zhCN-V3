@@ -1,10 +1,7 @@
 #include "BackupPage.h"
+#include "BackupStyle.h"
 
 void BackupPage::Render() {
-    ImGui::Text("存档备份与还原");
-    ImGui::Separator();
-
-    if (ImGui::Button("立即备份存档")) {
-        // 执行备份逻辑...
-    }
+    // 调用 Style 绘制并传入 Model
+    BackupStyle::RenderPageUI(m_Model);
 }

@@ -25,27 +25,6 @@
     <Filter Include="src\UI\Sidebar 侧边栏 %28左%29">
       <UniqueIdentifier>{990b0807-6795-4957-889c-0634a13b6999}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\UI\MainViewsPages">
-      <UniqueIdentifier>{a0e64b2b-0f56-41d1-a7f0-dcae6e6067c4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\UI\MainViewsPages\Pages">
-      <UniqueIdentifier>{8bd37514-25bc-49ff-8799-ad959aaa9ea6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\UI\MainViewsPages\Pages\1-Dashboard">
-      <UniqueIdentifier>{166fe94d-cff7-4006-8be4-7469a701c8ad}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\UI\MainViewsPages\Pages\2-Resolution">
-      <UniqueIdentifier>{2ad15eee-5ddf-4c25-9d02-a9cc51f4ff2e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\UI\MainViewsPages\Pages\3-Backup">
-      <UniqueIdentifier>{a127abc1-fbfc-49d8-9963-ae83536a2e9e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\UI\MainViewsPages\Pages\4-Localization">
-      <UniqueIdentifier>{6e8a7e65-f3d7-4519-9ac9-390f117f756d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\UI\MainViewsPages\Settings">
-      <UniqueIdentifier>{dd2f88fb-93e1-4b5c-8fc1-febf42894d0e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\UI\MainViews">
       <UniqueIdentifier>{1b1562ae-1410-4ec6-a61e-1ea3c7564a97}</UniqueIdentifier>
     </Filter>
@@ -91,6 +70,27 @@
     <Filter Include="src\Assets\STB_IMAGE_IMPLEMENTATION">
       <UniqueIdentifier>{4a98628e-9ed3-421a-89f0-6ec5e23d0902}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\UI\MainViews\MainViewsPages">
+      <UniqueIdentifier>{a0e64b2b-0f56-41d1-a7f0-dcae6e6067c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\UI\MainViews\MainViewsPages\Pages">
+      <UniqueIdentifier>{8bd37514-25bc-49ff-8799-ad959aaa9ea6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\UI\MainViews\MainViewsPages\Pages\1-Dashboard">
+      <UniqueIdentifier>{166fe94d-cff7-4006-8be4-7469a701c8ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\UI\MainViews\MainViewsPages\Pages\2-Resolution">
+      <UniqueIdentifier>{2ad15eee-5ddf-4c25-9d02-a9cc51f4ff2e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\UI\MainViews\MainViewsPages\Pages\3-Backup">
+      <UniqueIdentifier>{a127abc1-fbfc-49d8-9963-ae83536a2e9e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\UI\MainViews\MainViewsPages\Pages\4-Localization">
+      <UniqueIdentifier>{6e8a7e65-f3d7-4519-9ac9-390f117f756d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\UI\MainViews\MainViewsPages\Settings">
+      <UniqueIdentifier>{dd2f88fb-93e1-4b5c-8fc1-febf42894d0e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\imconfig.h">
@@ -114,12 +114,10 @@
     <ClInclude Include="src\AnimatedResolutionIcon.h" />
     <ClInclude Include="src\AnimatedSettingsIcon.h" />
     <ClInclude Include="src\AppRenderer.h" />
-    <ClInclude Include="src\BackupPage.h" />
     <ClInclude Include="src\DashboardPage.h" />
     <ClInclude Include="src\Direct3D_Resource.h" />
     <ClInclude Include="src\IconTextureLoader.h" />
     <ClInclude Include="src\LocalizationPage.h" />
-    <ClInclude Include="src\MainViews.h" />
     <ClInclude Include="src\RainEffect.h" />
     <ClInclude Include="src\RainEffectPipeline.h" />
     <ClInclude Include="src\ResolutionModel.h" />
@@ -146,6 +144,18 @@
     <ClInclude Include="src\Win32_API.h" />
     <ClInclude Include="src\BodycamAppIcon.h">
       <Filter>src\Assets\BodycamAppIcon</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BackupPage.h">
+      <Filter>src\UI\MainViews\MainViewsPages\Pages\3-Backup</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MainViews.h">
+      <Filter>src\UI\MainViews</Filter>
+    </ClInclude>
+    <ClInclude Include="BackupStyle.h">
+      <Filter>src\UI\MainViews\MainViewsPages\Pages\3-Backup</Filter>
+    </ClInclude>
+    <ClInclude Include="BackupModel.h">
+      <Filter>src\UI\MainViews\MainViewsPages\Pages\3-Backup</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -175,12 +185,10 @@
     <ClCompile Include="src\AnimatedResolutionIcon.cpp" />
     <ClCompile Include="src\AnimatedSettingsIcon.cpp" />
     <ClCompile Include="src\AppRenderer.cpp" />
-    <ClCompile Include="src\BackupPage.cpp" />
     <ClCompile Include="src\DashboardPage.cpp" />
     <ClCompile Include="src\Direct3D_Resource.cpp" />
     <ClCompile Include="src\LocalizationPage.cpp" />
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\MainViews.cpp" />
     <ClCompile Include="src\RainEffect.cpp" />
     <ClCompile Include="src\ResolutionModel.cpp" />
     <ClCompile Include="src\ResolutionPage.cpp" />
@@ -193,6 +201,18 @@
     <ClCompile Include="src\UI_Sidebar.cpp" />
     <ClCompile Include="src\UI_Theme.cpp" />
     <ClCompile Include="src\Win32_API.cpp" />
+    <ClCompile Include="src\BackupPage.cpp">
+      <Filter>src\UI\MainViews\MainViewsPages\Pages\3-Backup</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MainViews.cpp">
+      <Filter>src\UI\MainViews</Filter>
+    </ClCompile>
+    <ClCompile Include="BackupStyle.cpp">
+      <Filter>src\UI\MainViews\MainViewsPages\Pages\3-Backup</Filter>
+    </ClCompile>
+    <ClCompile Include="BackupModel.cpp">
+      <Filter>src\UI\MainViews\MainViewsPages\Pages\3-Backup</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\README.txt" />

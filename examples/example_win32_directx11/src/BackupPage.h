@@ -1,5 +1,5 @@
 #pragma once
-#include "imgui.h"
+#include "BackupModel.h"
 
 class BackupPage {
 public:
@@ -7,4 +7,7 @@ public:
     ~BackupPage() = default;
 
     void Render();
+
+private:
+    BackupModel m_Model;
 };
