@@ -174,7 +174,7 @@
     <ClInclude Include="src\AnimatedLocalizationIcon.h" />
     <ClInclude Include="src\AnimatedResolutionIcon.h" />
     <ClInclude Include="src\AnimatedSettingsIcon.h" />
-    <ClInclude Include="src\AppRenderer.h" />
+    <ClInclude Include="src\curseFiles\AppRenderer\AppRenderer.h" />
     <ClInclude Include="src\BackupPage.h" />
     <ClInclude Include="src\BodycamAppIcon.h" />
     <ClInclude Include="src\DashboardModel.h" />
@@ -225,7 +225,7 @@
     <ClCompile Include="src\AnimatedLocalizationIcon.cpp" />
     <ClCompile Include="src\AnimatedResolutionIcon.cpp" />
     <ClCompile Include="src\AnimatedSettingsIcon.cpp" />
-    <ClCompile Include="src\AppRenderer.cpp" />
+    <ClCompile Include="src\curseFiles\AppRenderer\AppRenderer.cpp" />
     <ClCompile Include="src\BackupPage.cpp" />
     <ClCompile Include="src\DashboardModel.cpp" />
     <ClCompile Include="src\DashboardPage.cpp" />

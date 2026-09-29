@@ -8,15 +8,15 @@
 
 // 引入 stb_image 解码库与图标十六进制数据
 #define STB_IMAGE_IMPLEMENTATION
-#include "Assets\STB_IMAGE_IMPLEMENTATION\stb_image.h"
-#include "Assets\BodycamAppIcon\BodycamAppIcon.h" // 你的二进制图标数据文件
+#include "..\..\Assets\STB_IMAGE_IMPLEMENTATION\stb_image.h"
+#include "..\..\Assets\BodycamAppIcon\BodycamAppIcon.h" // 你的二进制图标数据文件
 
 // 自定义模块
-#include "RainEffectPipeline.h"
-#include "curseFiles\Direct3D_Resource\Direct3D_Resource.h"
-#include "UI_Header.h"
-#include "UI_Sidebar.h"
-#include "MainViews.h"
+#include "..\..\src\RainEffectPipeline.h"
+#include "..\..\src\curseFiles\Direct3D_Resource\Direct3D_Resource.h"
+#include "..\..\src\UI_Header.h"
+#include "..\..\src\UI_Sidebar.h"
+#include "..\..\src\MainViews.h"
 
 // 全局变量定义
 HWND g_hWnd = nullptr;

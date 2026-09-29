@@ -10,7 +10,7 @@
 
 #include "curseFiles\Win32_API\Win32_API.h"
 #include "curseFiles\Direct3D_Resource\Direct3D_Resource.h"
-#include "AppRenderer.h"
+#include "curseFiles\AppRenderer\AppRenderer.h"
 
 #include "Assets\BodycamAppIcon\BodycamAppIcon.h"
 
