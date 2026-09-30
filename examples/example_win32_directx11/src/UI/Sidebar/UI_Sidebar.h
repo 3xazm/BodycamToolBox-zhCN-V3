@@ -1,7 +1,7 @@
 #pragma once
 #include "imgui.h"
-#include "UI\Theme\UI_Theme.h"
-#include "..\src\UI\Controls\UI_Controls.h"
+#include "..\..\src\UI\Theme\UI_Theme.h"
+#include "..\..\src\UI\Controls\UI_Controls.h"
 
 void RenderSidebar(
     ImDrawList* drawList,

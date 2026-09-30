@@ -1,9 +1,9 @@
 #include "MainViews.h"
-#include "DashboardPage.h"
-#include "ResolutionPage.h" 
-#include "BackupPage.h"
-#include "LocalizationPage.h" 
-#include "SettingPage.h"
+#include "..\..\src\UI\MainViews\MainViewsPages\Pages\1_Dashboard\DashboardPage.h"
+#include "..\..\src\UI\MainViews\MainViewsPages\Pages\2_Resolution\ResolutionPage.h"
+#include "..\..\src\UI\MainViews\MainViewsPages\Pages\3_Backup\BackupPage.h"
+#include "..\..\src\UI\MainViews\MainViewsPages\Pages\4_Localization\LocalizationPage.h"
+#include "..\..\src\UI\MainViews\MainViewsPages\PagesSettings\SettingPage.h"
 
 extern HWND g_hWnd;
 

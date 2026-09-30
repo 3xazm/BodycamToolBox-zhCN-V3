@@ -22,14 +22,8 @@
     <Filter Include="src\UI\Sidebar 侧边栏 %28左%29">
       <UniqueIdentifier>{990b0807-6795-4957-889c-0634a13b6999}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\UI\MainViews">
-      <UniqueIdentifier>{1b1562ae-1410-4ec6-a61e-1ea3c7564a97}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\Assets">
       <UniqueIdentifier>{ce14a469-1986-4f49-9bae-8ac7ea3dd9be}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Assets\HLSL">
-      <UniqueIdentifier>{7001836f-aa14-4da9-8cdf-c996f637469e}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\Assets\BodycamAppIcon">
       <UniqueIdentifier>{3980adc3-ec9b-4ca6-bf1a-d5b5a7ce62af}</UniqueIdentifier>
@@ -37,44 +31,8 @@
     <Filter Include="src\Assets\SidebarIcon">
       <UniqueIdentifier>{dc4b4b0b-46c8-450c-916c-e567c6a92ba0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Assets\SidebarIcon\SidebarIcon_Home">
-      <UniqueIdentifier>{64fd287a-22a7-4c88-9255-a4f5e2db61a7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Assets\SidebarIcon\SidebarIcon_Resolution">
-      <UniqueIdentifier>{45c5c8d6-1e31-4fdd-98f6-24b4754015ae}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Assets\SidebarIcon\SidebarIcon_Settings">
-      <UniqueIdentifier>{621cfeb0-3ce5-412e-9d8d-b604c485cefe}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Assets\SidebarIcon\SidebarIcon_Backup">
-      <UniqueIdentifier>{ce07390b-5c92-46ab-9565-a35bc122a8da}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Assets\SidebarIcon\SidebarIcon_Localization">
-      <UniqueIdentifier>{cfe744d7-05fd-4c3e-81e6-3250133cd73c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\Assets\STB_IMAGE_IMPLEMENTATION">
       <UniqueIdentifier>{4a98628e-9ed3-421a-89f0-6ec5e23d0902}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\UI\MainViews\MainViewsPages">
-      <UniqueIdentifier>{a0e64b2b-0f56-41d1-a7f0-dcae6e6067c4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\UI\MainViews\MainViewsPages\Pages">
-      <UniqueIdentifier>{8bd37514-25bc-49ff-8799-ad959aaa9ea6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\UI\MainViews\MainViewsPages\Settings">
-      <UniqueIdentifier>{dd2f88fb-93e1-4b5c-8fc1-febf42894d0e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\UI\MainViews\MainViewsPages\Pages\1_Dashboard">
-      <UniqueIdentifier>{166fe94d-cff7-4006-8be4-7469a701c8ad}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\UI\MainViews\MainViewsPages\Pages\2_Resolution">
-      <UniqueIdentifier>{2ad15eee-5ddf-4c25-9d02-a9cc51f4ff2e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\UI\MainViews\MainViewsPages\Pages\3_Backup">
-      <UniqueIdentifier>{a127abc1-fbfc-49d8-9963-ae83536a2e9e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\UI\MainViews\MainViewsPages\Pages\4_Localization">
-      <UniqueIdentifier>{6e8a7e65-f3d7-4519-9ac9-390f117f756d}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\curseFiles 绑定">
       <UniqueIdentifier>{657b841d-fff3-44af-9276-f608d71600d7}</UniqueIdentifier>
@@ -90,6 +48,78 @@
     </Filter>
     <Filter Include="src\UI\Theme 主题">
       <UniqueIdentifier>{d6ddbf3a-5905-46c5-bcc1-579a9dd20453}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Assets\SidebarIcon\AnimateIcon">
+      <UniqueIdentifier>{3848b37f-aab4-49c3-a035-9baf2727de46}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\UI\MainViews 主视图">
+      <UniqueIdentifier>{1b1562ae-1410-4ec6-a61e-1ea3c7564a97}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\UI\MainViews 主视图\MainViewsPages">
+      <UniqueIdentifier>{a0e64b2b-0f56-41d1-a7f0-dcae6e6067c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\UI\MainViews 主视图\MainViewsPages\Pages">
+      <UniqueIdentifier>{8bd37514-25bc-49ff-8799-ad959aaa9ea6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\UI\MainViews 主视图\MainViewsPages\Pages\1_Dashboard">
+      <UniqueIdentifier>{166fe94d-cff7-4006-8be4-7469a701c8ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\UI\MainViews 主视图\MainViewsPages\Pages\2_Resolution">
+      <UniqueIdentifier>{2ad15eee-5ddf-4c25-9d02-a9cc51f4ff2e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\UI\MainViews 主视图\MainViewsPages\Pages\3_Backup">
+      <UniqueIdentifier>{a127abc1-fbfc-49d8-9963-ae83536a2e9e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\UI\MainViews 主视图\MainViewsPages\Pages\4_Localization">
+      <UniqueIdentifier>{6e8a7e65-f3d7-4519-9ac9-390f117f756d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Assets\RainEffect_HLSL">
+      <UniqueIdentifier>{7001836f-aa14-4da9-8cdf-c996f637469e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\UI\MainViews 主视图\MainViewsPages\PagesSettings">
+      <UniqueIdentifier>{dd2f88fb-93e1-4b5c-8fc1-febf42894d0e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Assets\SidebarIcon\PagesIcon">
+      <UniqueIdentifier>{4fe39602-a562-43fc-b1ed-6bdc9afcc6bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Assets\SidebarIcon\PagesIcon\1_SidebarIcon_Home">
+      <UniqueIdentifier>{64fd287a-22a7-4c88-9255-a4f5e2db61a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Assets\SidebarIcon\PagesIcon\2_SidebarIcon_Resolution">
+      <UniqueIdentifier>{45c5c8d6-1e31-4fdd-98f6-24b4754015ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Assets\SidebarIcon\PagesIcon\3_SidebarIcon_Backup">
+      <UniqueIdentifier>{ce07390b-5c92-46ab-9565-a35bc122a8da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Assets\SidebarIcon\PagesSettingsIcon">
+      <UniqueIdentifier>{d0229c27-391f-49d6-be5f-abf160e09c8e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Assets\SidebarIcon\PagesSettingsIcon\SidebarIcon_Settings">
+      <UniqueIdentifier>{621cfeb0-3ce5-412e-9d8d-b604c485cefe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Assets\SidebarIcon\AnimateIcon\PagesAnimatedIcon">
+      <UniqueIdentifier>{60159cd8-fede-4a08-a1c1-fbaeb5886f1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Assets\SidebarIcon\AnimateIcon\PagesSettingsAnimatedIcon">
+      <UniqueIdentifier>{ca16d54e-be5c-4249-b5a2-f61b1a1befe1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Assets\SidebarIcon\AnimateIcon\PagesSettingsAnimatedIcon\AnimatedSettingsIcon">
+      <UniqueIdentifier>{f459ac6c-506f-485d-817a-12d9e32fe386}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Assets\SidebarIcon\AnimateIcon\PagesAnimatedIcon\3_AnimatedBackupIcon">
+      <UniqueIdentifier>{117380e4-4cdf-4b4f-9121-90c8f7942ba9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Assets\SidebarIcon\AnimateIcon\PagesAnimatedIcon\1_AnimatedHomeIcon">
+      <UniqueIdentifier>{8bc00513-0c6e-487b-8551-0c483e919631}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Assets\SidebarIcon\AnimateIcon\PagesAnimatedIcon\4_AnimatedLocalizationIcon">
+      <UniqueIdentifier>{db50df4b-26cb-423f-be0c-3fbd0c634df0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Assets\SidebarIcon\AnimateIcon\PagesAnimatedIcon\2_AnimatedResolutionIcon">
+      <UniqueIdentifier>{5f35fbc8-9de0-4194-97d0-f4bbb3dbd239}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Assets\SidebarIcon\PagesIcon\4_SidebarIcon_Localization">
+      <UniqueIdentifier>{cfe744d7-05fd-4c3e-81e6-3250133cd73c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -107,52 +137,6 @@
     </ClInclude>
     <ClInclude Include="..\..\backends\imgui_impl_dx11.h">
       <Filter>sources</Filter>
-    </ClInclude>
-    <ClInclude Include="src\AnimatedBackupIcon.h" />
-    <ClInclude Include="src\AnimatedHomeIcon.h" />
-    <ClInclude Include="src\AnimatedLocalizationIcon.h" />
-    <ClInclude Include="src\AnimatedResolutionIcon.h" />
-    <ClInclude Include="src\AnimatedSettingsIcon.h" />
-    <ClInclude Include="src\DashboardPage.h" />
-    <ClInclude Include="src\IconTextureLoader.h" />
-    <ClInclude Include="src\LocalizationPage.h" />
-    <ClInclude Include="src\RainEffect.h" />
-    <ClInclude Include="src\RainEffectPipeline.h" />
-    <ClInclude Include="src\ResolutionModel.h" />
-    <ClInclude Include="src\ResolutionPage.h" />
-    <ClInclude Include="src\ResolutionStyle.h" />
-    <ClInclude Include="src\SettingModel.h" />
-    <ClInclude Include="src\SettingPage.h" />
-    <ClInclude Include="src\SettingStyle.h" />
-    <ClInclude Include="src\SidebarIcon_BackupNoSelect.h" />
-    <ClInclude Include="src\SidebarIcon_BackupSelect.h" />
-    <ClInclude Include="src\SidebarIcon_HomeNoSelect.h" />
-    <ClInclude Include="src\SidebarIcon_HomeSelect.h" />
-    <ClInclude Include="src\SidebarIcon_LocalizationNoSelect.h" />
-    <ClInclude Include="src\SidebarIcon_LocalizationSelect.h" />
-    <ClInclude Include="src\SidebarIcon_ResolutionNoSelect.h" />
-    <ClInclude Include="src\SidebarIcon_ResolutionSelect.h" />
-    <ClInclude Include="src\SidebarIcon_SettingsNoSelect.h" />
-    <ClInclude Include="src\SidebarIcon_SettingsSelect.h" />
-    <ClInclude Include="src\UI_Sidebar.h" />
-    <ClInclude Include="src\BodycamAppIcon.h">
-      <Filter>src\Assets\BodycamAppIcon</Filter>
-    </ClInclude>
-    <ClInclude Include="src\BackupPage.h">
-      <Filter>src\UI\MainViews\MainViewsPages\Pages\3_Backup</Filter>
-    </ClInclude>
-    <ClInclude Include="src\MainViews.h">
-      <Filter>src\UI\MainViews</Filter>
-    </ClInclude>
-    <ClInclude Include="src\LocalizationModel.h" />
-    <ClInclude Include="src\LocalizationStyle.h" />
-    <ClInclude Include="src\DashboardStyle.h" />
-    <ClInclude Include="src\DashboardModel.h" />
-    <ClInclude Include="src\BackupModel.h">
-      <Filter>src\UI\MainViews\MainViewsPages\Pages\3_Backup</Filter>
-    </ClInclude>
-    <ClInclude Include="src\BackupStyle.h">
-      <Filter>src\UI\MainViews\MainViewsPages\Pages\3_Backup</Filter>
     </ClInclude>
     <ClInclude Include="src\curseFiles\Win32_API\Win32_API.h">
       <Filter>src\curseFiles 绑定\Win32_API</Filter>
@@ -174,6 +158,114 @@
     </ClInclude>
     <ClInclude Include="src\UI\Header\UI_Header.h">
       <Filter>src\UI\Header 标题</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UI\MainViews\MainViewsPages\Pages3_Backup\BackupModel.h">
+      <Filter>src\UI\MainViews 主视图\MainViewsPages\Pages\3_Backup</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UI\MainViews\MainViewsPages\Pages\3_Backup\BackupPage.h">
+      <Filter>src\UI\MainViews 主视图\MainViewsPages\Pages\3_Backup</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UI\MainViews\MainViewsPages\Pages\3_Backup\BackupStyle.h">
+      <Filter>src\UI\MainViews 主视图\MainViewsPages\Pages\3_Backup</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UI\MainViews\MainViewsPages\Pages\1_Dashboard\DashboardModel.h">
+      <Filter>src\UI\MainViews 主视图\MainViewsPages\Pages\1_Dashboard</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UI\MainViews\MainViewsPages\Pages\1_Dashboard\DashboardPage.h">
+      <Filter>src\UI\MainViews 主视图\MainViewsPages\Pages\1_Dashboard</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UI\MainViews\MainViewsPages\Pages\1_Dashboard\DashboardStyle.h">
+      <Filter>src\UI\MainViews 主视图\MainViewsPages\Pages\1_Dashboard</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UI\MainViews\MainViewsPages\Pages\4_Localization\LocalizationModel.h">
+      <Filter>src\UI\MainViews 主视图\MainViewsPages\Pages\4_Localization</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UI\MainViews\MainViewsPages\Pages\4_Localization\LocalizationPage.h">
+      <Filter>src\UI\MainViews 主视图\MainViewsPages\Pages\4_Localization</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UI\MainViews\MainViewsPages\Pages\4_Localization\LocalizationStyle.h">
+      <Filter>src\UI\MainViews 主视图\MainViewsPages\Pages\4_Localization</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UI\MainViews\MainViews.h">
+      <Filter>src\UI\MainViews 主视图</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UI\MainViews\MainViewsPages\Pages\2_Resolution\ResolutionModel.h">
+      <Filter>src\UI\MainViews 主视图\MainViewsPages\Pages\2_Resolution</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UI\MainViews\MainViewsPages\Pages\2_Resolution\ResolutionPage.h">
+      <Filter>src\UI\MainViews 主视图\MainViewsPages\Pages\2_Resolution</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UI\MainViews\MainViewsPages\Pages\2_Resolution\ResolutionStyle.h">
+      <Filter>src\UI\MainViews 主视图\MainViewsPages\Pages\2_Resolution</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UI\Sidebar\UI_Sidebar.h">
+      <Filter>src\UI\Sidebar 侧边栏 %28左%29</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Assets\RainEffect_HLSL\RainEffect.h">
+      <Filter>src\Assets\RainEffect_HLSL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Assets\RainEffect_HLSL\RainEffectPipeline.h">
+      <Filter>src\Assets\RainEffect_HLSL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UI\MainViews\MainViewsPages\PagesSettings\SettingModel.h">
+      <Filter>src\UI\MainViews 主视图\MainViewsPages\PagesSettings</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UI\MainViews\MainViewsPages\PagesSettings\SettingPage.h">
+      <Filter>src\UI\MainViews 主视图\MainViewsPages\PagesSettings</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UI\MainViews\MainViewsPages\PagesSettings\SettingStyle.h">
+      <Filter>src\UI\MainViews 主视图\MainViewsPages\PagesSettings</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Assets\BodycamAppIcon\BodycamAppIcon.h">
+      <Filter>src\Assets\BodycamAppIcon</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Assets\SidebarIcon\IconTextureLoader.h">
+      <Filter>src\Assets\SidebarIcon</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Assets\SidebarIcon\AnimateIcon\PagesAnimatedIcon\3_AnimatedBackupIcon\AnimatedBackupIcon.h">
+      <Filter>src\Assets\SidebarIcon\AnimateIcon\PagesAnimatedIcon\3_AnimatedBackupIcon</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Assets\SidebarIcon\AnimateIcon\PagesAnimatedIcon\1_AnimatedHomeIcon\AnimatedHomeIcon.h">
+      <Filter>src\Assets\SidebarIcon\AnimateIcon\PagesAnimatedIcon\1_AnimatedHomeIcon</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Assets\SidebarIcon\AnimateIcon\PagesAnimatedIcon\2_AnimatedResolutionIcon\AnimatedResolutionIcon.h">
+      <Filter>src\Assets\SidebarIcon\AnimateIcon\PagesAnimatedIcon\2_AnimatedResolutionIcon</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Assets\SidebarIcon\AnimateIcon\PagesAnimatedIcon\4_AnimatedLocalizationIcon\AnimatedLocalizationIcon.h">
+      <Filter>src\Assets\SidebarIcon\AnimateIcon\PagesAnimatedIcon\4_AnimatedLocalizationIcon</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Assets\SidebarIcon\AnimateIcon\PagesSettingsAnimatedIcon\AnimatedSettingsIcon\AnimatedSettingsIcon.h">
+      <Filter>src\Assets\SidebarIcon\AnimateIcon\PagesSettingsAnimatedIcon\AnimatedSettingsIcon</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Assets\SidebarIcon\PagesIcon\3_SidebarIcon_Backup\SidebarIcon_BackupNoSelect.h">
+      <Filter>src\Assets\SidebarIcon\PagesIcon\3_SidebarIcon_Backup</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Assets\SidebarIcon\PagesIcon\3_SidebarIcon_Backup\SidebarIcon_BackupSelect.h">
+      <Filter>src\Assets\SidebarIcon\PagesIcon\3_SidebarIcon_Backup</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Assets\SidebarIcon\PagesIcon\1_SidebarIcon_Home\SidebarIcon_HomeSelect.h">
+      <Filter>src\Assets\SidebarIcon\PagesIcon\1_SidebarIcon_Home</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Assets\SidebarIcon\PagesIcon\1_SidebarIcon_Home\SidebarIcon_HomeNoSelect.h">
+      <Filter>src\Assets\SidebarIcon\PagesIcon\1_SidebarIcon_Home</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Assets\SidebarIcon\PagesIcon\4_SidebarIcon_Localization\SidebarIcon_LocalizationSelect.h">
+      <Filter>src\Assets\SidebarIcon\PagesIcon\4_SidebarIcon_Localization</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Assets\SidebarIcon\PagesIcon\4_SidebarIcon_Localization\SidebarIcon_LocalizationNoSelect.h">
+      <Filter>src\Assets\SidebarIcon\PagesIcon\4_SidebarIcon_Localization</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Assets\SidebarIcon\PagesIcon\2_SidebarIcon_Resolution\SidebarIcon_ResolutionNoSelect.h">
+      <Filter>src\Assets\SidebarIcon\PagesIcon\2_SidebarIcon_Resolution</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Assets\SidebarIcon\PagesIcon\2_SidebarIcon_Resolution\SidebarIcon_ResolutionSelect.h">
+      <Filter>src\Assets\SidebarIcon\PagesIcon\2_SidebarIcon_Resolution</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Assets\SidebarIcon\PagesSettingsIcon\SidebarIcon_Settings\SidebarIcon_SettingsNoSelect.h">
+      <Filter>src\Assets\SidebarIcon\PagesSettingsIcon</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Assets\SidebarIcon\PagesSettingsIcon\SidebarIcon_Settings\SidebarIcon_SettingsSelect.h">
+      <Filter>src\Assets\SidebarIcon\PagesSettingsIcon</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -198,36 +290,6 @@
     <ClCompile Include="..\..\imgui_tables.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
-    <ClCompile Include="src\AnimatedBackupIcon.cpp" />
-    <ClCompile Include="src\AnimatedLocalizationIcon.cpp" />
-    <ClCompile Include="src\AnimatedResolutionIcon.cpp" />
-    <ClCompile Include="src\AnimatedSettingsIcon.cpp" />
-    <ClCompile Include="src\DashboardPage.cpp" />
-    <ClCompile Include="src\LocalizationPage.cpp" />
-    <ClCompile Include="src\RainEffect.cpp" />
-    <ClCompile Include="src\ResolutionModel.cpp" />
-    <ClCompile Include="src\ResolutionPage.cpp" />
-    <ClCompile Include="src\ResolutionStyle.cpp" />
-    <ClCompile Include="src\SettingModel.cpp" />
-    <ClCompile Include="src\SettingPage.cpp" />
-    <ClCompile Include="src\SettingStyle.cpp" />
-    <ClCompile Include="src\UI_Sidebar.cpp" />
-    <ClCompile Include="src\BackupPage.cpp">
-      <Filter>src\UI\MainViews\MainViewsPages\Pages\3_Backup</Filter>
-    </ClCompile>
-    <ClCompile Include="src\MainViews.cpp">
-      <Filter>src\UI\MainViews</Filter>
-    </ClCompile>
-    <ClCompile Include="src\LocalizationModel.cpp" />
-    <ClCompile Include="src\LocalizationStyle.cpp" />
-    <ClCompile Include="src\DashboardStyle.cpp" />
-    <ClCompile Include="src\DashboardModel.cpp" />
-    <ClCompile Include="src\BackupModel.cpp">
-      <Filter>src\UI\MainViews\MainViewsPages\Pages\3_Backup</Filter>
-    </ClCompile>
-    <ClCompile Include="src\BackupStyle.cpp">
-      <Filter>src\UI\MainViews\MainViewsPages\Pages\3_Backup</Filter>
-    </ClCompile>
     <ClCompile Include="src\main.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -249,6 +311,75 @@
     <ClCompile Include="src\UI\Header\UI_Header.cpp">
       <Filter>src\UI\Header 标题</Filter>
     </ClCompile>
+    <ClCompile Include="src\UI\MainViews\MainViewsPages\Pages\3_Backup\BackupModel.cpp">
+      <Filter>src\UI\MainViews 主视图\MainViewsPages\Pages\3_Backup</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UI\MainViews\MainViewsPages\Pages\3_Backup\BackupPage.cpp">
+      <Filter>src\UI\MainViews 主视图\MainViewsPages\Pages\3_Backup</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UI\MainViews\MainViewsPages\Pages\3_Backup\BackupStyle.cpp">
+      <Filter>src\UI\MainViews 主视图\MainViewsPages\Pages\3_Backup</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UI\MainViews\MainViewsPages\Pages\1_Dashboard\DashboardModel.cpp">
+      <Filter>src\UI\MainViews 主视图\MainViewsPages\Pages\1_Dashboard</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UI\MainViews\MainViewsPages\Pages\1_Dashboard\DashboardPage.cpp">
+      <Filter>src\UI\MainViews 主视图\MainViewsPages\Pages\1_Dashboard</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UI\MainViews\MainViewsPages\Pages\1_Dashboard\DashboardStyle.cpp">
+      <Filter>src\UI\MainViews 主视图\MainViewsPages\Pages\1_Dashboard</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UI\MainViews\MainViewsPages\Pages\4_Localization\LocalizationModel.cpp">
+      <Filter>src\UI\MainViews 主视图\MainViewsPages\Pages\4_Localization</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UI\MainViews\MainViewsPages\Pages\4_Localization\LocalizationPage.cpp">
+      <Filter>src\UI\MainViews 主视图\MainViewsPages\Pages\4_Localization</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UI\MainViews\MainViewsPages\Pages\4_Localization\LocalizationStyle.cpp">
+      <Filter>src\UI\MainViews 主视图\MainViewsPages\Pages\4_Localization</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UI\MainViews\MainViews.cpp">
+      <Filter>src\UI\MainViews 主视图</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UI\MainViews\MainViewsPages\Pages\2_Resolution\ResolutionModel.cpp">
+      <Filter>src\UI\MainViews 主视图\MainViewsPages\Pages\2_Resolution</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UI\MainViews\MainViewsPages\Pages\2_Resolution\ResolutionPage.cpp">
+      <Filter>src\UI\MainViews 主视图\MainViewsPages\Pages\2_Resolution</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UI\MainViews\MainViewsPages\Pages\2_Resolution\ResolutionStyle.cpp">
+      <Filter>src\UI\MainViews 主视图\MainViewsPages\Pages\2_Resolution</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UI\Sidebar\UI_Sidebar.cpp">
+      <Filter>src\UI\Sidebar 侧边栏 %28左%29</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Assets\RainEffect_HLSL\RainEffect.cpp">
+      <Filter>src\Assets\RainEffect_HLSL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UI\MainViews\MainViewsPages\PagesSettings\SettingModel.cpp">
+      <Filter>src\UI\MainViews 主视图\MainViewsPages\PagesSettings</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UI\MainViews\MainViewsPages\PagesSettings\SettingPage.cpp">
+      <Filter>src\UI\MainViews 主视图\MainViewsPages\PagesSettings</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UI\MainViews\MainViewsPages\PagesSettings\SettingStyle.cpp">
+      <Filter>src\UI\MainViews 主视图\MainViewsPages\PagesSettings</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Assets\SidebarIcon\AnimateIcon\PagesAnimatedIcon\3_AnimatedBackupIcon\AnimatedBackupIcon.cpp">
+      <Filter>src\Assets\SidebarIcon\AnimateIcon\PagesAnimatedIcon\3_AnimatedBackupIcon</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Assets\SidebarIcon\AnimateIcon\PagesAnimatedIcon\1_AnimatedHomeIcon\AnimatedHomeIcon.cpp">
+      <Filter>src\Assets\SidebarIcon\AnimateIcon\PagesAnimatedIcon\1_AnimatedHomeIcon</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Assets\SidebarIcon\AnimateIcon\PagesAnimatedIcon\2_AnimatedResolutionIcon\AnimatedResolutionIcon.cpp">
+      <Filter>src\Assets\SidebarIcon\AnimateIcon\PagesAnimatedIcon\2_AnimatedResolutionIcon</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Assets\SidebarIcon\AnimateIcon\PagesAnimatedIcon\4_AnimatedLocalizationIcon\AnimatedLocalizationIcon.cpp">
+      <Filter>src\Assets\SidebarIcon\AnimateIcon\PagesAnimatedIcon\4_AnimatedLocalizationIcon</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Assets\SidebarIcon\AnimateIcon\PagesSettingsAnimatedIcon\AnimatedSettingsIcon\AnimatedSettingsIcon.cpp">
+      <Filter>src\Assets\SidebarIcon\AnimateIcon\PagesSettingsAnimatedIcon\AnimatedSettingsIcon</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\README.txt" />
@@ -260,11 +391,11 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="RainEffect.hlsl">
-      <Filter>src\Assets\HLSL</Filter>
-    </CustomBuild>
+    <Image Include="bitmap1.bmp" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="bitmap1.bmp" />
+    <CustomBuild Include="src\Assets\RainEffect_HLSL\RainEffect.hlsl">
+      <Filter>src\Assets\RainEffect_HLSL</Filter>
+    </CustomBuild>
   </ItemGroup>
 </Project>

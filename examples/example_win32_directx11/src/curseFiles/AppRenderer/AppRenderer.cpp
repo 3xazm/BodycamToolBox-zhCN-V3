@@ -12,11 +12,11 @@
 #include "..\..\src\Assets\BodycamAppIcon\BodycamAppIcon.h" // 你的二进制图标数据文件
 
 // 自定义模块
-#include "..\..\src\RainEffectPipeline.h"
+#include "..\..\Assets\RainEffect_HLSL\RainEffectPipeline.h"
 #include "..\..\src\curseFiles\Direct3D_Resource\Direct3D_Resource.h"
 #include "..\..\src\UI\Header\UI_Header.h"
-#include "..\..\src\UI_Sidebar.h"
-#include "..\..\src\MainViews.h"
+#include "..\..\src\UI\Sidebar\UI_Sidebar.h"
+#include "..\..\src\UI\MainViews\MainViews.h"
 
 // 全局变量定义
 HWND g_hWnd = nullptr;
