@@ -2,122 +2,152 @@
 #include "ResolutionModel.h"
 #include "imgui.h"
 
+// 辅助：渲染卡片顶部标题与装饰条
+static void RenderHeader(const char* title, ImVec4 accentColor) {
+	ImDrawList* drawList = ImGui::GetWindowDrawList( );
+	ImVec2 p = ImGui::GetCursorScreenPos( );
+
+	// 绘制左侧 3px 宽的小色条
+	drawList->AddRectFilled(p, ImVec2(p.x + 3.0f, p.y + 18.0f), ImGui::GetColorU32(accentColor), 2.0f);
+
+	ImGui::SetCursorPosX(ImGui::GetCursorPosX( ) + 10.0f);
+	ImGui::TextColored(accentColor, "%s", title);
+	ImGui::Spacing( );
+}
+
+// 辅助：渲染状态徽章 (Badge)
+static void RenderStatusBadge(const char* text, int state) {
+	ImU32 bgColor;
+	switch ( state ) {
+	case 1:  bgColor = IM_COL32(0, 180, 100, 160); break;  // 正常 - 绿
+	case 2:  bgColor = IM_COL32(220, 150, 0, 160); break;  // 警告 - 黄
+	default: bgColor = IM_COL32(200, 50, 50, 160); break;   // 错误 - 红
+	}
+
+	ImDrawList* drawList = ImGui::GetWindowDrawList( );
+	ImVec2 p = ImGui::GetCursorScreenPos( );
+	ImVec2 textSize = ImGui::CalcTextSize(text);
+	ImVec2 padding(8.0f, 3.0f);
+	ImVec2 badgeSize(textSize.x + padding.x * 2, textSize.y + padding.y * 2);
+
+	drawList->AddRectFilled(p, ImVec2(p.x + badgeSize.x, p.y + badgeSize.y), bgColor, 4.0f);
+	drawList->AddText(ImVec2(p.x + padding.x, p.y + padding.y), IM_COL32(255, 255, 255, 255), text);
+
+	ImGui::Dummy(badgeSize); // 占位
+}
+
 void ResolutionStyle::RenderPageUI(ResolutionModel& model) {
-    ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 15.0f);
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(12.0f, 12.0f));
+	ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 12.0f);
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(14.0f, 14.0f));
 
-    // ==========================================
-    // 卡片 1：分辨率修复
-    // ==========================================
-    ImGui::BeginChild("ResolutionFixCard", ImVec2(0, 310), true, 0);
+	// 计算网格列数与卡片宽度
+	float availWidth = ImGui::GetContentRegionAvail( ).x;
+	float minCardWidth = 320.0f; // 单张卡片的最小理想宽度
+	float spacing = 12.0f;       // 卡片之间的间距
 
-    ImGui::Columns(2, "ResCols", false);
-    ImGui::SetColumnWidth(0, ImGui::GetWindowWidth() - 170.0f);
+	// 根据总宽度计算一行能容纳几列 (至少1列)
+	int columns = ( int ) ((availWidth + spacing) / (minCardWidth + spacing));
+	if ( columns < 1 ) columns = 1;
 
-    ImGui::TextColored(ImVec4(0.15f, 0.60f, 0.72f, 1.0f), "分辨率修复 1");
-    ImGui::Separator();
-    ImGui::Spacing();
+	// 计算实际卡片宽度，使其平分宽度占满整行
+	float cardWidth = (availWidth - (columns - 1) * spacing) / columns;
+	float cardHeight = 220.0f; // 统一卡片高度
 
-    ImGui::TextColored(ImVec4(0.0f, 0.66f, 0.58f, 1.0f), "%s", model.GetCurrentResolutionText().c_str());
+	int cardIndex = 0;
 
-    // 根据 Model 状态渲染不同颜色的状态文本
-    int resState = model.GetResolutionState();
-    ImVec4 statusColor = (resState == 1) ? ImVec4(0.0f, 1.0f, 0.0f, 1.0f) :
-        ((resState == 2) ? ImVec4(1.0f, 0.84f, 0.0f, 1.0f) : ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
+	auto PrepareNextCard = [&] (int index) {
+		if ( index > 0 ) {
+			if ( index % columns != 0 ) {
+				ImGui::SameLine(0.0f, spacing); // 同一行，接着画下一个卡片
+			}
+			else {
+				ImGui::Spacing( ); // 换行
+			}
+		}
+		};
 
-    ImGui::TextColored(statusColor, "%s", model.GetBodycamResolutionText().c_str());
-    ImGui::TextColored(statusColor, "%s", model.GetResolutionStatusText().c_str());
+	// ==========================================
+	// 卡片 1：分辨率优化
+	// ==========================================
+	PrepareNextCard(cardIndex++);
+	ImGui::BeginChild("Card_ResFix", ImVec2(cardWidth, cardHeight), true, 0);
+	{
+		RenderHeader("分辨率优化", ImVec4(0.0f, 0.75f, 0.85f, 1.0f));
 
-    ImGui::Spacing();
-    ImGui::TextWrapped("1- 修复笔记本 或 多显示器环境下导致Bodycam的分辨率异常问题。");
-    ImGui::TextWrapped("2- 如画面不完整等 以及 无法对画面正常点击等。");
-    ImGui::TextWrapped("3- 画面下面出现黑边，画面移出屏幕外等。");
+		ImGui::TextColored(ImVec4(0.85f, 0.85f, 0.85f, 1.0f), "%s", model.GetCurrentResolutionText( ).c_str( ));
+		ImGui::TextColored(ImVec4(0.85f, 0.85f, 0.85f, 1.0f), "%s", model.GetBodycamResolutionText( ).c_str( ));
 
-    ImGui::Spacing();
-    ImGui::TextColored(ImVec4(0.74f, 0.56f, 0.56f, 1.0f), "--*如果Bodycam工具箱加载不出来当前分辨率可点击刷新一下按钮。");
+		ImGui::Spacing( );
+		RenderStatusBadge(model.GetResolutionStatusText( ).c_str( ), model.GetResolutionState( ));
+		ImGui::Spacing( );
 
-    // 右侧按钮栏
-    ImGui::NextColumn();
+		ImGui::PushTextWrapPos(ImGui::GetCursorPos( ).x + cardWidth - 28.0f);
+		ImGui::TextColored(ImVec4(0.65f, 0.70f, 0.75f, 1.0f), "• 解决笔记本或多显示器画面拉伸、黑边及点击失效。");
+		ImGui::PopTextWrapPos( );
 
-    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.82f, 0.04f, 0.03f, 1.0f));
-    if (ImGui::Button("0.破坏分辨率", ImVec2(130, 30))) {
-        model.DestroyResolution();
-    }
-    ImGui::PopStyleColor();
+		// 底部操作按钮：占满全宽的单一一键修复按钮
+		ImGui::SetCursorPosY(ImGui::GetWindowHeight( ) - 50.0f);
 
-    ImGui::Dummy(ImVec2(0, 15));
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.60f, 0.45f, 0.85f));
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0f, 0.75f, 0.55f, 1.0f));
+		if ( ImGui::Button("一键修复", ImVec2(cardWidth - 28.0f, 34)) ) {
+			model.FixResolution( );
+		}
+		ImGui::PopStyleColor(2);
+	}
+	ImGui::EndChild( );
 
-    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
-    if (ImGui::Button("1.修复分辨率", ImVec2(130, 45))) {
-        model.FixResolution();
-    }
-    ImGui::PopStyleColor();
+	// ==========================================
+	// 卡片 2：黑屏修复
+	// ==========================================
+	PrepareNextCard(cardIndex++);
+	ImGui::BeginChild("Card_BlackScreenFix", ImVec2(cardWidth, cardHeight), true, 0);
+	{
+		RenderHeader("黑屏/启动异常修复", ImVec4(0.0f, 0.75f, 0.85f, 1.0f));
 
-    ImGui::Dummy(ImVec2(0, 15));
+		ImGui::PushTextWrapPos(ImGui::GetCursorPos( ).x + cardWidth - 28.0f);
+		ImGui::TextColored(ImVec4(0.85f, 0.85f, 0.85f, 1.0f), "解决游戏启动后有声音/音乐但画面黑屏的问题。");
+		ImGui::Spacing( );
+		ImGui::TextColored(ImVec4(0.65f, 0.70f, 0.75f, 1.0f), "• 仅支持 Steam 正版 Bodycam。");
+		ImGui::TextColored(ImVec4(0.65f, 0.70f, 0.75f, 1.0f), "• 修复预计耗时约 6 秒。");
+		ImGui::PopTextWrapPos( );
 
-    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.74f, 0.56f, 0.56f, 1.0f));
-    if (ImGui::Button("2.刷新一下", ImVec2(130, 40))) {
-        model.RefreshResolution();
-    }
-    ImGui::PopStyleColor();
+		// 底部按钮
+		ImGui::SetCursorPosY(ImGui::GetWindowHeight( ) - 50.0f);
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.18f, 0.38f, 0.56f, 0.85f));
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.25f, 0.48f, 0.70f, 1.0f));
+		if ( ImGui::Button("修复黑屏", ImVec2(cardWidth - 28.0f, 34)) ) {
+			model.FixBlackScreen( );
+		}
+		ImGui::PopStyleColor(2);
+	}
+	ImGui::EndChild( );
 
-    ImGui::Columns(1);
-    ImGui::EndChild();
+	// ==========================================
+	// 卡片 3：五颜六色彩虹修复
+	// ==========================================
+	PrepareNextCard(cardIndex++);
+	ImGui::BeginChild("Card_RainbowFix", ImVec2(cardWidth, cardHeight), true, 0);
+	{
+		RenderHeader("彩虹屏 & 闪屏修复", ImVec4(0.0f, 0.75f, 0.85f, 1.0f));
 
-    ImGui::Spacing();
+		ImGui::PushTextWrapPos(ImGui::GetCursorPos( ).x + cardWidth - 28.0f);
+		ImGui::TextColored(ImVec4(0.85f, 0.85f, 0.85f, 1.0f), "修复因 HDR 或色彩渲染冲突导致的色彩异常及闪屏问题。");
+		ImGui::Spacing( );
+		ImGui::TextColored(ImVec4(0.65f, 0.70f, 0.75f, 1.0f), "• 解决开局彩虹色异常。");
+		ImGui::TextColored(ImVec4(0.65f, 0.70f, 0.75f, 1.0f), "• 解决按 Tab 查看计分板时的画面闪烁。");
+		ImGui::PopTextWrapPos( );
 
-    // ==========================================
-    // 卡片 2：黑屏修复
-    // ==========================================
-    ImGui::BeginChild("BlackScreenFixCard", ImVec2(0, 180), true, 0);
+		// 底部按钮
+		ImGui::SetCursorPosY(ImGui::GetWindowHeight( ) - 50.0f);
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.35f, 0.22f, 0.52f, 0.85f));
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.48f, 0.28f, 0.68f, 1.0f));
+		if ( ImGui::Button("修复彩虹屏", ImVec2(cardWidth - 28.0f, 34)) ) {
+			model.FixRainbowScreen( );
+		}
+		ImGui::PopStyleColor(2);
+	}
+	ImGui::EndChild( );
 
-    ImGui::Columns(2, "BlackCols", false);
-    ImGui::SetColumnWidth(0, ImGui::GetWindowWidth() - 170.0f);
-
-    ImGui::TextColored(ImVec4(0.15f, 0.60f, 0.72f, 1.0f), "黑屏修复 2");
-    ImGui::Separator();
-    ImGui::Spacing();
-
-    ImGui::TextWrapped("1- 本修复方案针对特定兼容性黑屏有效 如黑屏有声音/音乐等");
-    ImGui::TextWrapped("2- 仅支持正版Bodycam版本，非官方版本 或 假入库无法保证修复效果。");
-    ImGui::TextWrapped("3- 如黑屏嘟嘟的响，可能需检查Watt Toolkit或第三方加速器等");
-    ImGui::TextWrapped("4- 修复过程预计耗时6 秒。");
-
-    ImGui::NextColumn();
-    ImGui::Dummy(ImVec2(0, 30));
-    if (ImGui::Button("修复##BlackScreen", ImVec2(120, 40))) {
-        model.FixBlackScreen();
-    }
-
-    ImGui::Columns(1);
-    ImGui::EndChild();
-
-    ImGui::Spacing();
-
-    // ==========================================
-    // 卡片 3：五颜六色彩虹修复
-    // ==========================================
-    ImGui::BeginChild("RainbowFixCard", ImVec2(0, 160), true, 0);
-
-    ImGui::Columns(2, "RainbowCols", false);
-    ImGui::SetColumnWidth(0, ImGui::GetWindowWidth() - 170.0f);
-
-    ImGui::TextColored(ImVec4(0.15f, 0.60f, 0.72f, 1.0f), "五颜六色彩虹修复 3");
-    ImGui::Separator();
-    ImGui::Spacing();
-
-    ImGui::TextWrapped("1- 五颜六色彩虹修复是指游戏中出现的彩虹色异常问题 或 闪屏");
-    ImGui::TextWrapped("2- 按Tab键的玩家数据面板出现闪屏 或 彩色异常。");
-    ImGui::TextWrapped("3- 开局时出现彩虹色异常。");
-
-    ImGui::NextColumn();
-    ImGui::Dummy(ImVec2(0, 25));
-    if (ImGui::Button("修复##Rainbow", ImVec2(120, 40))) {
-        model.FixRainbowScreen();
-    }
-
-    ImGui::Columns(1);
-    ImGui::EndChild();
-
-    ImGui::PopStyleVar(2);
+	ImGui::PopStyleVar(2);
 }
